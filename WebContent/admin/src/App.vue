@@ -1,20 +1,13 @@
 <template>
   <div id="app">
-	  <router-view></router-view>
+    <img src="./assets/logo.png">
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app',
-	data: function() {
-		return {
-			items: [
-				{message: 'Foo22' },
-				{message: 'Bar' }
-			]
-		}
-	}
+  name: 'app'
 }
 </script>
 
