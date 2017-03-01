@@ -5,8 +5,7 @@ import App from './App'
 import router from './router'
 
 Vue.config.productionTip = false
-console.info(process.env.baseUrl);
-console.info(process.env.baseUrl);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
