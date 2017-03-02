@@ -3,14 +3,14 @@
 export default {
   login (email, pass, cb) {
     cb = arguments[arguments.length - 1]
-    if (localStorage.token) {
+    if (localStorage.manageTokenCode) {
       if (cb) cb(true)
       this.onChange(true)
       return
     }
     pretendRequest(email, pass, (res) => {
       if (res.authenticated) {
-        localStorage.token = res.token
+        localStorage.manageTokenCode = res.manageTokenCode
         if (cb) cb(true)
         this.onChange(true)
       } else {
@@ -21,17 +21,17 @@ export default {
   },
 
   getToken () {
-    return localStorage.token
+    return localStorage.manageTokenCode
   },
 
   logout (cb) {
-    delete localStorage.token
+    delete localStorage.manageTokenCode
     if (cb) cb()
     this.onChange(false)
   },
 
   loggedIn () {
-    return !!localStorage.token
+    return !!localStorage.manageTokenCode
   },
 
   onChange () {}
