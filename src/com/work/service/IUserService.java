@@ -19,5 +19,8 @@ public interface IUserService <T extends TUser> extends IService<T> {
 	// 根据ID获取用户内容
 	public TUser getUserByID(int id);
 	
+	// 更新用户最新token
+	public TUser updateUserToken(int id);
+	
 }
 

@@ -5,9 +5,12 @@ import com.work.vo.TArticle;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * 操作字符串工具类
@@ -49,6 +52,14 @@ public class OperateString {
 		//return new String((byte[])content,"utf-8");
 	}
 	
-	
+	// 生成md5码
+	public String encoderByMd5(String str) throws Exception{
+		//确定计算方法
+		MessageDigest md5 = MessageDigest.getInstance("MD5");
+		BASE64Encoder base64en = new BASE64Encoder();
+		//加密后的字符串
+		String newstr = base64en.encode(md5.digest(str.getBytes("utf-8")));
+		return newstr;
+	}
 	
 }

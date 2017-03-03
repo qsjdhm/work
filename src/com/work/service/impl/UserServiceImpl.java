@@ -1,10 +1,13 @@
 package com.work.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import com.work.dao.IDao;
 import com.work.service.IUserService;
 import com.work.service.IService;
+import com.work.util.OperateString;
 import com.work.vo.TUser;
 
 /**
@@ -77,5 +80,37 @@ public class UserServiceImpl<T extends TUser> extends ServiceImpl<T> implements 
 		
 		return user;
 	}
+	
+	/**
+	 *  更新用户的session字段
+	 *  @param id 用户ID
+	 *  @return 单个用户内容
+	 */
+	@Override
+	public TUser updateUserToken(int id) {
+		
+		TUser proUser = getUserByID(id);
+		OperateString operateString = new OperateString();
+		// 生成新的md5，并存到数据库中
+		String token = "";
+		try {
+			token = operateString.encoderByMd5(proUser.getUser_Account() + new SimpleDateFormat("yyyyMMddHHmmssSSS") .format(new Date()));
+		} catch (Exception e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		
+		TUser user = new TUser();
+		user.setUser_ID(proUser.getUser_ID());
+		user.setUser_Account(proUser.getUser_Account());
+		user.setUser_Password(proUser.getUser_Password());
+		user.setUser_Email(proUser.getUser_Email());
+		user.setSessionId(proUser.getSessionId());
+		user.setUser_Token(token);
+		this.getDao().update((T) user);
+		
+		return user;
+	}
+	
 
 }

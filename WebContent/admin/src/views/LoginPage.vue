@@ -3,8 +3,6 @@
         <div class="wrapper">
             <div class="container">
                 <h1>Welcome</h1>
-                {{username}}
-                {{password}}
                 <form class="form">
                     <input :value="username" @input="usernameHandler" type="text" placeholder="Username" />
                     <input :value="password" @input="passwordHandler" type="text" placeholder="Password" />
@@ -56,12 +54,17 @@
             loginSystemHandler: function (e) {
                 const self = this;
                 this.$store.dispatch('loginSystem').then(function (result) {
+                    console.info(result);
                     if(result.success === "1"){
-                        localStorage["manageTokenCode"] = "这里应该是一串登录码";
-                        localStorage["manageTokenName"] = "超级管理员 - 张岩";
-                        window.location.href = self.$store.state.BASE_URL + "/admin/#/about";
+                        self.$message({
+                            message: result.msg,
+                            type: 'success'
+                        });
+                        localStorage["workUser"] = result.user;
+                        window.location.href = self.$store.state.BASE_URL + "/admin/#/home";
                     } else {
                         console.info(result.msg);
+                        self.$message.error(result.msg);
                         //message.error(result.msg);
                     }
                 });

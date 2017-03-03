@@ -1,6 +1,8 @@
 package com.work.controllers.admin;
 
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -36,6 +38,7 @@ public class LoginController {
 	@RequestMapping(value = "")
 	public void login(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
+		int id = 0;
 		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
 		String password = URLDecoder.decode(URLDecoder.decode(request.getParameter("password"), "utf-8"), "utf-8");
 		
@@ -58,10 +61,13 @@ public class LoginController {
 			
 			if(user.getUser_Account().equals(name)){
 				if(user.getUser_Password().equals(password)){  // 成功
+					id = user.getUser_ID();
 					aFlag = 0;  // 账号正确
 					pFlag = 0;  // 密码正确
 					System.out.println("login:"+request.getSession().getId());
 					user.setSessionId(request.getSession().getId());
+					// 更新用户最新token
+					userService.updateUserToken(id);
 					successUser = user;
 					break;
 				}else{  // 密码错误
@@ -76,9 +82,16 @@ public class LoginController {
 		}
 		
 		if(aFlag==0 && pFlag == 0){  // 成功
+			TUser user = userService.getUserByID(id);
+			
+			JSONObject userObject = new JSONObject();
+			userObject.put("name", user.getUser_Account());
+			userObject.put("email", user.getUser_Email());
+			userObject.put("token", user.getUser_Token());
+			
 			jsonObject.put("success", "1");
 			jsonObject.put("msg", "登陆成功");
-			System.out.println("登陆成功");
+			jsonObject.put("user", userObject);
 			OperateLoginUser.setUserId(successUser.getSessionId(), String.valueOf(1));
 		}else if(aFlag!=0){  // 账号错误
 			jsonObject.put("success", "-1");

@@ -21,6 +21,7 @@ public class TUser {
 	private String User_Password = "";
 	private String User_Email = "";
 	private String SessionId = "";
+	private String User_Token = "";
 	
 	public int getUser_ID() {
 		return User_ID;
@@ -51,5 +52,11 @@ public class TUser {
 	}
 	public void setSessionId(String sessionId) {
 		SessionId = sessionId;
+	}
+	public String getUser_Token() {
+		return User_Token;
+	}
+	public void setUser_Token(String user_Token) {
+		User_Token = user_Token;
 	}
 }
