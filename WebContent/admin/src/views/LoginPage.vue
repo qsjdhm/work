@@ -5,7 +5,7 @@
                 <h1>Welcome</h1>
                 <form class="form">
                     <input :value="username" @input="usernameHandler" type="text" placeholder="Username" />
-                    <input :value="password" @input="passwordHandler" type="text" placeholder="Password" />
+                    <input :value="password" @input="passwordHandler" type="password" placeholder="Password" />
                     <button @click="loginSystemHandler">Login</button>
                 </form>
             </div>
@@ -53,6 +53,7 @@
             },
             loginSystemHandler: function (e) {
                 const self = this;
+                console.info(this.$store);
                 this.$store.dispatch('loginSystem').then(function (result) {
                     console.info(result);
                     if(result.success === "1"){
@@ -61,9 +62,8 @@
                             type: 'success'
                         });
                         localStorage["workUser"] = result.user;
-                        window.location.href = self.$store.state.BASE_URL + "/admin/#/home";
+                        window.location.href = self.$store.state.BASE_URL + "/admin/#/home/dashboard";
                     } else {
-                        console.info(result.msg);
                         self.$message.error(result.msg);
                         //message.error(result.msg);
                     }

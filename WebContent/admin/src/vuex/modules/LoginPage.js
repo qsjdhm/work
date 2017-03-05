@@ -13,12 +13,7 @@ const state  = {
 
 // getters
 // 只能获取state中的值，并且可以进行数据处理，但是不建议，因为view中需要获取最初始的state的状态
-const getters = {
-	//password: function (state) {
-	//	// 可以在此做数据过滤、组织等处理
-	//	return state.password;
-	//}
-};
+const getters = {};
 
 // actions
 const actions = {

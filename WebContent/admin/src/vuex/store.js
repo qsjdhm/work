@@ -9,10 +9,13 @@ import * as state from './state';
 import * as actions from './actions';
 import * as getters from './getters';
 
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-default/index.css';
+//require('element-ui/lib/theme-default/index.css')
 
 import LoginPage from './modules/LoginPage';
+import FremeworkPage from './modules/FremeworkPage';
+import DashboardPage from './modules/dashboard/DashboardPage';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -25,7 +28,10 @@ export default new Vuex.Store({
 	actions,
 	getters,
 	modules: {
-		LoginPage
+		LoginPage,
+		FremeworkPage,
+
+		DashboardPage
 	},
 	strict: debug,
 	middlewares: middlewares,

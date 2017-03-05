@@ -8,10 +8,10 @@ import auth from '../utils/auth'
 
 Vue.use(Router)
 
-function directHome (to, from, next) {
+function directFremework (to, from, next) {
     if (auth.loggedIn()) {
         next({
-            path: '/home'
+            path: '/home/dashboard'
         })
     } else {
         next()
@@ -30,12 +30,11 @@ function requireAuth (to, from, next) {
 	}
 }
 
-//const Login = r => require.ensure([], () => r(require('../views/LoginPage')), 'group-foo');
-const Login = resolve => require(['../views/LoginPage'], resolve);
-const About = resolve => require(['../components/About'], resolve);
-const Note = resolve => require(['../components/About2'], resolve);
-
-
+const LoginPage     = resolve => require(['../views/LoginPage'], resolve);
+const FrameworkPage = resolve => require(['../views/FrameworkPage'], resolve);
+const DashboardPage = resolve => require(['../views/dashboard/DashboardPage'], resolve);
+const AddNotePage   = resolve => require(['../views/note/AddNotePage'], resolve);
+const DelNotePage   = resolve => require(['../views/note/DelNotePage'], resolve);
 
 
 export default new Router({
@@ -43,21 +42,27 @@ export default new Router({
         {
           path: '/',
           name: 'Login',
-          component: Login,
-          beforeEnter: directHome,
+          component: LoginPage,
+          beforeEnter: directFremework,
         },
         {
             path: '/home',
             name: 'Home',
-            component: About,
+            component: FrameworkPage,
             beforeEnter: requireAuth,
             children: [
                 {
-                    // 当 /user/:id/profile 匹配成功，
-                    // UserProfile 会被渲染在 User 的 <router-view> 中
-                    path: 'note',
-                    component: Note
-                }
+                    path: 'dashboard',
+                    component: DashboardPage
+                },
+				{
+					path: 'addNote',
+					component: AddNotePage
+				},
+				{
+					path: 'delNote',
+					component: DelNotePage
+				},
             ]
         },
         //{
