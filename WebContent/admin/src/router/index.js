@@ -53,14 +53,17 @@ export default new Router({
             children: [
                 {
                     path: 'dashboard',
+					name: '系统首页',
                     component: DashboardPage
                 },
 				{
 					path: 'addNote',
+					name: '新建笔记',
 					component: AddNotePage
 				},
 				{
 					path: 'delNote',
+					name: '删除笔记',
 					component: DelNotePage
 				},
             ]
