@@ -12,16 +12,19 @@
 						class="el-menu-vertical-demo"
 						@select="handleSelect"
 						@open="handleOpen"
-						@close="handleClose"
-				>
-					<el-menu-item index="dashboard"><i class="el-icon-menu"></i>文章管理</el-menu-item>
-					<el-submenu index="1">
-						<template slot="title"><i class="el-icon-message"></i>文章管理</template>
-						<el-menu-item index="addNote">添加文章</el-menu-item>
-					</el-submenu>
-					<el-submenu index="3">
-						<template slot="title"><i class="el-icon-setting"></i>文章管理</template>
-						<el-menu-item index="delNote">添加文章</el-menu-item>
+						@close="handleClose">
+					<el-menu-item index="dashboard"><i class="el-icon-menu"></i>系统首页</el-menu-item>
+					<el-submenu
+                        v-for="(menu, key, index) in menuList"
+                        :index="menu.index"
+                        :key="key">
+						<template slot="title"><i class="el-icon-message"></i>{{menu.name}}</template>
+                        <el-menu-item
+                            v-for="(subMenu, subKey, subIndex) in menu.subMenu"
+                            :index="subMenu.index"
+                            :key="subKey">
+                            {{subMenu.name}}
+                        </el-menu-item>
 					</el-submenu>
 				</el-menu>
 			</div>
@@ -53,6 +56,7 @@
 		computed: {
 			// 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
 			...mapState({
+                menuList: state => state.FremeworkPage.menuList,
 				activeMenu: state => state.FremeworkPage.activeMenu
 			})
 		},
@@ -61,7 +65,7 @@
 				this.$store.commit(SET_ACTIVEMENU, menu);
 				console.info('菜单点击了：');
 				console.info(this.$store.state.FremeworkPage.activeMenu);
-				window.location.href = this.$store.state.BASE_URL + "/admin/#/home/" + menu;
+				//window.location.href = this.$store.state.BASE_URL + "/admin/#/home/" + menu;
 
 //				console.info(a);
 //				console.info(b);
