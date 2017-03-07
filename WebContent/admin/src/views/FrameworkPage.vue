@@ -15,12 +15,12 @@
 						@close="handleClose">
 					<el-menu-item index="/home/dashboard"><i class="el-icon-menu"></i>系统首页</el-menu-item>
 					<el-submenu
-                        v-for="(menuGroup, key, index) in menuList"
+                        v-for="(menuGroup, key) in menuList"
                         :index="menuGroup.name"
                         :key="key">
 						<template slot="title"><i class="el-icon-message"></i>{{menuGroup.name}}</template>
                         <el-menu-item
-                            v-for="(subMenu, subKey, subIndex) in menuGroup.subMenu"
+                            v-for="(subMenu, subKey) in menuGroup.subMenu"
                             :index="subMenu.path"
                             :key="subKey">
                             {{subMenu.name}}
@@ -31,14 +31,20 @@
 		</div>
 		<div class="framework-header">
 			<el-row :gutter="20">
-				<el-col :span="16">
+				<el-col :span="12">
 					<div class="grid-content bg-purple">
-						<el-select @change="handleChange" v-model="activeMenu.name" filterable placeholder="快速菜单入口">
+						<el-select
+								class="search-select"
+								v-model="menuSelectValue"
+								filterable
+								placeholder="快速菜单入口">
 							<el-option-group
-									v-for="menuGroup in menuList"
+									v-for="(menuGroup, groupKey)  in menuList"
+									:key="groupKey"
 									:label="menuGroup.name">
 								<el-option
-										v-for="menu in menuGroup.subMenu"
+										v-for="(menu, key) in menuGroup.subMenu"
+										:key="key"
 										:label="menu.name"
 										:value="menu.path">
 								</el-option>
@@ -46,7 +52,22 @@
 						</el-select>
 					</div>
 				</el-col>
-				<el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
+				<el-col :span="12">
+					<div class="grid-content bg-purple">
+						<el-row :gutter="20">
+							<el-col :span="12">
+								<div class="now-date">
+									<i class="el-icon-date"></i>{{nowDate}}<span>|</span>
+								</div>
+							</el-col>
+							<el-col :span="12">
+								<div class="system-settings">
+									<i class="el-icon-date"></i>{{nowDate}}
+								</div>
+							</el-col>
+						</el-row>
+					</div>
+				</el-col>
 			</el-row>
 		</div>
 
@@ -75,47 +96,47 @@
 			...mapState({
                 menuList: state => state.FremeworkPage.menuList,
 				activeMenu: state => state.FremeworkPage.activeMenu
-			})
+			}),
+			// 搜索菜单栏当前菜单
+			menuSelectValue: {
+				get: function () {
+					if (this.activeMenu.name === '系统首页') {
+						return '';
+					} else {
+						return this.activeMenu.path;
+					}
+				},
+				set: function (menu) {
+					const self = this;
+					this.setCurrentMenu(menu).then(function(){
+						// 设置完成之后跳转页面
+						window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
+					});
+				}
+			},
+			nowDate: function () {
+				var date = new Date();
+				return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+			}
 		},
 		methods: {
-			handleSelect: function(menu,b,c) {
-				let obj = {};
-				if (menu === '/home/dashboard') {
-					obj.path = '/home/dashboard';
-					obj.name = '系统首页';
-				} else {
-					// 循环activeMenu找出对应的菜单
-					for (let i=0, len=this.menuList.length; i<len; i++) {
-						for (let j=0, jLen=this.menuList[i].subMenu.length; j<jLen; j++) {
-							if (this.menuList[i].subMenu[j].path === menu) {
-								obj.path = menu;
-								obj.name = this.menuList[i].subMenu[j].name;
-								break;
-							}
-						}
-					}
-				}
-				console.info(obj);
-
-				// 创建dom之前，根据当前路由给菜单设置默认选项
-				this.$store.commit(SET_ACTIVEMENU, obj);
-				console.info(menu);
-				console.info(b);
-				//this.$store.commit(SET_ACTIVEMENU, menu);
-				console.info('菜单点击了：');
-				console.info(this.$store.state.FremeworkPage.activeMenu);
+			// 映射 this.keywordChange() 为 action中的方法  this.$store.dispatch('increment')
+			...mapActions([
+				'setCurrentMenu'
+			]),
+			handleSelect: function(menu) {
+				const self = this;
+				this.setCurrentMenu(menu).then(function(){
+					// 设置完成之后跳转页面
+					window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
+				});
 			},
 			handleOpen: function() {
 
 			},
 			handleClose: function() {
 
-			},
-			handleChange: function(menu,a) {
-				console.info(222222);
-				console.info(menu);
-				console.info(a);
-			},
+			}
 		},
 		created: function () {
 			//console.info(this.$store.state.FremeworkPage.activeMenu);

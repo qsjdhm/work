@@ -66,7 +66,29 @@ const getters = {
 
 // actions
 const actions = {
-
+	setCurrentMenu ({ dispatch, commit, state, rootState }, currentMenu) {
+		return new Promise((resolve, reject) => {
+			// 从菜单序列中组织得到当前的对象并设置
+			let obj = {};
+			if (currentMenu === '/home/dashboard') {
+				obj.path = '/home/dashboard';
+				obj.name = '系统首页';
+			} else {
+				// 循环activeMenu找出对应的菜单
+				for (let i = 0, iLen = state.menuList.length; i < iLen; i++) {
+					for (let j = 0, jLen = state.menuList[i].subMenu.length; j < jLen; j++) {
+						if (state.menuList[i].subMenu[j].path === currentMenu) {
+							obj.path = currentMenu;
+							obj.name = state.menuList[i].subMenu[j].name;
+							break;
+						}
+					}
+				}
+			}
+			commit(SET_ACTIVEMENU, obj);
+			resolve();
+		})
+	}
 };
 
 // mutations
