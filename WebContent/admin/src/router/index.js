@@ -48,7 +48,7 @@ export default new Router({
         {
             path: '/home',
             name: 'Home',
-            component: FrameworkPage2,
+            component: FrameworkPage,
             beforeEnter: requireAuth,
             children: [
                 {

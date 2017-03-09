@@ -13,11 +13,19 @@
 				<el-col class="framework-toolbar" :span="20">
 					<div class="grid-content bg-purple">
                         <div class="framework-top-menu">
-                            <el-menu default-active="1" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                                <el-menu-item index="1"><i class="fa fa-bar-chart"></i>分析</el-menu-item>
-                                <el-menu-item index="2"><i class="fa fa-database"></i>数据管理</el-menu-item>
-                                <el-menu-item index="3"><i class="fa fa-cogs"></i>系统设置</el-menu-item>
-								<el-menu-item index="4"><i class="fa fa-picture-o"></i>图库</el-menu-item>
+                            <el-menu
+									:default-active="topActiveMenu"
+									class="el-menu-demo"
+									mode="horizontal"
+									@select="topMenuSelect"
+							>
+                                <el-menu-item
+										v-for="(topMenu, topKey) in menuList"
+										:index="topMenu.id"
+										:key="topKey"
+								>
+									<i class="fa" :class="topMenu.icon"></i>{{topMenu.name}}
+								</el-menu-item>
 							</el-menu>
                         </div>
                         <span class="slicer">|</span>
@@ -48,14 +56,29 @@
                     @select="handleSelect"
                     @open="handleOpen"
                     @close="handleClose">
-                    <el-menu-item index="/home/dashboard"><i class="fa fa-line-chart"></i>数据概览</el-menu-item>
+
+					<!--
+					如果是最底级菜单是具备点击页面跳转功能，所以它的index指向于path，方便直接获取使用
+					而二级菜单只具备展开功能，菜单本身没有path属性，所以index指向于index属性
+					 -->
+					<!-- 没有子菜单时 -->
+                    <el-menu-item
+							v-for="(menuGroup, key) in childMenuList"
+							v-if="!menuGroup.childMenu"
+							:index="menuGroup.path"
+							:key="key">
+						<i :class="menuGroup.icon" class="fa"></i>{{menuGroup.name}}
+					</el-menu-item>
+
+					<!-- 有子菜单时 -->
                     <el-submenu
-                        v-for="(menuGroup, key) in menuList"
-                        :index="menuGroup.name"
+                        v-for="(menuGroup, key) in childMenuList"
+						v-if="menuGroup.childMenu"
+                        :index="menuGroup.id"
                         :key="key">
                         <template slot="title"><i :class="menuGroup.icon" class="fa"></i>{{menuGroup.name}}</template>
                         <el-menu-item
-                            v-for="(subMenu, subKey) in menuGroup.subMenu"
+                            v-for="(subMenu, subKey) in menuGroup.childMenu"
                             :index="subMenu.path"
                             :key="subKey">
                             {{subMenu.name}}
@@ -81,7 +104,7 @@
 
 	import { mapGetters, mapState, mapActions } from 'vuex';
 	import {
-		SET_ACTIVEMENU
+		SET_TOPACTIVEMENU
 	} from '../vuex/modules/FremeworkPage';
 
 	export default {
@@ -94,31 +117,51 @@
 			// 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
 			...mapState({
                 menuList: state => state.FremeworkPage.menuList,
+				topActiveMenu: state => state.FremeworkPage.topActiveMenu,
 				activeMenu: state => state.FremeworkPage.activeMenu
 			}),
-			// 搜索菜单栏当前菜单
-			menuSelectValue: {
-				get: function () {
-					if (this.activeMenu.name === '数据概览') {
-                        return '';
-                    } else {
-                        return this.activeMenu.path;
-                    }
-				},
-				set: function (menu) {
-					const self = this;
-					this.setCurrentMenu(menu).then(function(){
-						// 设置完成之后跳转页面
-						window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
-					});
+			// 子菜单列表
+			childMenuList : function () {
+				let subMenu = [];
+				for (let i = 0, len = this.menuList.length; i < len; i++) {
+					if (this.menuList[i].id === this.topActiveMenu) {
+						subMenu = this.menuList[i].childMenu;
+						break;
+					}
 				}
+				console.info('计算属性：');
+				console.info(subMenu);
+				return subMenu;
 			}
+//			// 搜索菜单栏当前菜单
+//			menuSelectValue: {
+//				get: function () {
+//					if (this.activeMenu.name === '数据概览') {
+//                        return '';
+//                    } else {
+//                        return this.activeMenu.path;
+//                    }
+//				},
+//				set: function (menu) {
+//					const self = this;
+//					this.setCurrentMenu(menu).then(function(){
+//						// 设置完成之后跳转页面
+//						window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
+//					});
+//				}
+//			}
 		},
 		methods: {
 			// 映射 this.keywordChange() 为 action中的方法  this.$store.dispatch('increment')
 			...mapActions([
 				'setCurrentMenu'
 			]),
+			topMenuSelect: function(topMenu) {
+				console.info('顶级菜单选中：' + topMenu);
+				this.$store.commit(SET_TOPACTIVEMENU, topMenu);
+				// 设置完成之后跳转页面
+				//window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
+			},
 			handleSelect: function(menu) {
 				const self = this;
 				this.setCurrentMenu(menu).then(function(){
