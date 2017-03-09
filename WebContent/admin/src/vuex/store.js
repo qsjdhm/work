@@ -11,6 +11,7 @@ import * as getters from './getters';
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
+import '../assets/font-awesome-4.7.0/css/font-awesome.min.css'
 //require('element-ui/lib/theme-default/index.css')
 
 import LoginPage from './modules/LoginPage';

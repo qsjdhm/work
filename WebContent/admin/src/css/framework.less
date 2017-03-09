@@ -83,6 +83,10 @@
 					font-size: 16px;
 					height: 42px;
 					line-height: 42px;
+
+                    i {
+                        margin-right: 8px;
+                    }
 				}
 
 				.el-submenu__title:hover {
@@ -95,6 +99,9 @@
 					color: #fff!important;
 				}
 
+                .fa-line-chart {
+                    margin-right: 4px;
+                }
 			}
 		}
 	}
@@ -158,16 +165,52 @@
 		width: 240px;
 	}
 
-	.now-date {
-		float: right;
-		padding-top: 19px;
+    .settings {
+        text-align: right;
 
-		i {
-			padding-right: 4px;
-		}
+        .now-date, .system-settings {
+            display: inline-block;
+        }
 
-		span {
-			margin: 0 5px;
-		}
-	}
+        .now-date {
+            padding-top: 19px;
+            color: #666;
+
+            i {
+                padding-right: 4px;
+            }
+
+            span {
+                color: #abaaaa;
+                margin: 0 16px;
+            }
+        }
+
+        .system-settings {
+            padding-top: 19px;
+            color: #666;
+
+            .unread-message {
+                margin-right: 16px;
+            }
+
+            .setting {
+                margin-right: 16px;
+            }
+
+            .user {
+                margin-right: 16px;
+
+                span {
+                    margin-left: 10px;
+                }
+            }
+
+            .el-badge__content.is-fixed {
+                right: 11px;
+            }
+        }
+    }
+
+
 }

@@ -13,12 +13,12 @@
 						@select="handleSelect"
 						@open="handleOpen"
 						@close="handleClose">
-					<el-menu-item index="/home/dashboard"><i class="el-icon-menu"></i>系统首页</el-menu-item>
+					<el-menu-item index="/home/dashboard"><i class="fa fa-line-chart"></i>数据概览</el-menu-item>
 					<el-submenu
                         v-for="(menuGroup, key) in menuList"
                         :index="menuGroup.name"
                         :key="key">
-						<template slot="title"><i class="el-icon-message"></i>{{menuGroup.name}}</template>
+						<template slot="title"><i :class="menuGroup.icon" class="fa"></i>{{menuGroup.name}}</template>
                         <el-menu-item
                             v-for="(subMenu, subKey) in menuGroup.subMenu"
                             :index="subMenu.path"
@@ -52,20 +52,20 @@
 						</el-select>
 					</div>
 				</el-col>
-				<el-col :span="12">
+				<el-col class="settings" :span="12">
 					<div class="grid-content bg-purple">
-						<el-row :gutter="20">
-							<el-col :span="12">
-								<div class="now-date">
-									<i class="el-icon-date"></i>{{nowDate}}<span>|</span>
-								</div>
-							</el-col>
-							<el-col :span="12">
-								<div class="system-settings">
-									<i class="el-icon-date"></i>{{nowDate}}
-								</div>
-							</el-col>
-						</el-row>
+                        <div class="now-date">
+                            <i class="fa fa-calendar"></i>{{nowDate}}<span>|</span>
+                        </div>
+
+                        <div class="system-settings">
+                            <el-badge value="3" class="item unread-message">
+                                <i class="fa fa-bell-o"></i>
+                            </el-badge>
+                            <i class="setting fa fa-cog"></i>
+                            <i class="user fa fa-user-circle-o"><span>张三</span></i>
+
+                        </div>
 					</div>
 				</el-col>
 			</el-row>
@@ -91,6 +91,11 @@
 	} from '../vuex/modules/FremeworkPage';
 
 	export default {
+        data: function () {
+            return {
+                nowDate: this.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss')
+            }
+        },
 		computed: {
 			// 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
 			...mapState({
@@ -100,11 +105,11 @@
 			// 搜索菜单栏当前菜单
 			menuSelectValue: {
 				get: function () {
-					if (this.activeMenu.name === '系统首页') {
-						return '';
-					} else {
-						return this.activeMenu.path;
-					}
+					if (this.activeMenu.name === '数据概览') {
+                        return '';
+                    } else {
+                        return this.activeMenu.path;
+                    }
 				},
 				set: function (menu) {
 					const self = this;
@@ -113,10 +118,6 @@
 						window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
 					});
 				}
-			},
-			nowDate: function () {
-				var date = new Date();
-				return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
 			}
 		},
 		methods: {
@@ -136,16 +137,41 @@
 			},
 			handleClose: function() {
 
-			}
-		},
+			},
+            //格式化日期
+            formatDate: function(date, format) {
+                let paddNum = function(num){
+                    num += "";
+                    return num.replace(/^(\d)$/,"0$1");
+                };
+                //指定格式字符
+                let cfg = {
+                    yyyy : date.getFullYear() //年 : 4位
+                    ,yy : date.getFullYear().toString().substring(2)//年 : 2位
+                    ,M  : date.getMonth() + 1  //月 : 如果1位的时候不补0
+                    ,MM : paddNum(date.getMonth() + 1) //月 : 如果1位的时候补0
+                    ,d  : date.getDate()   //日 : 如果1位的时候不补0
+                    ,dd : paddNum(date.getDate())//日 : 如果1位的时候补0
+                    ,hh : date.getHours()  //时
+                    ,mm : date.getMinutes() //分
+                    ,ss : date.getSeconds() //秒
+                };
+                format || (format = "yyyy-MM-dd hh:mm:ss");
+                return format.replace(/([a-z])(\1)*/ig,function(m){return cfg[m];});
+            }
+        },
 		created: function () {
+            var self = this;
+            setInterval(function(){
+                self.nowDate = self.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
+            },1000);
 			//console.info(this.$store.state.FremeworkPage.activeMenu);
 			//在实例创建之后同步调用。此时实例已经结束解析选项，这意味着已建立：数据绑定，计算属性，方法，watcher/事件回调。
 			//但是还没有开始 DOM 编译，$el 还不存在,但是实例存在,即this.a存在,可打印出来 。
 			//console.log("framework建立");
 			//console.info(this);
 			//window.location.href = this.$store.state.BASE_URL + "/admin/#/home/";
-		},
+		}
 	}
 </script>
 

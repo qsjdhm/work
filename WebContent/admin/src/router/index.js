@@ -53,7 +53,7 @@ export default new Router({
             children: [
                 {
                     path: 'dashboard',
-					name: '系统首页',
+					name: '数据概览',
                     component: DashboardPage
                 },
 				{
