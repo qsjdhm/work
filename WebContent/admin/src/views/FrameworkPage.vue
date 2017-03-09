@@ -1,75 +1,67 @@
 <template>
 	<div class="framework-page">
-		<div class="framework-nav">
-			<div class="framework-logo">
-				<img src="../assets/logo.png"/>
-				<span>MANAGE</span>
-			</div>
-			<div class="framework-menu">
-				<el-menu
-						:unique-opened=true
-						:default-active="activeMenu.path"
-						class="el-menu-vertical-demo"
-						@select="handleSelect"
-						@open="handleOpen"
-						@close="handleClose">
-					<el-menu-item index="/home/dashboard"><i class="fa fa-line-chart"></i>数据概览</el-menu-item>
-					<el-submenu
-                        v-for="(menuGroup, key) in menuList"
-                        :index="menuGroup.name"
-                        :key="key">
-						<template slot="title"><i :class="menuGroup.icon" class="fa"></i>{{menuGroup.name}}</template>
-                        <el-menu-item
-                            v-for="(subMenu, subKey) in menuGroup.subMenu"
-                            :index="subMenu.path"
-                            :key="subKey">
-                            {{subMenu.name}}
-                        </el-menu-item>
-					</el-submenu>
-				</el-menu>
-			</div>
-		</div>
 		<div class="framework-header">
 			<el-row :gutter="20">
-				<el-col :span="12">
+				<el-col :span="6">
 					<div class="grid-content bg-purple">
-						<el-select
-								class="search-select"
-								v-model="menuSelectValue"
-								filterable
-								placeholder="快速菜单入口">
-							<el-option-group
-									v-for="(menuGroup, groupKey)  in menuList"
-									:key="groupKey"
-									:label="menuGroup.name">
-								<el-option
-										v-for="(menu, key) in menuGroup.subMenu"
-										:key="key"
-										:label="menu.name"
-										:value="menu.path">
-								</el-option>
-							</el-option-group>
-						</el-select>
+                        <div class="framework-logo">
+                            <img src="../assets/logo.png"/>
+                            <span>MANAGE</span>
+                        </div>
 					</div>
 				</el-col>
-				<el-col class="settings" :span="12">
+				<el-col class="framework-toolbar" :span="18">
 					<div class="grid-content bg-purple">
-                        <div class="now-date">
-                            <i class="fa fa-calendar"></i>{{nowDate}}<span>|</span>
+                        <div class="framework-top-menu">
+                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                                <el-menu-item index="1"><i class="fa fa-line-chart"></i>分析中心</el-menu-item>
+                                <el-menu-item index="1"><i class="fa fa-line-chart"></i>数据管理</el-menu-item>
+                                <el-menu-item index="3"><i class="fa fa-line-chart"></i>系统设置</el-menu-item>
+                            </el-menu>
                         </div>
-
+                        <span>|</span>
+                        <div class="now-date">
+                            <i class="fa fa-calendar"></i>{{nowDate}}
+                        </div>
+                        <span>|</span>
                         <div class="system-settings">
                             <el-badge value="3" class="item unread-message">
                                 <i class="fa fa-bell-o"></i>
                             </el-badge>
                             <i class="setting fa fa-cog"></i>
                             <i class="user fa fa-user-circle-o"><span>张三</span></i>
-
+                            <i class="fa fa-sign-out"></i>
                         </div>
 					</div>
 				</el-col>
 			</el-row>
 		</div>
+
+        <div class="framework-nav">
+            <div class="framework-child-menu">
+                <el-menu
+                    :unique-opened=true
+                    :default-active="activeMenu.path"
+                    class="el-menu-vertical-demo"
+                    @select="handleSelect"
+                    @open="handleOpen"
+                    @close="handleClose">
+                    <el-menu-item index="/home/dashboard"><i class="fa fa-line-chart"></i>数据概览</el-menu-item>
+                    <el-submenu
+                        v-for="(menuGroup, key) in menuList"
+                        :index="menuGroup.name"
+                        :key="key">
+                        <template slot="title"><i :class="menuGroup.icon" class="fa"></i>{{menuGroup.name}}</template>
+                        <el-menu-item
+                            v-for="(subMenu, subKey) in menuGroup.subMenu"
+                            :index="subMenu.path"
+                            :key="subKey">
+                            {{subMenu.name}}
+                        </el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </div>
+        </div>
 
 		<div class="framework-container">
 			<router-view></router-view>
@@ -152,9 +144,9 @@
                     ,MM : paddNum(date.getMonth() + 1) //月 : 如果1位的时候补0
                     ,d  : date.getDate()   //日 : 如果1位的时候不补0
                     ,dd : paddNum(date.getDate())//日 : 如果1位的时候补0
-                    ,hh : date.getHours()  //时
-                    ,mm : date.getMinutes() //分
-                    ,ss : date.getSeconds() //秒
+                    ,hh : paddNum(date.getHours())  //时
+                    ,mm : paddNum(date.getMinutes()) //分
+                    ,ss : paddNum(date.getSeconds()) //秒
                 };
                 format || (format = "yyyy-MM-dd hh:mm:ss");
                 return format.replace(/([a-z])(\1)*/ig,function(m){return cfg[m];});
