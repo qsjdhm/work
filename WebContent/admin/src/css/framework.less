@@ -47,7 +47,16 @@
                     color: #FFF;
                 }
             }
+
+			.framework-logo:hover {
+				color: #FFF;
+				cursor: pointer;
+			}
         }
+
+		.slicer {
+			opacity: 0.5;
+		}
 
         .search-select {
             width: 240px;
@@ -55,7 +64,7 @@
 
         .framework-toolbar {
             text-align: right;
-            color: #FFF;
+			color: #d7e7fd;
 
             /* 顶级菜单样式兼容 */
             .framework-top-menu {
@@ -72,18 +81,26 @@
                         height: 54px;
                         line-height: 54px;
                         font-size: 16px;
-                        color: #FFF!important;
                         border-bottom: 3px solid transparent;
-                        margin: 0 5px;
+                        margin: 0 2px;
+						color: #d7e7fd;
+						font-size: 15px;
 
                         i {
                             margin-right: 10px;
                         }
                     }
 
+					.el-menu-item.is-active {
+						background-color: rgba(65,99,215,0.5);
+						border-bottom: 3px solid #3CE3B9;
+						color: #FFF;
+					}
+
                     .el-menu-item:hover {
-                        background-color: rgba(65,99,215,0.5);
-                        border-bottom: 3px solid #3CE3B9;
+						background-color: rgba(65,99,215,0.5);
+						border-bottom: 3px solid #3CE3B9;
+						color: #FFF;
                     }
                 }
             }
@@ -95,6 +112,7 @@
             .now-date {
                 padding-top: 12px;
                 margin: 0 20px;
+				width: 153px;
 
                 i {
                     padding-right: 10px;
@@ -104,6 +122,11 @@
                     margin: 0 16px;
                 }
             }
+
+			.now-date:hover {
+				color: #FFF;
+				cursor: pointer;
+			}
 
             .system-settings {
                 padding-top: 12px;
@@ -119,17 +142,38 @@
                     }
                 }
 
+				.unread-message:hover {
+					color: #FFF;
+					cursor: pointer;
+				}
+
                 .setting {
                     margin-right: 16px;
                 }
+
+				.setting:hover {
+					color: #FFF;
+					cursor: pointer;
+				}
 
                 .user {
                     margin-right: 10px;
 
                     span {
+						font-size: 13px;
                         margin-left: 10px;
                     }
                 }
+
+				.user:hover {
+					color: #FFF;
+					cursor: pointer;
+				}
+
+				.logout:hover {
+					color: #FFF;
+					cursor: pointer;
+				}
 
                 .el-badge__content.is-fixed {
                     right: 11px;

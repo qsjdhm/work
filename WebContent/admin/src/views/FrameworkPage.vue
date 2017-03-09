@@ -2,7 +2,7 @@
 	<div class="framework-page">
 		<div class="framework-header">
 			<el-row :gutter="20">
-				<el-col :span="6">
+				<el-col :span="4">
 					<div class="grid-content bg-purple">
                         <div class="framework-logo">
                             <img src="../assets/logo.png"/>
@@ -10,27 +10,29 @@
                         </div>
 					</div>
 				</el-col>
-				<el-col class="framework-toolbar" :span="18">
+				<el-col class="framework-toolbar" :span="20">
 					<div class="grid-content bg-purple">
                         <div class="framework-top-menu">
-                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                                <el-menu-item index="1"><i class="fa fa-line-chart"></i>分析中心</el-menu-item>
-                                <el-menu-item index="1"><i class="fa fa-line-chart"></i>数据管理</el-menu-item>
-                                <el-menu-item index="3"><i class="fa fa-line-chart"></i>系统设置</el-menu-item>
-                            </el-menu>
+                            <el-menu default-active="1" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                                <el-menu-item index="1"><i class="fa fa-bar-chart"></i>分析</el-menu-item>
+                                <el-menu-item index="2"><i class="fa fa-database"></i>数据管理</el-menu-item>
+                                <el-menu-item index="3"><i class="fa fa-cogs"></i>系统设置</el-menu-item>
+								<el-menu-item index="4"><i class="fa fa-picture-o"></i>图库</el-menu-item>
+							</el-menu>
                         </div>
-                        <span>|</span>
+                        <span class="slicer">|</span>
                         <div class="now-date">
-                            <i class="fa fa-calendar"></i>{{nowDate}}
+                            <!--<i class="fa fa-calendar"></i>-->
+							{{nowDate}}
                         </div>
-                        <span>|</span>
+                        <span class="slicer">|</span>
                         <div class="system-settings">
                             <el-badge value="3" class="item unread-message">
                                 <i class="fa fa-bell-o"></i>
                             </el-badge>
                             <i class="setting fa fa-cog"></i>
                             <i class="user fa fa-user-circle-o"><span>张三</span></i>
-                            <i class="fa fa-sign-out"></i>
+                            <i class="logout fa fa-sign-out"></i>
                         </div>
 					</div>
 				</el-col>
