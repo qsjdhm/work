@@ -1,7 +1,7 @@
 
 
-export const SET_USERNAME = 'loginPage/SET_USERNAME';
-export const SET_PASSWORD = 'loginPage/SET_PASSWORD';
+export const SET_USERNAME = 'login/SET_USERNAME';
+export const SET_PASSWORD = 'login/SET_PASSWORD';
 
 
 const state  = {

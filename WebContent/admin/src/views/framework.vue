@@ -50,12 +50,13 @@
         <div class="framework-nav">
             <div class="framework-child-menu">
                 <el-menu
-                    :unique-opened=true
-                    :default-active="activeMenu.path"
+                    v-if="childMenuShow"
+                    :unique-opened=false
+                    :default-active="childActiveMenu"
                     class="el-menu-vertical-demo"
-                    @select="handleSelect"
-                    @open="handleOpen"
-                    @close="handleClose">
+                    @select="childMenuSelect"
+                    @open="childMenuOpen"
+                    @close="childMenuClose">
 
 					<!--
 					如果是最底级菜单是具备点击页面跳转功能，所以它的index指向于path，方便直接获取使用
@@ -104,21 +105,23 @@
 
 	import { mapGetters, mapState, mapActions } from 'vuex';
 	import {
-		SET_TOPACTIVEMENU
-	} from '../vuex/modules/FremeworkPage';
+		SET_TOPACTIVEMENU,
+        SET_CHILDACTIVEMENU
+	} from '../vuex/modules/fremework';
 
 	export default {
         data: function () {
             return {
+                childMenuShow: true,
                 nowDate: this.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss')
             }
         },
 		computed: {
 			// 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
 			...mapState({
-                menuList: state => state.FremeworkPage.menuList,
-				topActiveMenu: state => state.FremeworkPage.topActiveMenu,
-				activeMenu: state => state.FremeworkPage.activeMenu
+                menuList: state => state.fremework.menuList,
+				topActiveMenu: state => state.fremework.topActiveMenu,
+                childActiveMenu: state => state.fremework.childActiveMenu,
 			}),
 			// 子菜单列表
 			childMenuList : function () {
@@ -132,56 +135,77 @@
 				console.info('计算属性：');
 				console.info(subMenu);
 				return subMenu;
-			}
-//			// 搜索菜单栏当前菜单
-//			menuSelectValue: {
-//				get: function () {
-//					if (this.activeMenu.name === '数据概览') {
-//                        return '';
-//                    } else {
-//                        return this.activeMenu.path;
-//                    }
-//				},
-//				set: function (menu) {
-//					const self = this;
-//					this.setCurrentMenu(menu).then(function(){
-//						// 设置完成之后跳转页面
-//						window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
-//					});
-//				}
-//			}
+			},
 		},
 		methods: {
-			// 映射 this.keywordChange() 为 action中的方法  this.$store.dispatch('increment')
+			// 映射 this.setActiveTopMenu() 为 action中的方法  this.$store.dispatch('setActiveTopMenu')
 			...mapActions([
-				'setCurrentMenu'
+				'setActiveTopMenu',
+                'setActiveChildMenu'
 			]),
+
+            // 组件响应方法
+
+            // 顶级菜单选择事件
 			topMenuSelect: function(topMenu) {
-				console.info('顶级菜单选中：' + topMenu);
-				this.$store.commit(SET_TOPACTIVEMENU, topMenu);
-				// 设置完成之后跳转页面
-				//window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
+                const self = this;
+                this.childMenuShow = false;
+                this.setActiveTopMenu(topMenu).then(function () {
+                    // 通过v-if，使每次切换顶级菜单时，让浏览器重新渲染子菜单组件，达到切换顶级菜单后默认选中第一个子菜单
+                    self.childMenuShow = true;
+                    let dashboardPath = self.getDashboardMenu(topMenu);
+                    return self.setActiveChildMenu(dashboardPath);
+                }).then(function () {
+                    console.info('-------------');
+                    console.info(self.childActiveMenu);
+                    // 设置完成之后跳转页面
+                    window.location.href = self.$store.state.BASE_URL + '/admin/#' + self.childActiveMenu;
+                });
 			},
-			handleSelect: function(menu) {
+            // 子菜单选择事件
+            childMenuSelect: function(menu) {
+                console.info('====================');
+                console.info(menu);
 				const self = this;
-				this.setCurrentMenu(menu).then(function(){
+				this.setActiveChildMenu(menu).then(function () {
 					// 设置完成之后跳转页面
 					window.location.href = self.$store.state.BASE_URL + '/admin/#' + menu;
 				});
 			},
-			handleOpen: function() {
+            childMenuOpen: function() {},
+            childMenuClose: function() {},
 
-			},
-			handleClose: function() {
 
-			},
-            //格式化日期
+            // 功能性方法
+
+            // 根据顶级菜单的id，返回此顶级菜单下第一个可点击的子菜单
+            getDashboardMenu: function (topMenuId) {
+                let dashboardPath = '';
+                let subMenu = [];
+                for (let i = 0, len = this.menuList.length; i < len; i++) {
+                    if (this.menuList[i].id === topMenuId) {
+                        subMenu = this.menuList[i].childMenu;
+                        break;
+                    }
+                }
+
+                // 如果第一个数据菜单就存在path
+                if (subMenu[0].path) {
+                    dashboardPath = subMenu[0].path;
+                } else {
+                    // 不存在从子级里面找
+                    dashboardPath = subMenu[0].childMenu[0].path;
+                }
+
+                return dashboardPath;
+            },
+            // 格式化日期
             formatDate: function(date, format) {
                 let paddNum = function(num){
                     num += "";
                     return num.replace(/^(\d)$/,"0$1");
                 };
-                //指定格式字符
+                // 指定格式字符
                 let cfg = {
                     yyyy : date.getFullYear() //年 : 4位
                     ,yy : date.getFullYear().toString().substring(2)//年 : 2位

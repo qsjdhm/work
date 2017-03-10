@@ -7,9 +7,10 @@
 
 <script type="text/ecmascript-6">
     import { mapGetters, mapState, mapActions } from 'vuex';
-    import {
-        SET_ACTIVEMENU
-    } from '../../vuex/modules/FremeworkPage';
+//    import {
+//        SET_TOPACTIVEMENU,
+//        SET_CHILDACTIVEMENU
+//    } from '../vuex/modules/fremework';
 	export default {
 		computed: {
 

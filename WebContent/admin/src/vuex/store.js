@@ -11,12 +11,10 @@ import * as getters from './getters';
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
-import '../assets/font-awesome-4.7.0/css/font-awesome.min.css'
-//require('element-ui/lib/theme-default/index.css')
+import '../assets/font-awesome-4.7.0/css/font-awesome.min.css';
 
-import LoginPage from './modules/LoginPage';
-import FremeworkPage from './modules/FremeworkPage';
-import DashboardPage from './modules/dashboard/DashboardPage';
+import login from './modules/login';
+import fremework from './modules/fremework';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -29,10 +27,10 @@ export default new Vuex.Store({
 	actions,
 	getters,
 	modules: {
-		LoginPage,
-		FremeworkPage,
+		login,
+        fremework,
 
-		DashboardPage
+		//DashboardPage
 	},
 	strict: debug,
 	middlewares: middlewares,

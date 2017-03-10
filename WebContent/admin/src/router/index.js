@@ -30,42 +30,78 @@ function requireAuth (to, from, next) {
 	}
 }
 
-const LoginPage     = resolve => require(['../views/LoginPage'], resolve);
-const FrameworkPage = resolve => require(['../views/FrameworkPage'], resolve);
-const DashboardPage = resolve => require(['../views/dashboard/DashboardPage'], resolve);
-const AddNotePage   = resolve => require(['../views/note/AddNotePage'], resolve);
-const DelNotePage   = resolve => require(['../views/note/DelNotePage'], resolve);
+// 架构菜单
+const login                     = resolve => require(['../views/login'], resolve);
+const framework                 = resolve => require(['../views/framework'], resolve);
+// 分析菜单
+const analyzeDashboard          = resolve => require(['../views/analyze/dashboard'], resolve);
+const analyzeArticleTerritory   = resolve => require(['../views/analyze/article/article-territory'], resolve);
+const analyzeArticleData        = resolve => require(['../views/analyze/article/article-data'], resolve);
+const analyzeCommentTerritory   = resolve => require(['../views/analyze/comment/comment-territory'], resolve);
+// 数据管理菜单
+const dataArticleAdd            = resolve => require(['../views/data/article/article-add'], resolve);
+const dataArticleDel            = resolve => require(['../views/data/article/article-del'], resolve);
+const dataNoteAdd               = resolve => require(['../views/data/note/note-add'], resolve);
 
 
 export default new Router({
     routes: [
         {
           path: '/',
-          name: 'Login',
-          component: LoginPage,
+          name: '登录',
+          component: login,
           beforeEnter: directFremework,
         },
         {
             path: '/home',
-            name: 'Home',
-            component: FrameworkPage,
+            name: '框架',
+            component: framework,
             beforeEnter: requireAuth,
             children: [
                 {
-                    path: 'dashboard',
+                    meta: { pId: '1' },
+                    path: 'analyze-dashboard',
 					name: '数据概览',
-                    component: DashboardPage
+                    component: analyzeDashboard
                 },
-				{
-					path: 'addNote',
-					name: '新建笔记',
-					component: AddNotePage
-				},
-				{
-					path: 'delNote',
-					name: '删除笔记',
-					component: DelNotePage
-				},
+                {
+                    meta: { pId: '1' },
+                    path: 'analyze-article-territory',
+                    name: '地域分析',
+                    component: analyzeArticleTerritory
+                },
+                {
+                    meta: { pId: '1' },
+                    path: 'analyze-article-data',
+                    name: '数据分析',
+                    component: analyzeArticleData
+                },
+                {
+                    meta: { pId: '1' },
+                    path: 'analyze-comment-territory',
+                    name: '地域分析',
+                    component: analyzeCommentTerritory
+                },
+
+
+                {
+                    meta: { pId: '2' },
+                    path: 'data-article-add',
+                    name: '新增文章',
+                    component: dataArticleAdd
+                },
+                {
+                    meta: { pId: '2' },
+                    path: 'data-article-del',
+                    name: '删除文章22',
+                    component: dataArticleDel
+                },
+                {
+                    meta: { pId: '2' },
+                    path: 'data-note-add',
+                    name: '新增笔记',
+                    component: dataNoteAdd
+                }
             ]
         },
         //{
