@@ -1,7 +1,7 @@
 <template>
 	<div>
         数据管理 - 文章管理 - 添加笔记 - /home/data-note-add
-		<router-link to="/home/addNote">addNote</router-link>
+		<router-link to="/home/analyze-comment-territory">评论分析-地域分析</router-link>
 	</div>
 
 </template>
@@ -18,12 +18,14 @@
         computed: {
             // 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
             ...mapState({
+                childMenuShow: state => state.fremework.childMenuShow,
                 topActiveMenu: state => state.fremework.topActiveMenu,
             }),
         },
         methods: {
             // 映射 this.setActiveTopMenu() 为 action中的方法  this.$store.dispatch('setActiveTopMenu')
             ...mapActions([
+                'setChildMenuShow',
                 'setActiveTopMenu',
                 'setActiveChildMenu'
             ]),
@@ -36,6 +38,15 @@
             const self = this;
             if (this.topActiveMenu !== pId) {
                 this.setActiveTopMenu(pId).then(function () {
+                    self.setActiveChildMenu(path);
+                });
+
+                this.setChildMenuShow(false).then(function () {
+                    return self.setActiveTopMenu(pId);
+                }).then(function () {
+                    // 通过v-if，使每次切换顶级菜单时，让浏览器重新渲染子菜单组件，达到切换顶级菜单后默认选中第一个子菜单
+                    return self.setChildMenuShow(true);
+                }).then(function () {
                     self.setActiveChildMenu(path);
                 });
             }

@@ -105,6 +105,7 @@
 
 	import { mapGetters, mapState, mapActions } from 'vuex';
 	import {
+        SET_CHILDMENUSHOW,
 		SET_TOPACTIVEMENU,
         SET_CHILDACTIVEMENU
 	} from '../vuex/modules/fremework';
@@ -112,13 +113,13 @@
 	export default {
         data: function () {
             return {
-                childMenuShow: true,
                 nowDate: this.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss')
             }
         },
 		computed: {
 			// 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
 			...mapState({
+                childMenuShow: state => state.fremework.childMenuShow,
                 menuList: state => state.fremework.menuList,
 				topActiveMenu: state => state.fremework.topActiveMenu,
                 childActiveMenu: state => state.fremework.childActiveMenu,
@@ -140,6 +141,7 @@
 		methods: {
 			// 映射 this.setActiveTopMenu() 为 action中的方法  this.$store.dispatch('setActiveTopMenu')
 			...mapActions([
+                'setChildMenuShow',
 				'setActiveTopMenu',
                 'setActiveChildMenu'
 			]),
@@ -149,23 +151,21 @@
             // 顶级菜单选择事件
 			topMenuSelect: function(topMenu) {
                 const self = this;
-                this.childMenuShow = false;
-                this.setActiveTopMenu(topMenu).then(function () {
+                this.setChildMenuShow(false).then(function () {
+                    return self.setActiveTopMenu(topMenu);
+                }).then(function () {
                     // 通过v-if，使每次切换顶级菜单时，让浏览器重新渲染子菜单组件，达到切换顶级菜单后默认选中第一个子菜单
-                    self.childMenuShow = true;
+                    return self.setChildMenuShow(true);
+                }).then(function () {
                     let dashboardPath = self.getDashboardMenu(topMenu);
                     return self.setActiveChildMenu(dashboardPath);
                 }).then(function () {
-                    console.info('-------------');
-                    console.info(self.childActiveMenu);
                     // 设置完成之后跳转页面
                     window.location.href = self.$store.state.BASE_URL + '/admin/#' + self.childActiveMenu;
                 });
 			},
             // 子菜单选择事件
             childMenuSelect: function(menu) {
-                console.info('====================');
-                console.info(menu);
 				const self = this;
 				this.setActiveChildMenu(menu).then(function () {
 					// 设置完成之后跳转页面

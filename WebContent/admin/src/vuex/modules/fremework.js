@@ -9,6 +9,7 @@ export const SET_TOPACTIVEMENU   = 'fremework/SET_TOPACTIVEMENU';
 export const SET_CHILDACTIVEMENU = 'fremework/SET_CHILDACTIVEMENU';
 
 const state  = {
+    childMenuShow   : true,
 	topActiveMenu   : '',  // 顶级菜单当前选中项
 	childActiveMenu : '',  // 子级菜单当前选中项
 	menuList : [
@@ -76,12 +77,22 @@ const getters = {
 
 // actions
 const actions = {
+    // 因为框架中顶级菜单每切换一次，子菜单是需要重新渲染，所以使用v-if指令迫使浏览器引擎进行重新渲染
+    // 从而完成顶级菜单切换后，子菜单的默认选中参数才会起作用
+    setChildMenuShow ({ dispatch, commit, state, rootState }, menuShow) {
+        return new Promise((resolve, reject) => {
+            commit(SET_CHILDMENUSHOW, menuShow);
+            resolve();
+        })
+    },
+    // 顶级菜单切换
     setActiveTopMenu ({ dispatch, commit, state, rootState }, topMenu) {
         return new Promise((resolve, reject) => {
             commit(SET_TOPACTIVEMENU, topMenu);
             resolve();
         })
     },
+    // 子级菜单切换
     setActiveChildMenu ({ dispatch, commit, state, rootState }, childMenu) {
 	 	return new Promise((resolve, reject) => {
 	 		commit(SET_CHILDACTIVEMENU, childMenu);
@@ -93,6 +104,9 @@ const actions = {
 // mutations
 // action会发送请求到此，在此对state的值做设置处理
 const mutations = {
+    [SET_CHILDMENUSHOW](state , childMenuShow){
+        state.childMenuShow = childMenuShow;
+    },
 	[SET_TOPACTIVEMENU](state , topActiveMenu){
 		state.topActiveMenu = topActiveMenu;
 	},
