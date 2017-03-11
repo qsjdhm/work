@@ -11,7 +11,7 @@ Vue.use(Router)
 function directFremework (to, from, next) {
     if (auth.loggedIn()) {
         next({
-            path: '/home/dashboard'
+            path: '/home/analyze-dashboard'
         })
     } else {
         next()

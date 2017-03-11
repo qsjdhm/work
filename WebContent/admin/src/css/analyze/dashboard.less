@@ -1,0 +1,134 @@
+/**
+ *  分析 - 数据概览样式（包含兼容eleme框架样式处理）
+ */
+
+.analyze-dashboard-page {
+
+	.dashboard {
+		margin-bottom: 10px;
+
+		.dashboard-header {
+			font-size: 16px;
+			color: #333;
+			margin: 10px 0px 15px 0px;
+		}
+
+		.dashboard-container {
+			font-size: 24px;
+			color: #333;
+
+			.tendency-arrows {
+				font-size: 14px;
+				color: #4c4c4c;
+
+				.fa-long-arrow-down {
+					transform:rotate(45deg);
+					-ms-transform:rotate(45deg);
+					-moz-transform:rotate(45deg);
+					-webkit-transform:rotate(45deg);
+					-o-transform:rotate(45deg);
+					margin: 0 5px;
+					color: #02af81;
+				}
+
+				.fa-long-arrow-up {
+					transform:rotate(45deg);
+					-ms-transform:rotate(45deg);
+					-moz-transform:rotate(45deg);
+					-webkit-transform:rotate(45deg);
+					-o-transform:rotate(45deg);
+					margin: 0 5px;
+					color: red;
+				}
+			}
+
+			.dashboard-count-desc {
+				font-size: 13px;
+				color: #AAA;
+			}
+		}
+	}
+
+	.details {
+		margin: 20px 0;
+
+		.details-header {
+			padding-bottom: 10px;
+			border-bottom: 1px solid #DFDFDF;
+
+			.header-desc {
+				font-size: 14px;
+			}
+
+			.header-details {
+				text-align: right;
+				padding-right: 20px!important;
+				font-size: 13px;
+
+				a {
+					transition: color .3s;
+					text-decoration:none;
+					color: #3090fd;
+					margin-right: 15px;
+				}
+				a:hover {
+					color: #0a2afd;
+				}
+
+				i {
+					transition: color .3s;
+					font-size: 14px;
+					color: #858585;
+				}
+				i:hover {
+					cursor: pointer;
+					font-size: 14px;
+					color: #333;
+				}
+			}
+		}
+
+		.details-container {
+
+			.container-tip {
+				margin-top: 7px;
+				font-size: 12px;
+
+				>span {
+					font-size: 16px;
+					margin: 0 20px 0 8px;
+				}
+			}
+
+			.container-filter {
+				text-align: right;
+				display: inline-block;
+				padding-top: 5px;
+
+				.filter-sort {
+					width: 140px;
+					margin-right: 10px;
+
+					.el-input__icon::before {
+						color: #ddd;
+					}
+
+					.el-input__inner {
+						height: 24px;
+						border: 1px solid #dfdfdf;
+					}
+				}
+
+				.filter-time {
+
+					.el-input__inner {
+						height: 24px;
+						border: 1px solid #dfdfdf;
+					}
+				}
+			}
+		}
+	}
+}
+
+

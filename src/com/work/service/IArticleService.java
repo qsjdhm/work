@@ -7,6 +7,12 @@ import com.work.vo.TArticle;
 
 public interface IArticleService <T extends TArticle> extends IService<T> {
 
+	// 根据分类、时间区间获取文章总个数
+	public int getArticleCount(int fSortId, String time);
+	
+	// 根据分类、时间区间获取笔记总个数
+	public int getNoteCount(int fSortId, String time);
+	
 	// 根据总分类获得此类型下的文章总个数
 	public int getArticleLength(int fSortId);
 	

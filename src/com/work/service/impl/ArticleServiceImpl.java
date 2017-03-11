@@ -13,7 +13,47 @@ import com.work.vo.TArticle;
  * 实现业务逻辑的接口
  */
 public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> implements IArticleService<T> {
-
+	
+	/**
+	 *  根据分类、时间区间获取文章总个数
+	 *  @param fSortId 文章总类型id
+	 *  @param time 文章时间区间
+	 *  @return 文章个数
+	 */
+	@Override
+	public int getArticleCount(int fSortId, String time) {
+		
+		String sql = "";
+		if(fSortId==0){
+			sql = "select COUNT(*) from TArticle where F_Sort_ID<>8";
+		}else{
+			sql = "select COUNT(*) from TArticle where F_Sort_ID="+fSortId+"";
+		}
+		List article = this.getDao().list(sql);
+		Long count = (Long)article.listIterator().next();
+		return count.intValue();
+	}
+	
+	/**
+	 *  根据分类、时间区间获取笔记总个数
+	 *  @param sortId 笔记子类型
+	 *  @param time 文章时间区间
+	 */
+	@Override
+	public int getNoteCount(int sortId, String time) {
+		String sql = "";
+		if(sortId==0){
+			sql = "select COUNT(*) from TArticle where F_Sort_ID=8";
+		}else{
+			sql = "select COUNT(*) from TArticle where Sort_ID="+sortId+"";
+		}
+		List article = this.getDao().list(sql);
+		Long count = (Long)article.listIterator().next();
+		return count.intValue();
+	}
+	
+	
+	
 	/**
 	 *  根据总分类获得此类型下的文章总个数
 	 *  @param fSortId 文章总类型id
@@ -338,6 +378,8 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		
 		return article;
 	}
+	
+	
 	
 
 }
