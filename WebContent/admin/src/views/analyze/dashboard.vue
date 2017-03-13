@@ -6,45 +6,54 @@
 			</div>
 			<div class="dashboard-container">
 				<el-row :gutter="20">
-					<el-col :span="5">
-						{{overviewData.articleCount | formatNumber}}
-						<span class="tendency-arrows">
-							<i class="fa"
-							   :class="{'fa-long-arrow-down': !articleTendency, 'fa-long-arrow-up': articleTendency}">
-							</i>
-							{{overviewData.articleTendency}}
-						</span>
-						<div class="dashboard-count-desc">文章总数(比上月趋势)</div>
+					<el-col class="dashboard-item" :span="5">
+                        <div @click="dashboardClick('article')" title="点击可查看此模块下数据分析">
+                            {{overviewData.articleCount | formatNumber}}
+                            <span class="tendency-arrows">
+                                <i class="fa"
+                                   :class="{'fa-long-arrow-down': !articleTendency, 'fa-long-arrow-up': articleTendency}">
+                                </i>
+                                {{overviewData.articleTendency}}
+                            </span>
+                            <div class="dashboard-count-desc">文章总数(比上月趋势)</div>
+                        </div>
+
 					</el-col>
-					<el-col :span="5">
-						{{overviewData.noteCount | formatNumber}}
-						<span class="tendency-arrows">
-							<i class="fa"
-							   :class="{'fa-long-arrow-down': !noteTendency, 'fa-long-arrow-up': noteTendency}">
-							</i>
-							{{overviewData.noteTendency}}
-						</span>
-						<div class="dashboard-count-desc">笔记总数(比上月趋势)</div>
+                    <el-col class="dashboard-item" :span="5">
+                        <div @click="dashboardClick('note')" title="点击可查看此模块下数据分析">
+                            {{overviewData.noteCount | formatNumber}}
+                            <span class="tendency-arrows">
+                                <i class="fa"
+                                   :class="{'fa-long-arrow-down': !noteTendency, 'fa-long-arrow-up': noteTendency}">
+                                </i>
+                                {{overviewData.noteTendency}}
+                            </span>
+                            <div class="dashboard-count-desc">笔记总数(比上月趋势)</div>
+                        </div>
 					</el-col>
-					<el-col :span="5">
-						{{overviewData.commentCount | formatNumber}}
-						<span class="tendency-arrows">
-							<i class="fa"
-							   :class="{'fa-long-arrow-down': !commentTendency, 'fa-long-arrow-up': commentTendency}">
-							</i>
-							{{overviewData.commentTendency}}
-						</span>
-						<div class="dashboard-count-desc">用户评论数(比上月趋势)</div>
+                    <el-col class="dashboard-item" :span="5">
+                        <div @click="dashboardClick('comment')" title="点击可查看此模块下数据分析">
+                            {{overviewData.commentCount | formatNumber}}
+                            <span class="tendency-arrows">
+                                <i class="fa"
+                                   :class="{'fa-long-arrow-down': !commentTendency, 'fa-long-arrow-up': commentTendency}">
+                                </i>
+                                {{overviewData.commentTendency}}
+                            </span>
+                            <div class="dashboard-count-desc">用户评论数(比上月趋势)</div>
+                        </div>
 					</el-col>
-					<el-col :span="5">
-						{{overviewData.bookCount | formatNumber}}
-						<span class="tendency-arrows">
-							<i class="fa"
-							   :class="{'fa-long-arrow-down': !bookTendency, 'fa-long-arrow-up': bookTendency}">
-							</i>
-							{{overviewData.bookTendency}}
-						</span>
-						<div class="dashboard-count-desc">上传图书量(比上月趋势)</div>
+                    <el-col class="dashboard-item" :span="5">
+                        <div @click="dashboardClick('book')" title="点击可查看此模块下数据分析">
+                            {{overviewData.bookCount | formatNumber}}
+                            <span class="tendency-arrows">
+                                <i class="fa"
+                                   :class="{'fa-long-arrow-down': !bookTendency, 'fa-long-arrow-up': bookTendency}">
+                                </i>
+                                {{overviewData.bookTendency}}
+                            </span>
+                            <div class="dashboard-count-desc">上传图书量(比上月趋势)</div>
+                        </div>
 					</el-col>
 					<el-col :span="4"></el-col>
 				</el-row>
@@ -70,11 +79,12 @@
 						日均<span>120</span>
 					</el-col>
 					<el-col class="container-filter" :span="18">
-							<el-select class="filter-sort" v-model="value" placeholder="请选择">
+							<el-select class="filter-sort" v-model="selectedSubSort" placeholder="请选择">
 								<el-option
-										v-for="item in options"
+										v-for="(item, key) in subSortList"
 										:label="item.label"
-										:value="item.value">
+										:value="item.value"
+                                        :key="key">
 								</el-option>
 							</el-select>
 							<el-date-picker
@@ -98,48 +108,39 @@
 <script type="text/ecmascript-6">
 	// 引入 ECharts 主模块
 	var echarts = require('echarts/lib/echarts');
-	// 引入柱状图
 	require('echarts/lib/chart/bar');
-	// 引入提示框和标题组件
 	require('echarts/lib/component/tooltip');
 	require('echarts/lib/component/title');
 
 	import '../../css/analyze/dashboard.less';
 
     import { mapGetters, mapState, mapActions } from 'vuex';
+    // 引入框架派发器
     import {
         SET_TOPACTIVEMENU,
         SET_CHILDACTIVEMENU
     } from '../../vuex/modules/fremework';
+    // 引入此页面派发器
+    import {
+        SET_FSORTTYPE,
+        SET_SUBSORTLIST
+    } from '../../vuex/modules/analyze/dashboard';
 
     export default {
     	data: function () {
     		return {
 				'overviewData' : {},
-				options: [{
-					value: '选项1',
-					label: '黄金糕'
-				}, {
-					value: '选项2',
-					label: '双皮奶'
-				}, {
-					value: '选项3',
-					label: '蚵仔煎'
-				}, {
-					value: '选项4',
-					label: '龙须面'
-				}, {
-					value: '选项5',
-					label: '北京烤鸭'
-				}],
-				value: '',
-				value3: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+				value3: [new Date(2014, 10, 04, 10, 09), new Date(2016, 10, 04, 10, 09)],
 			}
 		},
         computed: {
             // 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
             ...mapState({
                 topActiveMenu: state => state.fremework.topActiveMenu,
+
+                selectedFSortType: state => state.analyzeDashboard.selectedFSortType,
+                subSortList: state => state.analyzeDashboard.subSortList,
+                selectedSubSort: state => state.analyzeDashboard.selectedSubSort,
             }),
 			'articleTendency' : function () {
             	if (this.overviewData.articleTendency) {
@@ -188,9 +189,14 @@
                 'setActiveTopMenu',
                 'setActiveChildMenu',
 
-				'getAnalyzeCount'
+				'getAnalyzeCount',
+                'setFSort',
+                'getSortByType'
             ]),
-
+            dashboardClick : function (type) {
+                this.$store.commit(SET_FSORTTYPE, type);
+                this.getSortByType();
+            }
         },
 		// 此生命周期挂载阶段还没开始，所以适用于修改父级dom和数据准备操作
         created: function () {
@@ -210,31 +216,18 @@
 		// 此声明周期挂载dom已经开始，适用于处理dom操作
 		mounted: function () {
     		const self = this;
-    		// 获取概览数据
+    		// 先获取文章、笔记、评论、图书的总数
 			this.getAnalyzeCount().then(function (response) {
 				self.overviewData = response.countData;
-				console.info(self.overviewData);
-			});
+                return '';
+			}).then(function (response) {
+                // 再根据当前父分类获取子分类列表
+                return self.getSortByType();
+            }).then(function (response) {
+                console.info(self.subSortList);
+            });
 
 
-//			console.log("未开始编译1");
-//			console.info(document.getElementById('main'));
-//			// 基于准备好的dom，初始化echarts实例
-//			var myChart = echarts.init(document.getElementById('main'));
-//			// 绘制图表
-//			myChart.setOption({
-//				title: { text: 'ECharts 入门示例' },
-//				tooltip: {},
-//				xAxis: {
-//					data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-//				},
-//				yAxis: {},
-//				series: [{
-//					name: '销量',
-//					type: 'bar',
-//					data: [5, 20, 36, 10, 10, 20]
-//				}]
-//			});
 		},
 
     }
