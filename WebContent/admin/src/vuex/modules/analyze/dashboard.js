@@ -4,21 +4,51 @@
 
 import Vue from 'vue';
 
+export const SET_OVERVIEWDATA = 'analyze-dashboard/SET_OVERVIEWDATA';  // 概览数据
 export const SET_FSORTTYPE = 'analyze-dashboard/SET_FSORTTYPE';  // 父分类类型
 export const SET_SUBSORTLIST = 'analyze-dashboard/SET_SUBSORTLIST';  // 子分类列表
 export const SET_SELECTEDSUBSORT = 'analyze-dashboard/SET_SELECTEDSUBSORT';  // 当前子分类选中项
+export const SET_TIMEINTERVAL = 'analyze-dashboard/SET_TIMEINTERVAL';  // 当前时间区间
 
 const state  = {
+	overviewData : {},  // 概览数据
     selectedFSortType : 'article',
     subSortList : [],  // 分类数据列表
     selectedSubSort : '-1',  // 默认选中全部
-
+	timeInterval : ''  // 时间区间
 };
 
 // getters
 // 只能获取state中的值，并且可以进行数据处理，但是不建议，因为view中需要获取最初始的state的状态
 const getters = {
-
+	'articleTendency' : function (state) {
+		if (state.overviewData.articleTendency) {
+			return state.overviewData.articleTendency.split('')[0] !== '-';
+		} else {
+			return true;
+		}
+	},
+	'noteTendency' : function (state) {
+		if (state.overviewData.noteTendency) {
+			return state.overviewData.noteTendency.split('')[0] !== '-';
+		} else {
+			return true;
+		}
+	},
+	'commentTendency' : function (state) {
+		if (state.overviewData.commentTendency) {
+			return state.overviewData.commentTendency.split('')[0] !== '-';
+		} else {
+			return true;
+		}
+	},
+	'bookTendency' : function (state) {
+		if (state.overviewData.bookTendency) {
+			return state.overviewData.bookTendency.split('')[0] !== '-';
+		} else {
+			return true;
+		}
+	}
 };
 
 // actions
@@ -71,11 +101,33 @@ const actions = {
             });
         })
     },
+	// 根据父分类、子分类、时间区间获取数据
+	getChartData ({ dispatch, commit, state, rootState }) {
+		return new Promise((resolve, reject) => {
+			console.info(state.selectedFSortType);
+			console.info(state.selectedSubSort);
+			console.info(state.timeInterval);
+			// Vue.http.post(rootState.BASE_URL + '/analyzeAction/getAnalyzeCount', {}, {
+			// 	headers: {
+			// 		"X-Requested-With": "XMLHttpRequest"
+			// 	},
+			// 	emulateJSON: true
+			// }).then(function(response) {
+			// 	resolve(response.data);
+			// }, function(response) {
+			// 	console.error(response);
+			// 	resolve(response.json());
+			// });
+		})
+	},
 };
 
 // mutations
 // action会发送请求到此，在此对state的值做设置处理
 const mutations = {
+	[SET_OVERVIEWDATA](state , overviewData){
+		state.overviewData = overviewData;
+	},
     [SET_FSORTTYPE](state , sortType){
 	 	state.selectedFSortType = sortType;
     },
@@ -85,6 +137,11 @@ const mutations = {
     [SET_SELECTEDSUBSORT](state , selectedSort){
         state.selectedSubSort = selectedSort;
     },
+	[SET_TIMEINTERVAL](state , timeInterval){
+    	console.info(22222222);
+    	console.info(timeInterval);
+		state.timeInterval = timeInterval;
+	},
 };
 
 export default {

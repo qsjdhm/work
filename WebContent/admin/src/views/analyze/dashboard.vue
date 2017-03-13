@@ -15,7 +15,8 @@
                                 </i>
                                 {{overviewData.articleTendency}}
                             </span>
-                            <div class="dashboard-count-desc">文章总数(比上月趋势)</div>
+                            <div class="dashboard-count-desc"
+								 :class="[selectedFSortType=='article' ? 'dashboard-count-desc-active' : '']">文章总数(比上月趋势)</div>
                         </div>
 
 					</el-col>
@@ -28,7 +29,8 @@
                                 </i>
                                 {{overviewData.noteTendency}}
                             </span>
-                            <div class="dashboard-count-desc">笔记总数(比上月趋势)</div>
+                            <div class="dashboard-count-desc"
+								 :class="[selectedFSortType=='note' ? 'dashboard-count-desc-active' : '']">笔记总数(比上月趋势)</div>
                         </div>
 					</el-col>
                     <el-col class="dashboard-item" :span="5">
@@ -40,7 +42,8 @@
                                 </i>
                                 {{overviewData.commentTendency}}
                             </span>
-                            <div class="dashboard-count-desc">用户评论数(比上月趋势)</div>
+                            <div class="dashboard-count-desc"
+								 :class="[selectedFSortType=='comment' ? 'dashboard-count-desc-active' : '']">用户评论数(比上月趋势)</div>
                         </div>
 					</el-col>
                     <el-col class="dashboard-item" :span="5">
@@ -52,7 +55,8 @@
                                 </i>
                                 {{overviewData.bookTendency}}
                             </span>
-                            <div class="dashboard-count-desc">上传图书量(比上月趋势)</div>
+                            <div class="dashboard-count-desc"
+								 :class="[selectedFSortType=='book' ? 'dashboard-count-desc-active' : '']">上传图书量(比上月趋势)</div>
                         </div>
 					</el-col>
 					<el-col :span="4"></el-col>
@@ -63,9 +67,10 @@
 		<div class="details">
 			<div class="details-header">
 				<el-row :gutter="20">
-					<el-col class="header-desc" :span="4">
-						文章数据分布
-					</el-col>
+					<el-col v-if="selectedFSortType=='article'" class="header-desc" :span="4">文章数据分布</el-col>
+					<el-col v-if="selectedFSortType=='note'" class="header-desc" :span="4">笔记数据分布</el-col>
+					<el-col v-if="selectedFSortType=='comment'" class="header-desc" :span="4">评论数据分布</el-col>
+					<el-col v-if="selectedFSortType=='book'" class="header-desc" :span="4">图书数据分布</el-col>
 					<el-col class="header-details" :span="20">
 						<router-link to="/home/data-note-add">查看详情</router-link>
 						<i class="fa fa-download"></i>
@@ -79,7 +84,7 @@
 						日均<span>120</span>
 					</el-col>
 					<el-col class="container-filter" :span="18">
-							<el-select class="filter-sort" v-model="selectedSubSort" placeholder="请选择">
+							<el-select class="filter-sort" v-model="subSortValue" placeholder="请选择">
 								<el-option
 										v-for="(item, key) in subSortList"
 										:label="item.label"
@@ -89,7 +94,7 @@
 							</el-select>
 							<el-date-picker
 									class="filter-time"
-									v-model="value3"
+									v-model="timeIntervalValue"
 									type="daterange"
 									placeholder="选择日期范围">
 							</el-date-picker>
@@ -122,15 +127,17 @@
     } from '../../vuex/modules/fremework';
     // 引入此页面派发器
     import {
+		SET_OVERVIEWDATA,
         SET_FSORTTYPE,
-        SET_SUBSORTLIST
+        SET_SUBSORTLIST,
+		SET_SELECTEDSUBSORT,
+		SET_TIMEINTERVAL
     } from '../../vuex/modules/analyze/dashboard';
 
     export default {
     	data: function () {
     		return {
-				'overviewData' : {},
-				value3: [new Date(2014, 10, 04, 10, 09), new Date(2016, 10, 04, 10, 09)],
+				value6: '',
 			}
 		},
         computed: {
@@ -138,36 +145,29 @@
             ...mapState({
                 topActiveMenu: state => state.fremework.topActiveMenu,
 
+				overviewData: state => state.analyzeDashboard.overviewData,
                 selectedFSortType: state => state.analyzeDashboard.selectedFSortType,
                 subSortList: state => state.analyzeDashboard.subSortList,
                 selectedSubSort: state => state.analyzeDashboard.selectedSubSort,
+				timeInterval: state => state.analyzeDashboard.timeInterval,
             }),
-			'articleTendency' : function () {
-            	if (this.overviewData.articleTendency) {
-					return this.overviewData.articleTendency.split('')[0] !== '-';
-				} else {
-            		return true;
+			...mapGetters([
+				'articleTendency',
+				'noteTendency',
+				'commentTendency',
+				'bookTendency'
+			]),
+			subSortValue: {
+				get: function () { return this.selectedSubSort; },
+				set: function (newSort) {
+					this.$store.commit(SET_SELECTEDSUBSORT, newSort);
+					this.$store.commit(SET_TIMEINTERVAL, '');
 				}
 			},
-			'noteTendency' : function () {
-				if (this.overviewData.noteTendency) {
-					return this.overviewData.noteTendency.split('')[0] !== '-';
-				} else {
-					return true;
-				}
-			},
-			'commentTendency' : function () {
-				if (this.overviewData.commentTendency) {
-					return this.overviewData.commentTendency.split('')[0] !== '-';
-				} else {
-					return true;
-				}
-			},
-			'bookTendency' : function () {
-				if (this.overviewData.bookTendency) {
-					return this.overviewData.bookTendency.split('')[0] !== '-';
-				} else {
-					return true;
+			timeIntervalValue: {
+				get: function () { return this.timeInterval; },
+				set: function (newTime) {
+					this.$store.commit(SET_TIMEINTERVAL, newTime);
 				}
 			}
         },
@@ -194,15 +194,24 @@
                 'getSortByType'
             ]),
             dashboardClick : function (type) {
-                this.$store.commit(SET_FSORTTYPE, type);
-                this.getSortByType();
+            	// 父类变了再重新获取
+            	if (type !== this.selectedFSortType) {
+					this.$store.commit(SET_FSORTTYPE, type);
+					this.$store.commit(SET_TIMEINTERVAL, '');
+            		if (type !== 'comment') {
+            			// 有子分类的获取子分类，再获取数据
+						this.getSortByType();
+					} else {
+            			// 评论没有分类，直接获取数据
+					}
+				}
             }
         },
 		// 此生命周期挂载阶段还没开始，所以适用于修改父级dom和数据准备操作
         created: function () {
             // 打开此view应该设置顶部菜单和子级菜单的选中状态
-            let pId = this.$route.meta.pId;
-            let path = this.$route.path;
+			const pId = this.$route.meta.pId;
+			const path = this.$route.path;
             const self = this;
             if (this.topActiveMenu !== pId) {
                 this.setActiveTopMenu(pId).then(function () {
@@ -218,7 +227,7 @@
     		const self = this;
     		// 先获取文章、笔记、评论、图书的总数
 			this.getAnalyzeCount().then(function (response) {
-				self.overviewData = response.countData;
+				self.$store.commit(SET_OVERVIEWDATA, response.countData);
                 return '';
 			}).then(function (response) {
                 // 再根据当前父分类获取子分类列表
