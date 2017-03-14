@@ -84,23 +84,41 @@
 						日均<span>120</span>
 					</el-col>
 					<el-col class="container-filter" :span="18">
-							<el-select class="filter-sort" v-model="subSortValue" placeholder="请选择">
-								<el-option
-										v-for="(item, key) in subSortList"
-										:label="item.label"
-										:value="item.value"
-                                        :key="key">
-								</el-option>
-							</el-select>
-							<el-date-picker
-									class="filter-time"
-									v-model="timeIntervalValue"
-									type="daterange"
-									placeholder="选择日期范围">
-							</el-date-picker>
-
+						<el-select class="filter-sort" v-model="subSortValue" placeholder="请选择">
+						    <el-option
+                                v-for="(item, key) in subSortList"
+                                :label="item.label"
+                                :value="item.value"
+                                :key="key">
+                            </el-option>
+                        </el-select>
+                        <el-date-picker
+                            class="filter-time"
+                            v-model="timeIntervalValue"
+                            type="daterange"
+                            placeholder="选择日期范围">
+                        </el-date-picker>
 					</el-col>
 				</el-row>
+                <el-row class="container-data" :gutter="20">
+                    <el-col class="container-chart" :span="12">
+                        撒打算
+                    </el-col>
+                    <el-col class="container-table" :span="12">
+                        <div class="table-data">
+
+                        </div>
+                        <div class="table-page">
+                            <el-pagination
+                                @current-change="tablePageChange"
+                                :current-page="tablePage"
+                                :page-size="20"
+                                layout="total, prev, pager, next"
+                                :total="tableCount">
+                            </el-pagination>
+                        </div>
+                    </el-col>
+                </el-row>
 			</div>
 		</div>
 		<!--分析 - 数据概览 - /home/analyze-dashboard
@@ -131,13 +149,14 @@
         SET_FSORTTYPE,
         SET_SUBSORTLIST,
 		SET_SELECTEDSUBSORT,
-		SET_TIMEINTERVAL
+		SET_TIMEINTERVAL,
+        SET_TABLEPAGE
     } from '../../vuex/modules/analyze/dashboard';
 
     export default {
     	data: function () {
     		return {
-				value6: '',
+
 			}
 		},
         computed: {
@@ -150,6 +169,8 @@
                 subSortList: state => state.analyzeDashboard.subSortList,
                 selectedSubSort: state => state.analyzeDashboard.selectedSubSort,
 				timeInterval: state => state.analyzeDashboard.timeInterval,
+                tableCount: state => state.analyzeDashboard.tableCount,
+                tablePage: state => state.analyzeDashboard.tablePage,
             }),
 			...mapGetters([
 				'articleTendency',
@@ -191,7 +212,9 @@
 
 				'getAnalyzeCount',
                 'setFSort',
-                'getSortByType'
+                'getSortByType',
+                'getTableDataCount',
+                'getTableData'
             ]),
             dashboardClick : function (type) {
             	// 父类变了再重新获取
@@ -205,6 +228,10 @@
             			// 评论没有分类，直接获取数据
 					}
 				}
+            },
+            tablePageChange(val) {
+                console.log(`当前页: ${val}`);
+                this.$store.commit(SET_TABLEPAGE, val);
             }
         },
 		// 此生命周期挂载阶段还没开始，所以适用于修改父级dom和数据准备操作
@@ -233,7 +260,12 @@
                 // 再根据当前父分类获取子分类列表
                 return self.getSortByType();
             }).then(function (response) {
-                console.info(self.subSortList);
+                // 获取数据总个数
+                return self.getTableDataCount();
+            }).then(function (response) {
+                self.getTableData();
+                // 获取数据
+                console.info(response);
             });
 
 
