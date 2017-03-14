@@ -59,6 +59,9 @@ public interface IArticleService <T extends TArticle> extends IService<T> {
 	
 	// 根据id获取此文章的下一篇文章
 	public TArticle getNextArticleByID(int id);
+
+	// 根据分类获取笔记数据列表
+	public List<T> getNoteList(int sortId, String time, int pageId, int pageNum);
 	
 }
 

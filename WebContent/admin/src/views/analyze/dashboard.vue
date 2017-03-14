@@ -102,11 +102,25 @@
 				</el-row>
                 <el-row class="container-data" :gutter="20">
                     <el-col class="container-chart" :span="12">
-                        撒打算
+						阿萨德
                     </el-col>
                     <el-col class="container-table" :span="12">
                         <div class="table-data">
-
+							<el-table
+									:data="tableData"
+									:height="tableHeight"
+									border
+									style="width: 100%">
+								<el-table-column
+										prop="id"
+										label="ID"
+										width="80">
+								</el-table-column>
+								<el-table-column
+										prop="name"
+										label="名称">
+								</el-table-column>
+							</el-table>
                         </div>
                         <div class="table-page">
                             <el-pagination
@@ -150,13 +164,14 @@
         SET_SUBSORTLIST,
 		SET_SELECTEDSUBSORT,
 		SET_TIMEINTERVAL,
-        SET_TABLEPAGE
+        SET_TABLEPAGE,
+		SET_TABLEDATA
     } from '../../vuex/modules/analyze/dashboard';
 
     export default {
     	data: function () {
     		return {
-
+				tableHeight : 0  // table的高度
 			}
 		},
         computed: {
@@ -171,6 +186,7 @@
 				timeInterval: state => state.analyzeDashboard.timeInterval,
                 tableCount: state => state.analyzeDashboard.tableCount,
                 tablePage: state => state.analyzeDashboard.tablePage,
+				tableData: state => state.analyzeDashboard.tableData,
             }),
 			...mapGetters([
 				'articleTendency',
@@ -181,8 +197,14 @@
 			subSortValue: {
 				get: function () { return this.selectedSubSort; },
 				set: function (newSort) {
+					const self = this;
 					this.$store.commit(SET_SELECTEDSUBSORT, newSort);
 					this.$store.commit(SET_TIMEINTERVAL, '');
+					this.getTableDataCount().then(function (response) {
+						self.getTableData();
+						// 获取数据
+						console.info(response);
+					});
 				}
 			},
 			timeIntervalValue: {
@@ -217,21 +239,28 @@
                 'getTableData'
             ]),
             dashboardClick : function (type) {
+            	const self = this;
             	// 父类变了再重新获取
             	if (type !== this.selectedFSortType) {
 					this.$store.commit(SET_FSORTTYPE, type);
 					this.$store.commit(SET_TIMEINTERVAL, '');
             		if (type !== 'comment') {
             			// 有子分类的获取子分类，再获取数据
-						this.getSortByType();
+						this.getSortByType().then(function () {
+							return self.getTableDataCount();
+						}).then(function () {
+							console.info(44444);
+							self.getTableData();
+						});
 					} else {
             			// 评论没有分类，直接获取数据
 					}
 				}
             },
             tablePageChange(val) {
-                console.log(`当前页: ${val}`);
                 this.$store.commit(SET_TABLEPAGE, val);
+                // 重新获取当前页的table表数据
+				this.getTableData();
             }
         },
 		// 此生命周期挂载阶段还没开始，所以适用于修改父级dom和数据准备操作
@@ -251,6 +280,9 @@
         },
 		// 此声明周期挂载dom已经开始，适用于处理dom操作
 		mounted: function () {
+    		// 设置table高度
+			this.tableHeight = document.getElementById("frameworkContainer").offsetHeight - 260;
+
     		const self = this;
     		// 先获取文章、笔记、评论、图书的总数
 			this.getAnalyzeCount().then(function (response) {

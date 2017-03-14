@@ -11,6 +11,7 @@ export const SET_SELECTEDSUBSORT = 'analyze-dashboard/SET_SELECTEDSUBSORT';  // 
 export const SET_TIMEINTERVAL = 'analyze-dashboard/SET_TIMEINTERVAL';  // 当前时间区间
 export const SET_TABLECOUNT = 'analyze-dashboard/SET_TABLECOUNT';  // 当前表格数据总数
 export const SET_TABLEPAGE = 'analyze-dashboard/SET_TABLEPAGE';  // 当前表格当前页数
+export const SET_TABLEDATA = 'analyze-dashboard/SET_TABLEDATA';  // 当前表格当前数据
 
 const state  = {
 	overviewData : {},  // 概览数据
@@ -20,6 +21,7 @@ const state  = {
 	timeInterval : '',  // 时间区间
     tableCount : 0,  // 表格数据总数
     tablePage : 1,  // 表格当前页
+	tableData : [],  // 表格数据
 };
 
 // getters
@@ -98,6 +100,7 @@ const actions = {
                 commit(SET_SUBSORTLIST, tempSortList);
                 // 每一次获取子分类列表都要选中“全部”
                 commit(SET_SELECTEDSUBSORT, '0');
+                console.info(333333333);
                 resolve();
             }, function(response) {
                 console.error(response);
@@ -115,22 +118,46 @@ const actions = {
 	},
     // 根据根据父分类、子分类、时间区间获取表格数据总数--用来设置page
     getTableDataCount ({ dispatch, commit, state, rootState }) {
-        return new Promise((resolve, reject) => {
-            Vue.http.post(rootState.BASE_URL + '/articleAction/getArticleCount', {
-                sort : state.selectedSubSort
-            }, {
-             	headers: {
-             		"X-Requested-With": "XMLHttpRequest"
-             	},
-             	emulateJSON: true
-            }).then(function(response) {
-                commit(SET_TABLECOUNT, response.data.data);
-                resolve(response.data.data);
-            }, function(response) {
-             	console.error(response);
-             	resolve(response.json());
-            });
-        })
+		// 根据父分类、子分类获取数据
+		if (state.selectedFSortType === 'article') {
+			return new Promise((resolve, reject) => {
+				Vue.http.post(rootState.BASE_URL + '/articleAction/getArticleCount', {
+					sort : state.selectedSubSort
+				}, {
+					headers: {
+						"X-Requested-With": "XMLHttpRequest"
+					},
+					emulateJSON: true
+				}).then(function(response) {
+					commit(SET_TABLECOUNT, response.data.data);
+					resolve(response.data.data);
+				}, function(response) {
+					console.error(response);
+					resolve(response.json());
+				});
+			})
+		} else if (state.selectedFSortType === 'note') {
+			return new Promise((resolve, reject) => {
+				Vue.http.post(rootState.BASE_URL + '/noteAction/getNoteCount', {
+					sort : state.selectedSubSort
+				}, {
+					headers: {
+						"X-Requested-With": "XMLHttpRequest"
+					},
+					emulateJSON: true
+				}).then(function(response) {
+					commit(SET_TABLECOUNT, response.data.data);
+					resolve(response.data.data);
+				}, function(response) {
+					console.error(response);
+					resolve(response.json());
+				});
+			})
+		} else if (state.selectedFSortType === 'comment') {
+
+		} else if (state.selectedFSortType === 'book') {
+
+		}
     },
     // 根据根据父分类、子分类、时间区间获取表格数据--用来设置表格
     getTableData ({ dispatch, commit, state, rootState }) {
@@ -147,15 +174,29 @@ const actions = {
                     },
                     emulateJSON: true
                 }).then(function(response) {
-                    console.info(222222222222);
-                    console.info(response.data);
+					commit(SET_TABLEDATA, response.data.data);
                     resolve(response.data.data);
                 }, function(response) {
                     console.error(response);
                     resolve(response.json());
                 });
             } else if (state.selectedFSortType === 'note') {
-
+				Vue.http.post(rootState.BASE_URL + '/noteAction/getNoteList', {
+					sort : state.selectedSubSort,
+					page : state.tablePage,
+					size : 20
+				}, {
+					headers: {
+						"X-Requested-With": "XMLHttpRequest"
+					},
+					emulateJSON: true
+				}).then(function(response) {
+					commit(SET_TABLEDATA, response.data.data);
+					resolve(response.data.data);
+				}, function(response) {
+					console.error(response);
+					resolve(response.json());
+				});
             } else if (state.selectedFSortType === 'comment') {
 
             } else if (state.selectedFSortType === 'book') {
@@ -189,7 +230,29 @@ const mutations = {
     [SET_TABLEPAGE](state , tablePage){
         state.tablePage = tablePage;
     },
+	[SET_TABLEDATA](state , tableData){
+    	var tempData = [];
+    	// 根据不同的父类型，要处理下数据
+		for (let i = 0, len = tableData.length; i < len; i++) {
+			if (state.selectedFSortType === 'article') {
+				tempData.push({
+					'id' : tableData[i].Article_ID,
+					'name' : tableData[i].Article_Title
+				});
+			} else if (state.selectedFSortType === 'note') {
+				tempData.push({
+					'id' : tableData[i].Article_ID,
+					'name' : tableData[i].Article_Title
+				});
+			} else if (state.selectedFSortType === 'comment') {
 
+			} else if (state.selectedFSortType === 'book') {
+
+			}
+		}
+
+		state.tableData = tempData;
+	},
 };
 
 export default {

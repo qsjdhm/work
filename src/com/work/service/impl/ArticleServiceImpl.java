@@ -52,7 +52,30 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		return count.intValue();
 	}
 	
-	
+	/**
+	 *  根据分类、时间区间获取笔记全部的数据
+	 *  @param sortId 笔记子类型
+	 *  @param time 文章时间区间
+	 */
+	@Override
+	public List<T> getNoteList(int sortId, String time, int pageId, int pageNum) {
+		int start = pageNum*(pageId-1);
+		int end = pageNum;
+		
+		String sql = "";
+		if(sortId==0){
+			sql = "select article from TArticle article where F_Sort_ID=8 order by Article_ID desc";
+		}else{
+			sql = "select article from TArticle article where Sort_ID="+sortId+" order by Article_ID desc";
+		}
+
+		List<T> articles = this.getDao().pageQuery(sql, start, end);
+		if(articles.size()>0){
+			return articles;
+		}
+		
+		return null;
+	}
 	
 	/**
 	 *  根据总分类获得此类型下的文章总个数

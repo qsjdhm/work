@@ -17,13 +17,11 @@
 									:default-active="topActiveMenu"
 									class="el-menu-demo"
 									mode="horizontal"
-									@select="topMenuSelect"
-							>
+									@select="topMenuSelect">
                                 <el-menu-item
 										v-for="(topMenu, topKey) in menuList"
 										:index="topMenu.id"
-										:key="topKey"
-								>
+										:key="topKey">
 									<i class="fa" :class="topMenu.icon"></i>{{topMenu.name}}
 								</el-menu-item>
 							</el-menu>
@@ -89,7 +87,7 @@
             </div>
         </div>
 
-		<div class="framework-container">
+		<div class="framework-container" id="frameworkContainer">
 			<router-view></router-view>
 		</div>
 

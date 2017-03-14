@@ -202,7 +202,8 @@ public class AdminNoteController {
 	public void getNoteCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		int count = articleService.getArticleSubSortLength(sort);
+		String time = request.getParameter("time");
+		int count = articleService.getNoteCount(sort, time);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
 		jsonObject.put("msg", "获取笔记个数成功");
@@ -219,7 +220,8 @@ public class AdminNoteController {
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
 		int page = Integer.parseInt(request.getParameter("page"));
-		List <TArticle> notes = articleService.getArticleSubSort(sort, page, 10);
+		String time = request.getParameter("time");
+		List <TArticle> notes = articleService.getNoteList(sort, time, page, 10);
 		
 		JSONArray noteJsonArray = new JSONArray();
 		for(int i=0; i<notes.size(); i++){
