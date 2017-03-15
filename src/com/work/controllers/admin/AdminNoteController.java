@@ -220,8 +220,9 @@ public class AdminNoteController {
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
 		int page = Integer.parseInt(request.getParameter("page"));
+		int size = Integer.parseInt(request.getParameter("size"));
 		String time = request.getParameter("time");
-		List <TArticle> notes = articleService.getNoteList(sort, time, page, 10);
+		List <TArticle> notes = articleService.getNoteList(sort, time, page, size);
 		
 		JSONArray noteJsonArray = new JSONArray();
 		for(int i=0; i<notes.size(); i++){

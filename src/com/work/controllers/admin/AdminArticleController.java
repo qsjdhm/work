@@ -238,7 +238,8 @@ public class AdminArticleController {
 	public void getArticleCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		int count = articleService.getArticleLength(sort);
+		String time = request.getParameter("time");
+		int count = articleService.getArticleCount(sort, time);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
 		jsonObject.put("msg", "获取文章个数成功");
@@ -259,6 +260,7 @@ public class AdminArticleController {
 		List <TArticle> articles = articleService.getArticle(sort, page, size);
 		
 		JSONArray articleJsonArray = new JSONArray();
+		System.out.println(articles.size());
 		for(int i=0; i<articles.size(); i++){
 			JSONObject articleJson = new JSONObject();
 			TArticle article = articles.get(i);

@@ -130,6 +130,7 @@ const actions = {
 					emulateJSON: true
 				}).then(function(response) {
 					commit(SET_TABLECOUNT, response.data.data);
+                    commit(SET_TABLEPAGE, 1);
 					resolve(response.data.data);
 				}, function(response) {
 					console.error(response);
@@ -147,6 +148,7 @@ const actions = {
 					emulateJSON: true
 				}).then(function(response) {
 					commit(SET_TABLECOUNT, response.data.data);
+                    commit(SET_TABLEPAGE, 1);
 					resolve(response.data.data);
 				}, function(response) {
 					console.error(response);

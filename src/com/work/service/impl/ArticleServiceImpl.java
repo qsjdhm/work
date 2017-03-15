@@ -135,7 +135,7 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		int end = pageNum;
 		String sql = "";
 		if(fSortId==0){
-			sql = "select article from TArticle article order by Article_ID desc ";
+			sql = "select article from TArticle article where F_Sort_ID<>8 order by Article_ID desc ";
 		}else{
 			sql = "select article from TArticle article where F_Sort_ID="+fSortId+" order by Article_ID desc ";
 		}
