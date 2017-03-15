@@ -213,7 +213,8 @@ public class AdminBookController {
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
 		int page = Integer.parseInt(request.getParameter("page"));
-		List <TBook> books = bookService.getBook(sort, page, 10);
+		int size = Integer.parseInt(request.getParameter("size"));
+		List <TBook> books = bookService.getBook(sort, page, size);
 		
 		JSONArray bookJsonArray = new JSONArray();
 		for(int i=0; i<books.size(); i++){
