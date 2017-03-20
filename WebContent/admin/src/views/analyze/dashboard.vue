@@ -101,7 +101,7 @@
 				</el-row>
                 <el-row class="container-data" :gutter="20">
                     <el-col id="chart_pack" class="container-chart" :span="13">
-						<div id="main" style="width: 100%;height: 370px;"></div>
+						<div id="main" :style="{ width: '100%', height: tableHeight + 50 + 'px' }"></div>
                     </el-col>
 					<el-col class="container-table" :span="1">
 					</el-col>
@@ -282,13 +282,11 @@
             }
         },
 		// 此声明周期挂载dom已经开始，适用于处理dom操作
-		mounted: function () {
-    		// 设置table高度
+        mounted: function () {
+            const self = this;
+            // 设置table高度
 			this.tableHeight = document.getElementById("frameworkContainer").offsetHeight - 260;
-			let width = document.getElementById("chart_pack").offsetWidth;
 
-
-    		const self = this;
     		// 先获取文章、笔记、评论、图书的总数
 			this.getAnalyzeCount().then(function (response) {
                 // 再根据当前父分类获取子分类列表
@@ -298,37 +296,37 @@
                 return self.getTableDataCount();
             }).then(function (response) {
                 self.getTableData();
+
+
+
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('main'));
+
+                // 指定图表的配置项和数据
+                var option = {
+                    grid: {
+                        height: self.tableHeight - 50
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['销量']
+                    },
+                    xAxis: {
+                        data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: [5, 20, 36, 10, 10, 20]
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
             });
 
-			// 基于准备好的dom，初始化echarts实例
-			var myChart = echarts.init(document.getElementById('main'));
 
-			// 指定图表的配置项和数据
-			var option = {
-				title: {
-					text: 'ECharts 入门示例'
-				},
-				grid: {
-					width: width,
-					//height: 300
-				},
-				tooltip: {},
-				legend: {
-					data:['销量']
-				},
-				xAxis: {
-					data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-				},
-				yAxis: {},
-				series: [{
-					name: '销量',
-					type: 'bar',
-					data: [5, 20, 36, 10, 10, 20]
-				}]
-			};
-
-			// 使用刚指定的配置项和数据显示图表。
-			myChart.setOption(option);
 		},
 
     }
