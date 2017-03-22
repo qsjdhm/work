@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import com.work.util.ENV;
 
 import javax.annotation.Resource;
@@ -119,6 +121,40 @@ public class AdminAnalyzeController {
 		jsonObject.put("countData", countJson);
 		
 		response.getWriter().print(jsonObject); 
+	}
+	
+	/*
+	 * 功能：获取系统整个数据的分布情况
+	 * 参数：type 哪个表数据
+	 * 返回：json数据
+	 */
+	@RequestMapping(value="/getDataDistribution", method = {RequestMethod.POST})
+	public void getDataDistribution(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		String type = request.getParameter("type");
+		if (type.equals("article")) {
+			List <Map<String,Object>> articles = articleService.getArticleDistribution("article");
+			
+			JSONArray articleJsonArray = new JSONArray();
+			for(int i=0; i<articles.size(); i++){
+				JSONObject articleJson = new JSONObject();
+				Map<String,Object> article = articles.get(i);
+				
+
+				articleJson.put("date", article.get("cycle"));
+				articleJson.put("count", article.get("count"));
+				
+				articleJsonArray.add(articleJson);
+			}
+			
+		} else if (type.equals("note")) {
+			
+		} else if (type.equals("comment")) {
+			
+		} else if (type.equals("book")) {
+			
+		}
+		
+		
 	}
 	
 	

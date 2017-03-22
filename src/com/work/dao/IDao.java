@@ -1,6 +1,7 @@
 package com.work.dao;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 声明数据访问的接口
@@ -31,4 +32,8 @@ public interface IDao<T> {
 	 */
 	public List<T> pageQuery(String hql, int start, int end);
 	
+	/**
+	 * 功能描述：原生sql执行
+	 */
+	public List<Map<String, Object>> pageSqlQuery(String sql);
 }

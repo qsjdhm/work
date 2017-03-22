@@ -1,8 +1,10 @@
 package com.work.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.work.dao.IDao;
@@ -68,6 +70,12 @@ public class DaoImpl<T> extends HibernateDaoSupport implements IDao<T> {
 	public List<T> pageQuery(String hql, int start, int end) {
 		Query query = this.getHibernateTemplate().getSessionFactory().openSession().createQuery(hql);
 	    return query.setFirstResult(start).setMaxResults(end).list();
+	}
+	@Override
+	public List<Map<String,Object>> pageSqlQuery(String sql) {
+		Query query = this.getHibernateTemplate().getSessionFactory().openSession().createSQLQuery(sql);
+		query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+		return query.list();
 	}
 
 }

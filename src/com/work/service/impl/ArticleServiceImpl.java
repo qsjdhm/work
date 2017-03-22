@@ -1,6 +1,7 @@
 package com.work.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 
@@ -70,6 +71,28 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		}
 
 		List<T> articles = this.getDao().pageQuery(sql, start, end);
+		if(articles.size()>0){
+			return articles;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 *  根据类型获取数据分布
+	 *  @param type 数据类型
+	 *  @return 分布数据值
+	 */
+	@Override
+	public List<Map<String,Object>> getArticleDistribution(String type) {
+		
+		String sql = "";
+		if(type.equals("article")){
+			sql = "select cycle,COUNT(*) as count from (select left(Article_Date,7) cycle  from article where F_Sort_ID<>8) temp group by cycle";
+		}else{
+			sql = "select cycle,COUNT(*) as count from (select left(Article_Date,7) cycle from article where F_Sort_ID=8) temp group by cycle";
+		}
+		List<Map<String,Object>> articles = this.getDao().pageSqlQuery(sql);
 		if(articles.size()>0){
 			return articles;
 		}

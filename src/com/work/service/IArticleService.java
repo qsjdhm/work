@@ -1,6 +1,7 @@
 package com.work.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.work.vo.TArticle;
 
@@ -21,6 +22,9 @@ public interface IArticleService <T extends TArticle> extends IService<T> {
 	
 	// 根据总分类、页数、每页个数获取此分类下的文章列表
 	public List<T> getArticle(int fSortId, int pageId, int pageNum);
+	
+	// 根据类型获取数据分布
+	public List<Map<String, Object>> getArticleDistribution(String type);
 	
 
 	/* 子分类就相当于是笔记下的文章 */

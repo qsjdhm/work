@@ -109,11 +109,24 @@ const actions = {
     },
 	// 根据父分类、子分类、时间区间获取数据
 	getChartData ({ dispatch, commit, state, rootState }) {
+		// 根据父分类、子分类获取数据
 		return new Promise((resolve, reject) => {
-			console.info(state.selectedFSortType);
-			console.info(state.selectedSubSort);
-			console.info(state.timeInterval);
-		})
+			Vue.http.post(rootState.BASE_URL + '/analyzeAction/getDataDistribution', {
+				type: state.selectedFSortType
+			}, {
+				headers: {
+					"X-Requested-With": "XMLHttpRequest"
+				},
+				emulateJSON: true
+			}).then(function(response) {
+				console.info('图表数据：：：：：：：：：');
+				console.info(response);
+				resolve(response.data.data);
+			}, function(response) {
+				console.error(response);
+				resolve(response.json());
+			});
+		});
 	},
     // 根据根据父分类、子分类、时间区间获取表格数据总数--用来设置page
     getTableDataCount ({ dispatch, commit, state, rootState }) {
