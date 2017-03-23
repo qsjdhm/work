@@ -146,9 +146,17 @@
 <script type="text/ecmascript-6">
 	// 引入 ECharts 主模块
 	var echarts = require('echarts/lib/echarts');
-	require('echarts/lib/chart/bar');
-	require('echarts/lib/component/tooltip');
-	require('echarts/lib/component/title');
+	require('echarts/lib/chart/line');
+    require('echarts/lib/chart/bar');
+    require('echarts/lib/component/toolbox');
+    require('echarts/lib/component/dataZoom');
+    require('echarts/lib/component/tooltip');
+    require('echarts/lib/component/grid');
+    require('echarts/lib/component/legend');
+
+
+
+
 
 	import '../../css/analyze/dashboard.less';
 
@@ -172,6 +180,7 @@
     export default {
     	data: function () {
     		return {
+                myChart : null,  // 图表组件对象
 				tableHeight : 0  // table的高度
 			}
 		},
@@ -185,6 +194,7 @@
                 subSortList: state => state.analyzeDashboard.subSortList,
                 selectedSubSort: state => state.analyzeDashboard.selectedSubSort,
 				timeInterval: state => state.analyzeDashboard.timeInterval,
+                chartData: state => state.analyzeDashboard.chartData,
                 tableCount: state => state.analyzeDashboard.tableCount,
                 tablePage: state => state.analyzeDashboard.tablePage,
 				tableData: state => state.analyzeDashboard.tableData,
@@ -252,13 +262,23 @@
 						this.getSortByType().then(function () {
 							return self.getTableDataCount();
 						}).then(function () {
-							self.getTableData();
-						});
+							return self.getTableData();
+                        }).then(function (response) {
+                            // 获取数据区间个数
+                            return self.getChartData();
+                        }).then(function (response) {
+                            self.initChart();
+                        });
 					} else {
             			// 评论没有分类，直接获取数据
 						this.getTableDataCount().then(function () {
-							self.getTableData();
-						});
+							return self.getTableData();
+                        }).then(function (response) {
+                            // 获取数据区间个数
+                            return self.getChartData();
+                        }).then(function (response) {
+                            self.initChart();
+                        });
 					}
 				}
             },
@@ -267,6 +287,99 @@
                 this.$store.commit(SET_TABLEPAGE, val);
                 // 重新获取当前页的table表数据
 				this.getTableData();
+            },
+            // 初始化图表
+            initChart() {
+                let self = this;
+                // 基于准备好的dom，初始化echarts实例
+                self.myChart = echarts.init(document.getElementById('main'));
+
+                // 指定图表的配置项和数据
+                var option = {};
+                if (self.selectedFSortType !== 'book') {
+                    option = {
+                        tooltip : {
+                            trigger: 'axis'
+                        },
+                        grid: {
+                            height: self.tableHeight - 50,
+                            top: 10,
+                            left: '3%',
+                            right: '4%',
+                            containLabel: true
+                        },
+                        dataZoom: [
+                            {
+                                start: 0,
+                                end: 80,
+                            }
+                        ],
+                        xAxis: {
+                            nameLocation: 'start',
+                            data: self.chartData.xAxis,
+                            boundaryGap: false,
+                            splitLine: {  // 网格
+                                show: true,
+                                lineStyle: {
+                                    // 使用深浅的间隔色
+                                    color: ['#ddd']
+                                }
+                            },
+                            axisTick: {
+                                alignWithLabel: false
+                            },
+                            axisLabel:{  // 刻度倾斜
+                                interval: 0,
+                                rotate: 45,//倾斜度 -90 至 90 默认为0
+                                textStyle:{
+                                    color: "#666"
+                                }
+                            },
+                        },
+                        yAxis : [
+                            {
+                                type : 'value'
+                            }
+                        ],
+                        series: self.chartData.data
+                    };
+                } else {
+                    option = {
+                        tooltip : {
+                            trigger: 'axis'
+                        },
+                        grid: {
+                            height: self.tableHeight + 20,
+                            top: 10,
+                            left: '3%',
+                            right: '4%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            data: self.chartData.xAxis,
+                            boundaryGap: true,
+                            splitLine: {  // 网格
+                                show: true,
+                                lineStyle: {
+                                    // 使用深浅的间隔色
+                                    color: ['#ddd']
+                                }
+                            },
+                            axisTick: {
+                                alignWithLabel: false
+                            },
+                        },
+                        yAxis : [
+                            {
+                                type : 'value'
+                            }
+                        ],
+                        series: self.chartData.data
+                    };
+                }
+
+                // 使用刚指定的配置项和数据显示图表。
+                self.myChart.setOption(option);
             }
         },
 		// 此生命周期挂载阶段还没开始，所以适用于修改父级dom和数据准备操作
@@ -300,34 +413,9 @@
                 return self.getTableData();
 			}).then(function (response) {
 				// 获取数据区间个数
-				self.getChartData();
-
-
-                // 基于准备好的dom，初始化echarts实例
-//                var myChart = echarts.init(document.getElementById('main'));
-//
-//                // 指定图表的配置项和数据
-//                var option = {
-//                    grid: {
-//                        height: self.tableHeight - 50
-//                    },
-//                    tooltip: {},
-//                    legend: {
-//                        data:['销量']
-//                    },
-//                    xAxis: {
-//                        data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-//                    },
-//                    yAxis: {},
-//                    series: [{
-//                        name: '销量',
-//                        type: 'bar',
-//                        data: [5, 20, 36, 10, 10, 20]
-//                    }]
-//                };
-//
-//                // 使用刚指定的配置项和数据显示图表。
-//                myChart.setOption(option);
+				return self.getChartData();
+            }).then(function (response) {
+                self.initChart();
             });
 
 

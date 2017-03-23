@@ -1,6 +1,7 @@
 package com.work.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.work.dao.IDao;
 import com.work.service.ICommentService;
@@ -11,6 +12,22 @@ import com.work.vo.TComment;
  * 实现业务逻辑的接口
  */
 public class CommentServiceImpl<T extends TComment> extends ServiceImpl<T> implements ICommentService<T> {
+	
+	/**
+	 *  获取数据分布
+	 *  @return 分布数据值
+	 */
+	@Override
+	public List<Map<String,Object>> getCommentDistribution() {
+		
+		String sql = "select cycle,COUNT(*) as count from (select left(Comment_Time, 7) cycle from comment) temp group by cycle";
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
+		}
+		
+		return null;
+	}
 	
 	/**
 	 *  获取评论的总个数

@@ -31,9 +31,8 @@ public interface IDao<T> {
 	 * 功能描述：查询从第几条到第几条记录
 	 */
 	public List<T> pageQuery(String hql, int start, int end);
-	
 	/**
-	 * 功能描述：原生sql执行
+	 * 功能描述：执行mysql原生sql查询语句
 	 */
-	public List<Map<String, Object>> pageSqlQuery(String sql);
+	public List<Map<String, Object>> sqlQuery(String sql);
 }

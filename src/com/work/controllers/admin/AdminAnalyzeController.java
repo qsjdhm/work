@@ -100,10 +100,10 @@ public class AdminAnalyzeController {
 	@RequestMapping(value="/getAnalyzeCount", method = {RequestMethod.POST})
 	public void getAnalyzeCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		// 获取各个表的总数据
-		int articleCount = 1100+articleService.getArticleCount(0, "");
-		int noteCount    = 6000+articleService.getNoteCount(0, "");
-		int commentCount = 25000+commentService.getCommentLength();
-		int bookCount    = 50+bookService.getBookLength(0);
+		int articleCount = articleService.getArticleCount(0, "");
+		int noteCount    = articleService.getNoteCount(0, "");
+		int commentCount = commentService.getCommentLength();
+		int bookCount    = bookService.getBookLength(0);
 		
 		JSONObject countJson = new JSONObject();
 		countJson.put("articleCount", articleCount);
@@ -131,30 +131,35 @@ public class AdminAnalyzeController {
 	@RequestMapping(value="/getDataDistribution", method = {RequestMethod.POST})
 	public void getDataDistribution(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String type = request.getParameter("type");
-		if (type.equals("article")) {
-			List <Map<String,Object>> articles = articleService.getArticleDistribution("article");
-			
-			JSONArray articleJsonArray = new JSONArray();
-			for(int i=0; i<articles.size(); i++){
-				JSONObject articleJson = new JSONObject();
-				Map<String,Object> article = articles.get(i);
-				
-
-				articleJson.put("date", article.get("cycle"));
-				articleJson.put("count", article.get("count"));
-				
-				articleJsonArray.add(articleJson);
-			}
-			
-		} else if (type.equals("note")) {
-			
+		JSONArray dataJsonArray = new JSONArray();
+		List <Map<String,Object>> mapList = null;
+		if (type.equals("article") || type.equals("note")) {
+			mapList = articleService.getArticleDistribution(type);
 		} else if (type.equals("comment")) {
-			
+			mapList = commentService.getCommentDistribution();
 		} else if (type.equals("book")) {
-			
+			mapList = bookService.getBookDistribution();
 		}
 		
+		for(int i=0; i<mapList.size(); i++){
+			JSONObject itemJson = new JSONObject();
+			Map<String,Object> map = mapList.get(i);
+
+			itemJson.put("date", map.get("cycle"));
+			itemJson.put("count", map.get("count"));
+			
+			dataJsonArray.add(itemJson);
+		}
 		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success", "1");
+		jsonObject.put("msg", "获取文章分析数据成功");
+		jsonObject.put("data", dataJsonArray);
+		
+		response.setContentType("text/html;charset=utf-8");
+        response.setHeader("Cache-Control", "no-cache"); 
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().print(jsonObject); 
 	}
 	
 	

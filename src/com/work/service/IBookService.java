@@ -1,11 +1,15 @@
 package com.work.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.work.vo.TBook;
 
 
 public interface IBookService <T extends TBook> extends IService<T> {
+	
+	// 获取评论的数据分布
+	public List<Map<String, Object>> getBookDistribution();
 	
 	// 根据总分类获得此类型下的图书总个数
 	public int getBookLength(int SortId);

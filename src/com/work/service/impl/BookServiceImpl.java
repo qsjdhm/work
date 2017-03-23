@@ -1,6 +1,7 @@
 package com.work.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 
@@ -13,6 +14,23 @@ import com.work.vo.TBook;
  * 实现业务逻辑的接口
  */
 public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements IBookService<T> {
+	
+	/**
+	 *  获取数据分布
+	 *  @return 分布数据值
+	 */
+	@Override
+	public List<Map<String,Object>> getBookDistribution() {
+		
+		String sql = "select cycle,COUNT(*) as count from (select Sort_Name cycle from book) temp group by cycle";
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
+		}
+		
+		return null;
+	}
+	
 	
 	/**
 	 *  根据分类获得此类型下的图书总个数

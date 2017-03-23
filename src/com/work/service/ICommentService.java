@@ -1,11 +1,15 @@
 package com.work.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.work.vo.TComment;
 
 
 public interface ICommentService <T extends TComment> extends IService<T> {
+	
+	// 获取评论的数据分布
+	public List<Map<String, Object>> getCommentDistribution();
 	
 	// 获取评论的总个数
 	public int getCommentLength();

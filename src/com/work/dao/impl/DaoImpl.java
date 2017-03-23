@@ -71,9 +71,15 @@ public class DaoImpl<T> extends HibernateDaoSupport implements IDao<T> {
 		Query query = this.getHibernateTemplate().getSessionFactory().openSession().createQuery(hql);
 	    return query.setFirstResult(start).setMaxResults(end).list();
 	}
+	/**
+	 * 功能描述：执行mysql原生sql查询语句
+	 * @param sql 查询的sql语句
+	 * @return map对象集合
+	 */
 	@Override
-	public List<Map<String,Object>> pageSqlQuery(String sql) {
+	public List<Map<String,Object>> sqlQuery(String sql) {
 		Query query = this.getHibernateTemplate().getSessionFactory().openSession().createSQLQuery(sql);
+		// 获得的对象转为普通list
 		query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 		return query.list();
 	}

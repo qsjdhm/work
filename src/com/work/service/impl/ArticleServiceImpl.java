@@ -88,13 +88,13 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		
 		String sql = "";
 		if(type.equals("article")){
-			sql = "select cycle,COUNT(*) as count from (select left(Article_Date,7) cycle  from article where F_Sort_ID<>8) temp group by cycle";
+			sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle  from article where F_Sort_ID<>8) temp group by cycle";
 		}else{
-			sql = "select cycle,COUNT(*) as count from (select left(Article_Date,7) cycle from article where F_Sort_ID=8) temp group by cycle";
+			sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle from article where F_Sort_ID=8) temp group by cycle";
 		}
-		List<Map<String,Object>> articles = this.getDao().pageSqlQuery(sql);
-		if(articles.size()>0){
-			return articles;
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
 		}
 		
 		return null;

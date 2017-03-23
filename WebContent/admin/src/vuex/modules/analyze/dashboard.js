@@ -9,6 +9,7 @@ export const SET_FSORTTYPE = 'analyze-dashboard/SET_FSORTTYPE';  // 父分类类
 export const SET_SUBSORTLIST = 'analyze-dashboard/SET_SUBSORTLIST';  // 子分类列表
 export const SET_SELECTEDSUBSORT = 'analyze-dashboard/SET_SELECTEDSUBSORT';  // 当前子分类选中项
 export const SET_TIMEINTERVAL = 'analyze-dashboard/SET_TIMEINTERVAL';  // 当前时间区间
+export const SET_CHARTDATA = 'analyze-dashboard/SET_CHARTDATA';  // 当前图表数据总数
 export const SET_TABLECOUNT = 'analyze-dashboard/SET_TABLECOUNT';  // 当前表格数据总数
 export const SET_TABLEPAGE = 'analyze-dashboard/SET_TABLEPAGE';  // 当前表格当前页数
 export const SET_TABLEDATA = 'analyze-dashboard/SET_TABLEDATA';  // 当前表格当前数据
@@ -19,6 +20,7 @@ const state  = {
     subSortList : [],  // 分类数据列表
     selectedSubSort : '0',  // 默认选中全部
 	timeInterval : '',  // 时间区间
+    chartData : {},  // 图表数据
     tableCount : 0,  // 表格数据总数
     tablePage : 1,  // 表格当前页
 	tableData : [],  // 表格数据
@@ -119,8 +121,7 @@ const actions = {
 				},
 				emulateJSON: true
 			}).then(function(response) {
-				console.info('图表数据：：：：：：：：：');
-				console.info(response);
+                commit(SET_CHARTDATA, response.data.data);
 				resolve(response.data.data);
 			}, function(response) {
 				console.error(response);
@@ -232,6 +233,61 @@ const mutations = {
 	[SET_TIMEINTERVAL](state , timeInterval){
 		state.timeInterval = timeInterval;
 	},
+    [SET_CHARTDATA](state , chartData){
+        var returnData = {};
+        if (state.selectedFSortType === 'article' || state.selectedFSortType === 'note' || state.selectedFSortType === 'comment') {
+            let xAxis = [];
+            let dataValue = [];
+            for (let i = 0, len = chartData.length; i < len; i++) {
+                xAxis.push(chartData[i].date);  // 刻度
+                dataValue.push(chartData[i].count);  // 刻度值
+            }
+            returnData['legend'] = ['本月总数'];
+            returnData['xAxis'] = xAxis;
+            returnData['data'] = [{
+                name : '本月总数',
+                type : 'line',
+                areaStyle: {
+                    normal: {
+                        color:'#E0F1FC'
+                    }
+                },
+                itemStyle : {
+                    normal : {
+                        color: '#84b8f1',
+                    }
+                },
+                data : dataValue
+            }];
+        } else if (state.selectedFSortType === 'book') {
+            let xAxis = [];
+            let dataValue = [];
+            for (let i = 0, len = chartData.length; i < len; i++) {
+                xAxis.push(chartData[i].date);  // 刻度
+                dataValue.push(chartData[i].count);  // 刻度值
+            }
+            returnData['legend'] = ['本月总数'];
+            returnData['xAxis'] = xAxis;
+            returnData['data'] = [{
+                name : '本月总数',
+                type : 'bar',
+                areaStyle: {
+                    normal: {
+                        color:'#E0F1FC'
+                    }
+                },
+                itemStyle : {
+                    normal : {
+                        color: '#84b8f1',
+                    }
+                },
+                data : dataValue
+            }];
+        }
+        console.info('图表数据：：：：：：：：：');
+        console.info(returnData);
+        state.chartData = returnData;
+    },
     [SET_TABLECOUNT](state , tableCount){
         state.tableCount = tableCount;
     },
@@ -239,7 +295,7 @@ const mutations = {
         state.tablePage = tablePage;
     },
 	[SET_TABLEDATA](state , tableData){
-    	var tempData = [];
+        let tempData = [];
     	// 根据不同的父类型，要处理下数据
 		for (let i = 0, len = tableData.length; i < len; i++) {
 			if (state.selectedFSortType === 'article' || state.selectedFSortType === 'note') {
