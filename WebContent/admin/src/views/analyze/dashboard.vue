@@ -79,8 +79,8 @@
 			<div class="details-container">
 				<el-row :gutter="20">
 					<el-col class="container-tip" :span="6">
-						合计<span>1234</span>
-						日均<span>120</span>
+						合计<span>{{sum}}</span>
+						月均<span>{{monthly}}</span>
 					</el-col>
 					<el-col class="container-filter" :span="18">
 						<el-select v-if="selectedFSortType!=='comment'" class="filter-sort" v-model="subSortValue" placeholder="请选择">
@@ -181,7 +181,9 @@
     	data: function () {
     		return {
                 myChart : null,  // 图表组件对象
-				tableHeight : 0  // table的高度
+				tableHeight : 0, // table的高度
+				sum : 0,         // 总计
+				monthly : 0,     // 月均
 			}
 		},
         computed: {
@@ -267,6 +269,8 @@
                             // 获取数据区间个数
                             return self.getChartData();
                         }).then(function (response) {
+							self.sum = response.total;
+							self.monthly = response.monthly;
                             self.initChart();
                         });
 					} else {
@@ -277,6 +281,8 @@
                             // 获取数据区间个数
                             return self.getChartData();
                         }).then(function (response) {
+							self.sum = response.total;
+							self.monthly = response.monthly;
                             self.initChart();
                         });
 					}
@@ -415,6 +421,8 @@
 				// 获取数据区间个数
 				return self.getChartData();
             }).then(function (response) {
+				self.sum = response.total;
+				self.monthly = response.monthly;
                 self.initChart();
             });
 

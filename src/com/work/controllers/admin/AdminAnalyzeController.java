@@ -1,5 +1,6 @@
 package com.work.controllers.admin;
 
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,15 +106,61 @@ public class AdminAnalyzeController {
 		int commentCount = commentService.getCommentLength();
 		int bookCount    = bookService.getBookLength(0);
 		
+		// 计算环比
+		String articleTendency = "";
+		String noteTendency = "";
+		String commentTendency = "";
+		String bookTendency = "37%";
+		
+		List <Map<String,Object>> articleList = articleService.getArticleDistribution("article");
+		List <Map<String,Object>> noteList = articleService.getArticleDistribution("note");
+		List <Map<String,Object>> commentList = commentService.getCommentDistribution();
+		
+		
+		// 文章环比
+		Map<String, Object> beforeArticle = articleList.get(articleList.size() - 2);
+		Map<String, Object> lastArticle = articleList.get(articleList.size() - 1);
+		double beforeArticleValue = (double)Integer.parseInt(beforeArticle.get("count").toString());
+		double lastArticleValue = (double)Integer.parseInt(lastArticle.get("count").toString());
+		if (((lastArticleValue/beforeArticleValue) * 100) < 100) {
+			articleTendency = "-" + String.format("%.2f", (lastArticleValue/beforeArticleValue) * 100) + "%";
+		} else {
+			articleTendency = String.format("%.2f", (lastArticleValue/beforeArticleValue) * 100) + "%";
+		}
+		
+		// 笔记环比
+		Map<String, Object> beforeNote = noteList.get(noteList.size() - 2);
+		Map<String, Object> lastNote = noteList.get(noteList.size() - 1);
+		double beforeNoteValue = (double)Integer.parseInt(beforeNote.get("count").toString());
+		double lastNoteValue = (double)Integer.parseInt(lastNote.get("count").toString());
+		if (((lastNoteValue/beforeNoteValue) * 100) < 100) {
+			noteTendency = "-" + String.format("%.2f", (lastNoteValue/beforeNoteValue) * 100) + "%";
+		} else {
+			noteTendency = String.format("%.2f", (lastNoteValue/beforeNoteValue) * 100) + "%";
+		}
+		
+		// 评论环比
+		Map<String, Object> beforeComment = commentList.get(commentList.size() - 2);
+		Map<String, Object> lastComment = commentList.get(commentList.size() - 1);
+		double beforeCommentValue = (double)Integer.parseInt(beforeComment.get("count").toString());
+		double lastCommentValue = (double)Integer.parseInt(lastComment.get("count").toString());
+		if (((lastCommentValue/beforeCommentValue) * 100) < 100) {
+			commentTendency = "-" + String.format("%.2f", (lastCommentValue/beforeCommentValue) * 100) + "%";
+		} else {
+			commentTendency = String.format("%.2f", (lastCommentValue/beforeCommentValue) * 100) + "%";
+		}
+		
+		
+		
 		JSONObject countJson = new JSONObject();
 		countJson.put("articleCount", articleCount);
 		countJson.put("noteCount", noteCount);
 		countJson.put("commentCount", commentCount);
 		countJson.put("bookCount", bookCount);
-		countJson.put("articleTendency", "-12%");
-		countJson.put("noteTendency", "68%");
-		countJson.put("commentTendency", "24%");
-		countJson.put("bookTendency", "-3%");
+		countJson.put("articleTendency", articleTendency);
+		countJson.put("noteTendency", noteTendency);
+		countJson.put("commentTendency", commentTendency);
+		countJson.put("bookTendency", bookTendency);
 		
 		response.setCharacterEncoding("UTF-8");
 		JSONObject jsonObject = new JSONObject();
@@ -141,20 +188,29 @@ public class AdminAnalyzeController {
 			mapList = bookService.getBookDistribution();
 		}
 		
-		for(int i=0; i<mapList.size(); i++){
+		int total = 0;
+		int length = 0;
+		
+		for(int i=0; i<mapList.size(); i++, length++){
 			JSONObject itemJson = new JSONObject();
 			Map<String,Object> map = mapList.get(i);
 
 			itemJson.put("date", map.get("cycle"));
 			itemJson.put("count", map.get("count"));
 			
+			// 计算合计
+			total += Integer.parseInt(map.get("count").toString());
+			
 			dataJsonArray.add(itemJson);
 		}
 		
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
-		jsonObject.put("msg", "获取文章分析数据成功");
+		jsonObject.put("msg", "获取分析数据成功");
 		jsonObject.put("data", dataJsonArray);
+		jsonObject.put("total", total);
+		jsonObject.put("monthly", Math.round(total/length));
 		
 		response.setContentType("text/html;charset=utf-8");
         response.setHeader("Cache-Control", "no-cache"); 

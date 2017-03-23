@@ -122,7 +122,7 @@ const actions = {
 				emulateJSON: true
 			}).then(function(response) {
                 commit(SET_CHARTDATA, response.data.data);
-				resolve(response.data.data);
+				resolve(response.data);
 			}, function(response) {
 				console.error(response);
 				resolve(response.json());
