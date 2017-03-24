@@ -27,7 +27,7 @@
 
 <script type="text/ecmascript-6">
     // 引入界面样式
-    import '../css/framework.less';
+    import '../css/login.less';
 
 	import { mapGetters, mapState, mapActions } from 'vuex';
     import {
