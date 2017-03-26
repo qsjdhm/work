@@ -92,11 +92,20 @@
                             </el-option>
                         </el-select>
                         <el-date-picker
+							v-if="selectedFSortType!=='book'"
                             class="filter-time"
-                            v-model="timeIntervalValue"
-                            type="daterange"
-                            placeholder="选择日期范围">
+                            v-model="startTimeValue"
+                            type="month"
+                            placeholder="起始日期">
                         </el-date-picker>
+						<span v-if="selectedFSortType!=='book'"> - </span>
+						<el-date-picker
+								v-if="selectedFSortType!=='book'"
+								class="filter-time"
+								v-model="endTimeValue"
+								type="month"
+								placeholder="至今">
+						</el-date-picker>
 					</el-col>
 				</el-row>
                 <el-row class="container-data" :gutter="20">
@@ -136,11 +145,7 @@
                 </el-row>
 			</div>
 		</div>
-		<!--分析 - 数据概览 - /home/analyze-dashboard
-		<div id="main" style="width: 500px;height: 500px;" ref="abc"></div>
-		<router-link to="/home/addNote">addNote</router-link>-->
 	</div>
-
 </template>
 
 <script type="text/ecmascript-6">
@@ -153,9 +158,6 @@
     require('echarts/lib/component/tooltip');
     require('echarts/lib/component/grid');
     require('echarts/lib/component/legend');
-
-
-
 
 
 	import '../../css/analyze/dashboard.less';
@@ -172,7 +174,8 @@
         SET_FSORTTYPE,
         SET_SUBSORTLIST,
 		SET_SELECTEDSUBSORT,
-		SET_TIMEINTERVAL,
+		SET_STARTTIME,
+		SET_ENDTIME,
         SET_TABLEPAGE,
 		SET_TABLEDATA
     } from '../../vuex/modules/analyze/dashboard';
@@ -195,7 +198,8 @@
                 selectedFSortType: state => state.analyzeDashboard.selectedFSortType,
                 subSortList: state => state.analyzeDashboard.subSortList,
                 selectedSubSort: state => state.analyzeDashboard.selectedSubSort,
-				timeInterval: state => state.analyzeDashboard.timeInterval,
+				startTime: state => state.analyzeDashboard.startTime,
+				endTime: state => state.analyzeDashboard.endTime,
                 chartData: state => state.analyzeDashboard.chartData,
                 tableCount: state => state.analyzeDashboard.tableCount,
                 tablePage: state => state.analyzeDashboard.tablePage,
@@ -213,17 +217,52 @@
 				set: function (newSort) {
 					const self = this;
 					this.$store.commit(SET_SELECTEDSUBSORT, newSort);
-					this.$store.commit(SET_TIMEINTERVAL, '');
+					this.$store.commit(SET_STARTTIME, '');
+					this.$store.commit(SET_ENDTIME, '');
 					this.getTableDataCount().then(function (response) {
 						self.getTableData();
 					});
 				}
 			},
 			// 时间区间切换事件
-			timeIntervalValue: {
-				get: function () { return this.timeInterval; },
+			startTimeValue: {
+				get: function () { return this.startTime; },
 				set: function (newTime) {
-					this.$store.commit(SET_TIMEINTERVAL, newTime);
+					const self = this;
+					if (newTime === '') {
+						self.$store.commit(SET_STARTTIME, '');
+					} else {
+						let year = newTime.getFullYear();
+						let month = newTime.getMonth()+1;
+						if (month < 10) {
+							month = '0'+month;
+						}
+						self.$store.commit(SET_STARTTIME, year+'-'+month);
+					}
+
+					self.getTableDataCount().then(function (response) {
+						self.getTableData();
+					});
+				}
+			},
+			endTimeValue: {
+				get: function () { return this.endTime; },
+				set: function (newTime) {
+					const self = this;
+					if (newTime === '') {
+						self.$store.commit(SET_ENDTIME, '');
+					} else {
+						let year = newTime.getFullYear();
+						let month = newTime.getMonth() + 1;
+						if (month < 10) {
+							month = '0' + month;
+						}
+						self.$store.commit(SET_ENDTIME, year + '-' + month);
+					}
+
+					self.getTableDataCount().then(function (response) {
+						self.getTableData();
+					});
 				}
 			}
         },
@@ -258,7 +297,8 @@
             	// 父类变了再重新获取
             	if (type !== this.selectedFSortType) {
 					this.$store.commit(SET_FSORTTYPE, type);
-					this.$store.commit(SET_TIMEINTERVAL, '');
+					this.$store.commit(SET_STARTTIME, '');
+					this.$store.commit(SET_ENDTIME, '');
             		if (type !== 'comment') {
             			// 有子分类的获取子分类，再获取数据
 						this.getSortByType().then(function () {

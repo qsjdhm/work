@@ -101,9 +101,9 @@ public class AdminAnalyzeController {
 	@RequestMapping(value="/getAnalyzeCount", method = {RequestMethod.POST})
 	public void getAnalyzeCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		// 获取各个表的总数据
-		int articleCount = articleService.getArticleCount(0, "");
-		int noteCount    = articleService.getNoteCount(0, "");
-		int commentCount = commentService.getCommentLength();
+		int articleCount = articleService.getArticleCount(0, "", "");
+		int noteCount    = articleService.getNoteCount(0, "", "");
+		int commentCount = commentService.getCommentLength("", "");
 		int bookCount    = bookService.getBookLength(0);
 		
 		// 计算环比

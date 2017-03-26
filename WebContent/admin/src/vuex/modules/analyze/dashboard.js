@@ -8,7 +8,8 @@ export const SET_OVERVIEWDATA = 'analyze-dashboard/SET_OVERVIEWDATA';  // 概览
 export const SET_FSORTTYPE = 'analyze-dashboard/SET_FSORTTYPE';  // 父分类类型
 export const SET_SUBSORTLIST = 'analyze-dashboard/SET_SUBSORTLIST';  // 子分类列表
 export const SET_SELECTEDSUBSORT = 'analyze-dashboard/SET_SELECTEDSUBSORT';  // 当前子分类选中项
-export const SET_TIMEINTERVAL = 'analyze-dashboard/SET_TIMEINTERVAL';  // 当前时间区间
+export const SET_STARTTIME = 'analyze-dashboard/SET_STARTTIME';  // 起始日期
+export const SET_ENDTIME = 'analyze-dashboard/SET_ENDTIME';  // 结束日期
 export const SET_CHARTDATA = 'analyze-dashboard/SET_CHARTDATA';  // 当前图表数据总数
 export const SET_TABLECOUNT = 'analyze-dashboard/SET_TABLECOUNT';  // 当前表格数据总数
 export const SET_TABLEPAGE = 'analyze-dashboard/SET_TABLEPAGE';  // 当前表格当前页数
@@ -19,7 +20,8 @@ const state  = {
     selectedFSortType : 'article',
     subSortList : [],  // 分类数据列表
     selectedSubSort : '0',  // 默认选中全部
-	timeInterval : '',  // 时间区间
+	startTime : '',  // 起始日期
+	endTime : '',  // 结束日期
     chartData : {},  // 图表数据
     tableCount : 0,  // 表格数据总数
     tablePage : 1,  // 表格当前页
@@ -136,15 +138,29 @@ const actions = {
 			let postData = {};
 			let url = '';
 			if (state.selectedFSortType === 'article') {
-				postData = { sort : state.selectedSubSort };
+				postData = {
+					sort : state.selectedSubSort,
+					start: state.startTime,
+					end  : state.endTime,
+				};
 				url = rootState.BASE_URL + '/articleAction/getArticleCount';
 			} else if (state.selectedFSortType === 'note') {
-				postData = { sort : state.selectedSubSort };
+				postData = {
+					sort : state.selectedSubSort,
+					start: state.startTime,
+					end  : state.endTime,
+				};
 				url = rootState.BASE_URL + '/noteAction/getNoteCount';
 			} else if (state.selectedFSortType === 'comment') {
+				postData = {
+					start: state.startTime,
+					end  : state.endTime,
+				};
 				url = rootState.BASE_URL + '/commentAction/getCommentCount';
 			} else if (state.selectedFSortType === 'book') {
-				postData = { sort : state.selectedSubSort };
+				postData = {
+					sort : state.selectedSubSort
+				};
 				url = rootState.BASE_URL + '/bookAction/getBookCount';
 			}
 
@@ -172,6 +188,8 @@ const actions = {
 			if (state.selectedFSortType === 'article') {
 				postData = {
 					sort : state.selectedSubSort,
+					start: state.startTime,
+					end  : state.endTime,
 					page : state.tablePage,
 					size : 20
 				};
@@ -179,12 +197,16 @@ const actions = {
 			} else if (state.selectedFSortType === 'note') {
 				postData = {
 					sort : state.selectedSubSort,
+					start: state.startTime,
+					end  : state.endTime,
 					page : state.tablePage,
 					size : 20
 				};
 				url = rootState.BASE_URL + '/noteAction/getNoteList';
 			} else if (state.selectedFSortType === 'comment') {
 				postData = {
+					start: state.startTime,
+					end  : state.endTime,
 					page : state.tablePage,
 					size : 20
 				};
@@ -230,8 +252,11 @@ const mutations = {
     [SET_SELECTEDSUBSORT](state , selectedSort){
         state.selectedSubSort = selectedSort;
     },
-	[SET_TIMEINTERVAL](state , timeInterval){
-		state.timeInterval = timeInterval;
+	[SET_STARTTIME](state , startTime){
+		state.startTime = startTime;
+	},
+	[SET_ENDTIME](state , endTime){
+		state.endTime = endTime;
 	},
     [SET_CHARTDATA](state , chartData){
         var returnData = {};
@@ -284,8 +309,6 @@ const mutations = {
                 data : dataValue
             }];
         }
-        console.info('图表数据：：：：：：：：：');
-        console.info(returnData);
         state.chartData = returnData;
     },
     [SET_TABLECOUNT](state , tableCount){

@@ -42,13 +42,12 @@ public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements 
 		
 		String sql = "";
 		if(sortId==0){
-			sql = "select COUNT(*) from TBook";
+			sql = "select COUNT(*) as count from book";
 		}else{
-			sql = "select COUNT(*) from TBook where Sort_ID="+sortId+"";
+			sql = "select COUNT(*) as count from book where Sort_ID="+sortId+"";
 		}
-		List book = this.getDao().list(sql);
-		Long count = (Long)book.listIterator().next();
-		return count.intValue();
+		int count = this.getDao().getSqlQueryCount(sql);
+		return count;
 	}
 	
 	/**

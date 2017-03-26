@@ -3,30 +3,45 @@
  * @type {string}
  */
 
+import Vue from 'vue';
+
 // 更新选中菜单
 export const SET_CHILDMENUSHOW   = 'fremework/SET_CHILDMENUSHOW';
 export const SET_TOPACTIVEMENU   = 'fremework/SET_TOPACTIVEMENU';
 export const SET_CHILDACTIVEMENU = 'fremework/SET_CHILDACTIVEMENU';
+export const SET_UNREADCOMMENT   = 'fremework/SET_UNREADCOMMENT';
 
 const state  = {
     childMenuShow   : true,
 	topActiveMenu   : '',  // 顶级菜单当前选中项
 	childActiveMenu : '',  // 子级菜单当前选中项
 	menuList : [
+		// pId为顶级菜单的id
 		{
 			'id': '1', 'icon': 'fa-bar-chart', 'name': '分析', 'level': 1, 'childMenu': [
 				{
-					'id': '1-1', 'pId': '1', 'icon': 'fa-line-chart', 'name': '数据概览', 'level': 2, 'path': '/home/analyze-dashboard'
+					'id': '1-1', 'pId': '1', 'icon': 'fa-pie-chart', 'name': '数据概览', 'level': 2, 'path': '/home/analyze-dashboard'
 				},
 				{
-					'id': '1-2', 'icon': 'fa-line-chart', 'name': '文章分析', 'level': 2, 'childMenu': [
-						{'id': '1-2-1', 'pId': '1', 'name': '地域分析', 'level': 3, 'path': '/home/analyze-article-territory'},
-						{'id': '1-2-2', 'pId': '1', 'name': '数据分析', 'level': 3, 'path': '/home/analyze-article-data'}
+					'id': '1-2', 'icon': 'fa-file-text-o', 'name': '文章分析', 'level': 2, 'childMenu': [
+						{'id': '1-2-1', 'pId': '1', 'name': '用户访问量', 'level': 3, 'path': '/home/analyze-article-pv'},
+						{'id': '1-2-2', 'pId': '1', 'name': '数据分布', 'level': 3, 'path': '/home/analyze-article-data'}
 					]
 				},
 				{
-					'id': '1-3', 'icon': 'fa-line-chart', 'name': '评论分析', 'level': 2, 'childMenu': [
-						{'id': '1-3-1', 'pId': '1', 'name': '地域分析', 'level': 3, 'path': '/home/analyze-comment-territory'}
+					'id': '1-3', 'icon': 'fa-file-code-o', 'name': '笔记分析', 'level': 2, 'childMenu': [
+						{'id': '1-3-1', 'pId': '1', 'name': '用户访问量', 'level': 3, 'path': '/home/analyze-note-pv'},
+						{'id': '1-3-2', 'pId': '1', 'name': '数据分布', 'level': 3, 'path': '/home/analyze-note-data'}
+					]
+				},
+				{
+					'id': '1-4', 'icon': 'fa-commenting-o', 'name': '评论分析', 'level': 2, 'childMenu': [
+						{'id': '1-4-1', 'pId': '1', 'name': '评论热度值', 'level': 3, 'path': '/home/analyze-comment-heat'}
+					]
+				},
+				{
+					'id': '1-5', 'icon': 'fa-book', 'name': '图书分析', 'level': 2, 'childMenu': [
+						{'id': '1-5-1', 'pId': '1', 'name': '图书热度值', 'level': 3, 'path': '/home/analyze-book-heat'}
 					]
 				}
 			],
@@ -66,7 +81,8 @@ const state  = {
 				},
 			]
 		}
-    ]
+    ],
+	unreadComment    : 0
 };
 
 // getters
@@ -98,7 +114,21 @@ const actions = {
 	 		commit(SET_CHILDACTIVEMENU, childMenu);
 	 		resolve();
 	 	})
-    }
+    },
+	// 获取未读评论
+	getUnreadComment ({ dispatch, commit, state, rootState }) {
+		return new Promise((resolve, reject) => {
+			Vue.http.post(rootState.BASE_URL + '/commentAction/getUnreadCommentLength', {}, {
+				headers: {
+					"X-Requested-With": "XMLHttpRequest"
+				},
+				emulateJSON: true
+			}).then(function(response) {
+				commit(SET_UNREADCOMMENT, response.data.data);
+				resolve(response.data);
+			});
+		})
+	},
 };
 
 // mutations
@@ -113,6 +143,9 @@ const mutations = {
     [SET_CHILDACTIVEMENU](state , childActiveMenu){
         state.childActiveMenu = childActiveMenu;
     },
+	[SET_UNREADCOMMENT](state , unreadComment){
+		state.unreadComment = unreadComment;
+	},
 };
 
 export default {

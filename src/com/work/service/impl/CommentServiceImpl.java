@@ -1,5 +1,6 @@
 package com.work.service.impl;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -30,16 +31,56 @@ public class CommentServiceImpl<T extends TComment> extends ServiceImpl<T> imple
 	}
 	
 	/**
-	 *  获取评论的总个数
-	 *  @return 总个数
+	 *  根据时间区间获取评论总个数
+	 *  @param startTime 开始日期
+	 *  @param endTime 结束日期
+	 *  @return 评论总个数
 	 */
 	@Override
-	public int getCommentLength() {
+	public int getCommentLength(String startTime, String endTime) {
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+
+		String sql = "select COUNT(*) as count from comment where left(Comment_Time, 7) >= '"+startTime+"' and left(Comment_Time, 7) <= '"+endTime+"'";
+		int count = this.getDao().getSqlQueryCount(sql);
+		return count;
+	}
+	
+	/**
+	 *  根据开始日期、结束日期、页数、每页个数获取评论列表
+	 *  @param startTime 开始时间
+	 *  @param endTime 结束时间
+	 *  @param pageId 当前页
+	 *  @param pageNum 每页个数
+	 *  @return 评论总个数
+	 */
+	@Override
+	public List<Map<String, Object>> getCommentList(String startTime, String endTime, int pageId, int pageNum) {
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+		// 首先需要根据页数和每页个数计算出起始数和终止数
+		int start = pageNum*(pageId-1);
+		int end = pageNum;
+		String sql = "select * from comment where left(Comment_Time, 7) >= '"+startTime+"' and left(Comment_Time, 7) <= '"+endTime+"' order by Comment_ID desc limit "+ start + " , " + end;
 		
-		String sql = "select COUNT(*) from TComment";
-		List comment = this.getDao().list(sql);
-		Long count = (Long)comment.listIterator().next();
-		return count.intValue();
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
+		}
+		
+		return null;
 	}
 	
 	/**

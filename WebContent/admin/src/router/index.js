@@ -35,9 +35,12 @@ const login                     = resolve => require(['../views/login'], resolve
 const framework                 = resolve => require(['../views/framework'], resolve);
 // 分析菜单
 const analyzeDashboard          = resolve => require(['../views/analyze/dashboard'], resolve);
-const analyzeArticleTerritory   = resolve => require(['../views/analyze/article/article-territory'], resolve);
+const analyzeArticlePV          = resolve => require(['../views/analyze/article/article-pv'], resolve);
 const analyzeArticleData        = resolve => require(['../views/analyze/article/article-data'], resolve);
-const analyzeCommentTerritory   = resolve => require(['../views/analyze/comment/comment-territory'], resolve);
+const analyzeNotePV             = resolve => require(['../views/analyze/note/note-pv'], resolve);
+const analyzeNoteData           = resolve => require(['../views/analyze/note/note-data'], resolve);
+const analyzeCommentHeat        = resolve => require(['../views/analyze/comment/comment-heat'], resolve);
+const analyzeBookHeat           = resolve => require(['../views/analyze/book/book-heat'], resolve);
 // 数据管理菜单
 const dataArticleAdd            = resolve => require(['../views/data/article/article-add'], resolve);
 const dataArticleDel            = resolve => require(['../views/data/article/article-del'], resolve);
@@ -59,29 +62,47 @@ export default new Router({
             beforeEnter: requireAuth,
             children: [
                 {
-                    meta: { pId: '1' },
+                    meta: { pId: '1' },  // 用来给每个子页面做当前顶级菜单对比，看看是否需要跳转顶级菜单
                     path: 'analyze-dashboard',
 					name: '数据概览',
                     component: analyzeDashboard
                 },
                 {
                     meta: { pId: '1' },
-                    path: 'analyze-article-territory',
-                    name: '地域分析',
-                    component: analyzeArticleTerritory
+                    path: 'analyze-article-pv',
+                    name: '用户访问量',
+                    component: analyzeArticlePV
                 },
                 {
                     meta: { pId: '1' },
                     path: 'analyze-article-data',
-                    name: '数据分析',
+                    name: '数据分布',
                     component: analyzeArticleData
                 },
+				{
+					meta: { pId: '1' },
+					path: 'analyze-note-pv',
+					name: '用户访问量',
+					component: analyzeNotePV
+				},
+				{
+					meta: { pId: '1' },
+					path: 'analyze-note-data',
+					name: '数据分布',
+					component: analyzeNoteData
+				},
                 {
                     meta: { pId: '1' },
-                    path: 'analyze-comment-territory',
-                    name: '地域分析',
-                    component: analyzeCommentTerritory
+                    path: 'analyze-comment-heat',
+                    name: '评论热度值',
+                    component: analyzeCommentHeat
                 },
+				{
+					meta: { pId: '1' },
+					path: 'analyze-book-heat',
+					name: '图书热度值',
+					component: analyzeBookHeat
+				},
 
 
                 {

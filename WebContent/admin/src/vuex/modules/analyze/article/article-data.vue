@@ -1,6 +1,6 @@
 <template>
 	<div>
-        分析 - 文章分析 - 地域分析 - /home/analyze-article-data
+        分析 - 文章分析 - 数据分析 - /home/analyze-article-data
 		<router-link to="/home/addNote">addNote</router-link>
 	</div>
 

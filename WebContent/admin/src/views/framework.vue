@@ -28,17 +28,16 @@
                         </div>
                         <span class="slicer">|</span>
                         <div class="now-date">
-                            <!--<i class="fa fa-calendar"></i>-->
 							{{nowDate}}
                         </div>
                         <span class="slicer">|</span>
                         <div class="system-settings">
-                            <el-badge value="3" class="item unread-message">
+                            <el-badge :value="unreadComment" class="item unread-message">
                                 <i class="fa fa-bell-o"></i>
                             </el-badge>
                             <i class="setting fa fa-cog"></i>
                             <i class="user fa fa-user-circle-o"><span>张三</span></i>
-                            <i class="logout fa fa-sign-out"></i>
+                            <i @click="signOut" class="logout fa fa-sign-out"></i>
                         </div>
 					</div>
 				</el-col>
@@ -121,6 +120,7 @@
                 menuList: state => state.fremework.menuList,
 				topActiveMenu: state => state.fremework.topActiveMenu,
                 childActiveMenu: state => state.fremework.childActiveMenu,
+				unreadComment: state => state.fremework.unreadComment,
 			}),
 			// 子菜单列表
 			childMenuList : function () {
@@ -141,7 +141,8 @@
 			...mapActions([
                 'setChildMenuShow',
 				'setActiveTopMenu',
-                'setActiveChildMenu'
+                'setActiveChildMenu',
+				'getUnreadComment'
 			]),
 
             // 组件响应方法
@@ -172,6 +173,12 @@
 			},
             childMenuOpen: function() {},
             childMenuClose: function() {},
+
+			// dom触发事件方法
+			signOut: function () {
+				delete localStorage.workUser;
+				window.location.href = this.$store.state.BASE_URL + '/admin';
+			},
 
 
             // 功能性方法
@@ -224,6 +231,9 @@
             setInterval(function(){
                 self.nowDate = self.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
             },1000);
+
+            // 获取未读评论
+			self.getUnreadComment();
 			//console.info(this.$store.state.FremeworkPage.activeMenu);
 			//在实例创建之后同步调用。此时实例已经结束解析选项，这意味着已建立：数据绑定，计算属性，方法，watcher/事件回调。
 			//但是还没有开始 DOM 编译，$el 还不存在,但是实例存在,即this.a存在,可打印出来 。

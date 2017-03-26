@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import com.work.util.ENV;
 
 import javax.annotation.Resource;
@@ -86,116 +88,6 @@ public class AdminArticleController {
 		this.commentService = commentService;
 	}
 	
-	
-	/****************供页面加载转向的ACTION******************/
-	
-	
-	// 负责映射到新增文章页面
-	@RequestMapping(value = "/addPage")
-	public ModelAndView addPage() throws Exception{
-
-		// 1.获取除了笔记以外的文章分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSortByAriticleNotNote();
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, 2);
-		// 2.获取标签分类
-		List <TSort> tags = sortService.getSort(4, 0, 1000);
-		String tagsHtml = generateHtml.generateAdminTagsHtml(tags);
-		// 3.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 4.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("tagsHtml", tagsHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/article/add_article");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
-	// 负责映射到删除文章页面
-	@RequestMapping(value = "/delPage/{sort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView delPage(
-			@PathVariable(value="sort") Integer sort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取除了笔记以外的文章分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSortByAriticleNotNote();
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, sort);
-		// 2.根据分类获得此类型下的文章总个数
-		int count = articleService.getArticleLength(sort);
-		// 3.根据分类、页数获取文章列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TArticle> articles = articleService.getArticle(sort, page, 6);
-		String articleHtml = generateHtml.generateAdminArticleDelHtml(articles);
-		// 4.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 5.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("sortId", sort);  // 当前分类
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("articleHtml", articleHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/article/del_article");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	// 负责映射到修改文章页面
-	@RequestMapping(value = "/updatePage/{sort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView updatePage(
-			@PathVariable(value="sort") Integer sort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取除了笔记以外的文章分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSortByAriticleNotNote();
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, sort);
-		// 2.根据分类获得此类型下的文章总个数
-		int count = articleService.getArticleLength(sort);
-		// 3.根据分类、页数获取文章列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TArticle> articles = articleService.getArticle(sort, page, 6);
-		String articleHtml = generateHtml.generateAdminArticleUpdateHtml(articles);
-		// 4.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 5.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("sortId", sort);  // 当前分类
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("articleHtml", articleHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/article/update_article");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
-	/****************供AJAX请求的ACTION******************/
-	
 
 	/*
 	 * 功能：根据文章ID，获取此文章下的评论数据
@@ -238,8 +130,10 @@ public class AdminArticleController {
 	public void getArticleCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		String time = request.getParameter("time");
-		int count = articleService.getArticleCount(sort, time);
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
+		int count = articleService.getArticleCount(sort, startTime, endTime);
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
 		jsonObject.put("msg", "获取文章个数成功");
@@ -255,36 +149,26 @@ public class AdminArticleController {
 	public void getArticleList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		List <TArticle> articles = articleService.getArticle(sort, page, size);
+		List <Map<String,Object>> articleList = articleService.getArticleList(sort, startTime, endTime, page, size);
 		
 		JSONArray articleJsonArray = new JSONArray();
-		System.out.println(articles.size());
-		for(int i=0; i<articles.size(); i++){
+		for(int i=0; i<articleList.size(); i++){
 			JSONObject articleJson = new JSONObject();
-			TArticle article = articles.get(i);
+			Map <String,Object> article = articleList.get(i);
 			
-			String contentHtml = article.getArticle_Content();
-			String content = "";
-			// 过滤图片
-			OperateImage operateImage = new OperateImage();
-			OperateString operateString = new OperateString();
-			contentHtml = operateImage.filterImage(contentHtml);
-			// 过滤html所有标签
-			contentHtml = operateString.filterHtmlTag(contentHtml);
-			// 截取字符串
-			contentHtml = operateString.interceptCharacters(contentHtml, 0, 150);
-			content = contentHtml.replaceAll("&nbsp;", "");  
-
-			articleJson.put("Article_ID", article.getArticle_ID());
-			articleJson.put("Article_Title", article.getArticle_Title());
-			articleJson.put("Article_Tag", article.getArticle_Tag());
-			articleJson.put("Article_Content", content);
-			articleJson.put("Sort_Name", article.getSort_Name());
-			articleJson.put("Recommend_Num", article.getRecommend_Num());
-			articleJson.put("Read_Num", article.getRead_Num());
-			articleJson.put("Article_Date", article.getArticle_Date());
+			articleJson.put("Article_ID", article.get("Article_ID").toString());
+			articleJson.put("Article_Title", article.get("Article_Title").toString());
+			articleJson.put("Article_Date", article.get("Article_Date").toString());
+			articleJson.put("Article_Tag", article.get("Article_Tag").toString());
+			articleJson.put("Sort_ID", article.get("Sort_ID").toString());
+			articleJson.put("Sort_Name", article.get("Sort_Name").toString());
+			articleJson.put("F_Sort_ID", article.get("F_Sort_ID").toString());
+			articleJson.put("Recommend_Num", article.get("Recommend_Num").toString());
+			articleJson.put("Read_Num", article.get("Read_Num").toString());
 			
 			articleJsonArray.add(articleJson);
 		}

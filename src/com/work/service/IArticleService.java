@@ -8,23 +8,34 @@ import com.work.vo.TArticle;
 
 public interface IArticleService <T extends TArticle> extends IService<T> {
 
+	// 根据类型获取数据分布
+	public List<Map<String, Object>> getArticleDistribution(String type);
+		
 	// 根据分类、时间区间获取文章总个数
-	public int getArticleCount(int fSortId, String time);
+	public int getArticleCount(int fSortId, String startTime, String endTime);
 	
 	// 根据分类、时间区间获取笔记总个数
-	public int getNoteCount(int fSortId, String time);
+	public int getNoteCount(int fSortId, String startTime, String endTime);
 	
+	// 根据总分类、开始日期、结束日期、页数、每页个数获取此分类下的文章列表
+	public List<Map<String, Object>> getArticleList(int fSortId, String startTime, String endTime, int pageId, int pageNum);
+		
+	// 根据分类获取笔记数据列表
+	public List<Map<String, Object>> getNoteList(int sortId, String startTime, String endTime, int pageId, int pageNum);
+		
+	
+	// 根据总分类、页数、每页个数获取此分类下的文章列表
+	public List<T> getArticle(int fSortId, int pageId, int pageNum);
+		
+		
 	// 根据总分类获得此类型下的文章总个数
 	public int getArticleLength(int fSortId);
 	
 	// 根据总分类和每页个数获取此分类下文章的总页数
 	public int getArticlePageCount(int fSortId, int pageNum);
 	
-	// 根据总分类、页数、每页个数获取此分类下的文章列表
-	public List<T> getArticle(int fSortId, int pageId, int pageNum);
 	
-	// 根据类型获取数据分布
-	public List<Map<String, Object>> getArticleDistribution(String type);
+	
 	
 
 	/* 子分类就相当于是笔记下的文章 */
@@ -64,8 +75,7 @@ public interface IArticleService <T extends TArticle> extends IService<T> {
 	// 根据id获取此文章的下一篇文章
 	public TArticle getNextArticleByID(int id);
 
-	// 根据分类获取笔记数据列表
-	public List<T> getNoteList(int sortId, String time, int pageId, int pageNum);
+	
 	
 }
 

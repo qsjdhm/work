@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import com.work.util.ENV;
 
 import javax.annotation.Resource;
@@ -202,8 +204,10 @@ public class AdminNoteController {
 	public void getNoteCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		String time = request.getParameter("time");
-		int count = articleService.getNoteCount(sort, time);
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
+		int count = articleService.getNoteCount(sort, startTime, endTime);
+		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
 		jsonObject.put("msg", "获取笔记个数成功");
@@ -216,38 +220,29 @@ public class AdminNoteController {
 	}
 	
 	@RequestMapping(value = "/getNoteList")
-	public void getArticleList(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public void getNoteList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		String time = request.getParameter("time");
-		List <TArticle> notes = articleService.getNoteList(sort, time, page, size);
+		List <Map<String,Object>> noteList = articleService.getNoteList(sort, startTime, endTime, page, size);
 		
 		JSONArray noteJsonArray = new JSONArray();
-		for(int i=0; i<notes.size(); i++){
+		for(int i=0; i<noteList.size(); i++){
 			JSONObject noteJson = new JSONObject();
-			TArticle article = notes.get(i);
+			Map <String,Object> note = noteList.get(i);
 			
-			String contentHtml = article.getArticle_Content();
-			String content = "";
-			// 过滤图片
-			OperateImage operateImage = new OperateImage();
-			OperateString operateString = new OperateString();
-			contentHtml = operateImage.filterImage(contentHtml);
-			// 过滤html所有标签
-			contentHtml = operateString.filterHtmlTag(contentHtml);
-			// 截取字符串
-			contentHtml = operateString.interceptCharacters(contentHtml, 0, 150);
-			content = contentHtml.replaceAll("&nbsp;", "");  
-			
-			noteJson.put("Article_ID", article.getArticle_ID());
-			noteJson.put("Article_Title", article.getArticle_Title());
-			noteJson.put("Article_Content", content);
-			noteJson.put("Sort_Name", article.getSort_Name());
-			noteJson.put("Recommend_Num", article.getRecommend_Num());
-			noteJson.put("Read_Num", article.getRead_Num());
-			noteJson.put("Article_Date", article.getArticle_Date());
+			noteJson.put("Article_ID", note.get("Article_ID").toString());
+			noteJson.put("Article_Title", note.get("Article_Title").toString());
+			noteJson.put("Article_Date", note.get("Article_Date").toString());
+			noteJson.put("Article_Tag", note.get("Article_Tag").toString());
+			noteJson.put("Sort_ID", note.get("Sort_ID").toString());
+			noteJson.put("Sort_Name", note.get("Sort_Name").toString());
+			noteJson.put("F_Sort_ID", note.get("F_Sort_ID").toString());
+			noteJson.put("Recommend_Num", note.get("Recommend_Num").toString());
+			noteJson.put("Read_Num", note.get("Read_Num").toString());
 			
 			noteJsonArray.add(noteJson);
 		}

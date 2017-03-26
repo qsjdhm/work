@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,6 @@ import com.work.vo.TBook;
 import com.work.vo.TLink;
 import com.work.vo.TSort;
 import com.work.vo.TComment;
-
 import com.work.util.OperateEmail;
 
 
@@ -91,7 +91,9 @@ public class AdminCommentController {
 	@RequestMapping(value = "/getCommentCount")
 	public void getCommentCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
-		int count = commentService.getCommentLength();
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
+		int count = commentService.getCommentLength(startTime, endTime);
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
@@ -123,20 +125,26 @@ public class AdminCommentController {
 	@RequestMapping(value = "/getCommentList")
 	public void getCommentList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		List <TComment> comments = commentService.getComment(page, size);
+		List <Map<String,Object>> commentList = commentService.getCommentList(startTime, endTime, page, size);
 		
 		JSONArray commentJsonArray = new JSONArray();
-		for(int i=0; i<comments.size(); i++){
+		for(int i=0; i<commentList.size(); i++){
 			JSONObject commentJson = new JSONObject();
-			TComment comment = comments.get(i);
-			commentJson.put("Comment_ID", comment.getComment_ID());
-			commentJson.put("Comment_Person_Name", comment.getComment_Person_Name());
-			commentJson.put("Comment_Content", comment.getComment_Content());
-			commentJson.put("Comment_ArticleID", comment.getComment_ArticleID());
-			commentJson.put("Comment_ArticleTitle", comment.getComment_ArticleTitle());
-			commentJson.put("Comment_Read", comment.getComment_Read());
+			Map <String,Object> comment = commentList.get(i);
+			
+			commentJson.put("Comment_ID", comment.get("Comment_ID").toString());
+			commentJson.put("Comment_Person_Name", comment.get("Comment_Person_Name").toString());
+			commentJson.put("Comment_Person_Email", comment.get("Comment_Person_Email").toString());
+			commentJson.put("Comment_Content", comment.get("Comment_Content").toString());
+			commentJson.put("Comment_Time", comment.get("Comment_Time").toString());
+			commentJson.put("Comment_ArticleID", comment.get("Comment_ArticleID").toString());
+			commentJson.put("Comment_ArticleTitle", comment.get("Comment_ArticleTitle").toString());
+			commentJson.put("Parent_CommentID", comment.get("Parent_CommentID").toString());
+			commentJson.put("Comment_Read", comment.get("Comment_Read").toString());
 			
 			commentJsonArray.add(commentJson);
 		}

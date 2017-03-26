@@ -35,4 +35,12 @@ public interface IDao<T> {
 	 * 功能描述：执行mysql原生sql查询语句
 	 */
 	public List<Map<String, Object>> sqlQuery(String sql);
+	/**
+	 * 功能描述：执行mysql原生sql查询语句--带分页
+	 */
+	public List<Map<String, Object>> pageSqlQuery(String sql, int start, int end);
+	/**
+	 * 功能描述：执行mysql原生sql查询获取总数
+	 */
+	public int getSqlQueryCount(String sql);
 }

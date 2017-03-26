@@ -1,5 +1,6 @@
 package com.work.service.impl;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -18,61 +19,143 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 	/**
 	 *  根据分类、时间区间获取文章总个数
 	 *  @param fSortId 文章总类型id
-	 *  @param time 文章时间区间
+	 *  @param startTime 开始日期
+	 *  @param endTime 结束日期
 	 *  @return 文章个数
 	 */
 	@Override
-	public int getArticleCount(int fSortId, String time) {
+	public int getArticleCount(int fSortId, String startTime, String endTime) {
 		
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+
 		String sql = "";
 		if(fSortId==0){
-			sql = "select COUNT(*) from TArticle where F_Sort_ID<>8";
+			sql = "select COUNT(*) as count from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID<>8";
 		}else{
-			sql = "select COUNT(*) from TArticle where F_Sort_ID="+fSortId+"";
+			sql = "select COUNT(*) as count from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID="+fSortId+"";
 		}
-		List article = this.getDao().list(sql);
-		Long count = (Long)article.listIterator().next();
-		return count.intValue();
+		int count = this.getDao().getSqlQueryCount(sql);
+		return count;
+		
+		
+//		String sql = "";
+//		if(fSortId==0){
+//			sql = "select COUNT(*) from TArticle where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID<>8";
+//		}else{
+//			sql = "select COUNT(*) from TArticle where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID="+fSortId+"";
+//		}
+//		List article = this.getDao().list(sql);
+//		Long count = (Long)article.listIterator().next();
+//		return count.intValue();
 	}
 	
 	/**
 	 *  根据分类、时间区间获取笔记总个数
 	 *  @param sortId 笔记子类型
-	 *  @param time 文章时间区间
+	 *  @param startTime 开始日期
+	 *  @param endTime 结束日期
+	 *  @return 文章个数
 	 */
 	@Override
-	public int getNoteCount(int sortId, String time) {
+	public int getNoteCount(int sortId, String startTime, String endTime) {
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+
 		String sql = "";
 		if(sortId==0){
-			sql = "select COUNT(*) from TArticle where F_Sort_ID=8";
+			sql = "select COUNT(*) as count from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID=8";
 		}else{
-			sql = "select COUNT(*) from TArticle where Sort_ID="+sortId+"";
+			sql = "select COUNT(*) as count from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and Sort_ID="+sortId+"";
 		}
-		List article = this.getDao().list(sql);
-		Long count = (Long)article.listIterator().next();
-		return count.intValue();
+		int count = this.getDao().getSqlQueryCount(sql);
+		return count;
+	}
+	
+	/**
+	 *  根据总分类、开始日期、结束日期、页数、每页个数获取此分类下的文章列表
+	 *  @param fSortId 文章总类型id
+	 *  @param startTime 开始时间
+	 *  @param endTime 结束时间
+	 *  @param pageId 当前页
+	 *  @param pageNum 每页个数
+	 *  @return 文章列表
+	 */
+	
+	@Override
+	public List<Map<String, Object>> getArticleList(int fSortId, String startTime, String endTime, int pageId, int pageNum) {
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+		// 首先需要根据页数和每页个数计算出起始数和终止数
+		int start = pageNum*(pageId-1);
+		int end = pageNum;
+		String sql = "";
+		
+		if(fSortId==0){
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID<>8 order by Article_ID desc limit "+ start + " , " + end;
+		}else{  // 分类查询
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID="+fSortId+" order by Article_ID limit "+ start + " , " + end;
+		}
+		
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
+		}
+		
+		return null;
 	}
 	
 	/**
 	 *  根据分类、时间区间获取笔记全部的数据
 	 *  @param sortId 笔记子类型
-	 *  @param time 文章时间区间
+	 *  @param startTime 开始时间
+	 *  @param endTime 结束时间
+	 *  @param pageId 当前页
+	 *  @param pageNum 每页个数
+	 *  @return 笔记列表
 	 */
 	@Override
-	public List<T> getNoteList(int sortId, String time, int pageId, int pageNum) {
+	public List<Map<String, Object>> getNoteList(int sortId, String startTime, String endTime, int pageId, int pageNum) {
+		
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+		// 首先需要根据页数和每页个数计算出起始数和终止数
 		int start = pageNum*(pageId-1);
 		int end = pageNum;
-		
 		String sql = "";
 		if(sortId==0){
-			sql = "select article from TArticle article where F_Sort_ID=8 order by Article_ID desc";
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID=8 order by Article_ID desc limit "+ start + " , " + end;
 		}else{
-			sql = "select article from TArticle article where Sort_ID="+sortId+" order by Article_ID desc";
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and Sort_ID="+sortId+" order by Article_ID limit "+ start + " , " + end;
 		}
 
-		List<T> articles = this.getDao().pageQuery(sql, start, end);
-		if(articles.size()>0){
-			return articles;
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
 		}
 		
 		return null;
@@ -97,6 +180,34 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 			return mapList;
 		}
 		
+		return null;
+	}
+	
+	
+	
+	/**
+	 *  根据总分类、页数、每页个数获取此分类下的文章列表
+	 *  @param fSortId 文章总类型id
+	 *  @param pageId 当前页
+	 *  @param pageNum 每页个数
+	 *  @return 文章列表
+	 */
+	@Override
+	public List<T> getArticle(int fSortId, int pageId, int pageNum) {
+		
+		// 首先需要根据页数和每页个数计算出起始数和终止数
+		int start = pageNum*(pageId-1);
+		int end = pageNum;
+		String sql = "";
+		if(fSortId==0){
+			sql = "select article from TArticle article order by Article_ID desc ";
+		}else{
+			sql = "select article from TArticle article where F_Sort_ID="+fSortId+" order by Article_ID desc ";
+		}
+		List<T> articles = this.getDao().pageQuery(sql, start, end);
+		if(articles.size()>0){
+			return articles;
+		}
 		return null;
 	}
 	
@@ -141,32 +252,6 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		int pageCount = (count-1) / pageNum+1;  // 这样就计算好了页码数量，逢1进1
 		
 		return pageCount;
-	}
-	
-	/**
-	 *  根据总分类、页数、每页个数获取此分类下的文章列表
-	 *  @param fSortId 文章总类型id
-	 *  @param pageId 当前页
-	 *  @param pageNum 每页个数
-	 *  @return 文章列表
-	 */
-	@Override
-	public List<T> getArticle(int fSortId, int pageId, int pageNum) {
-		
-		// 首先需要根据页数和每页个数计算出起始数和终止数
-		int start = pageNum*(pageId-1);
-		int end = pageNum;
-		String sql = "";
-		if(fSortId==0){
-			sql = "select article from TArticle article where F_Sort_ID<>8 order by Article_ID desc ";
-		}else{
-			sql = "select article from TArticle article where F_Sort_ID="+fSortId+" order by Article_ID desc ";
-		}
-		List<T> articles = this.getDao().pageQuery(sql, start, end);
-		if(articles.size()>0){
-			return articles;
-		}
-		return null;
 	}
 	
 	
