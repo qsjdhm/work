@@ -164,16 +164,36 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 	/**
 	 *  根据类型获取数据分布
 	 *  @param type 数据类型
+	 *  @param sort 子分类
+	 *  @param startTime 开始日期
+	 *  @param endTime 开始日期
 	 *  @return 分布数据值
 	 */
 	@Override
-	public List<Map<String,Object>> getArticleDistribution(String type) {
+	public List<Map<String,Object>> getArticleDistribution(String type, int sort, String startTime, String endTime) {
+		
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
 		
 		String sql = "";
 		if(type.equals("article")){
-			sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle  from article where F_Sort_ID<>8) temp group by cycle";
+			if (sort==0) {  // 不分类下的时间区间的文章
+				sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle from article where F_Sort_ID<>8 and left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"') temp group by cycle";
+			} else {  // 分类下的时间区间的文章
+				sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle from article where F_Sort_ID<>8 and left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and Sort_ID="+sort+") temp group by cycle";
+			}
 		}else{
-			sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle from article where F_Sort_ID=8) temp group by cycle";
+			if (sort==0) {  // 不分类下的时间区间的笔记
+				sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle from article where F_Sort_ID=8 and left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"') temp group by cycle";
+			} else {
+				sql = "select cycle,COUNT(*) as count from (select left(Article_Date, 7) cycle from article where F_Sort_ID=8 and left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and Sort_ID="+sort+") temp group by cycle";
+			}
 		}
 		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
 		if(mapList.size()>0){

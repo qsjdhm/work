@@ -112,9 +112,9 @@ public class AdminAnalyzeController {
 		String commentTendency = "";
 		String bookTendency = "37%";
 		
-		List <Map<String,Object>> articleList = articleService.getArticleDistribution("article");
-		List <Map<String,Object>> noteList = articleService.getArticleDistribution("note");
-		List <Map<String,Object>> commentList = commentService.getCommentDistribution();
+		List <Map<String,Object>> articleList = articleService.getArticleDistribution("article", 0, "", "");
+		List <Map<String,Object>> noteList = articleService.getArticleDistribution("note", 0, "", "");
+		List <Map<String,Object>> commentList = commentService.getCommentDistribution("", "");
 		
 		
 		// 文章环比
@@ -181,11 +181,17 @@ public class AdminAnalyzeController {
 		JSONArray dataJsonArray = new JSONArray();
 		List <Map<String,Object>> mapList = null;
 		if (type.equals("article") || type.equals("note")) {
-			mapList = articleService.getArticleDistribution(type);
+			int sort = Integer.parseInt(request.getParameter("sort"));
+			String startTime = request.getParameter("start");
+			String endTime = request.getParameter("end");
+			mapList = articleService.getArticleDistribution(type, sort, startTime, endTime);
 		} else if (type.equals("comment")) {
-			mapList = commentService.getCommentDistribution();
+			String startTime = request.getParameter("start");
+			String endTime = request.getParameter("end");
+			mapList = commentService.getCommentDistribution(startTime, endTime);
 		} else if (type.equals("book")) {
-			mapList = bookService.getBookDistribution();
+			int sort = Integer.parseInt(request.getParameter("sort"));
+			mapList = bookService.getBookDistribution(sort);
 		}
 		
 		int total = 0;

@@ -9,7 +9,7 @@ import com.work.vo.TComment;
 public interface ICommentService <T extends TComment> extends IService<T> {
 	
 	// 获取评论的数据分布
-	public List<Map<String, Object>> getCommentDistribution();
+	public List<Map<String, Object>> getCommentDistribution(String startTime, String endTime);
 	
 	// 获取评论的总个数
 	public int getCommentLength(String startTime, String endTime);

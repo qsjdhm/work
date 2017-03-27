@@ -115,9 +115,34 @@ const actions = {
 	getChartData ({ dispatch, commit, state, rootState }) {
 		// 根据父分类、子分类获取数据
 		return new Promise((resolve, reject) => {
-			Vue.http.post(rootState.BASE_URL + '/analyzeAction/getDataDistribution', {
-				type: state.selectedFSortType
-			}, {
+			let postData = {};
+			if (state.selectedFSortType === 'article') {
+				postData = {
+					type : state.selectedFSortType,
+					sort : state.selectedSubSort,
+					start: state.startTime,
+					end  : state.endTime,
+				};
+			} else if (state.selectedFSortType === 'note') {
+				postData = {
+					type : state.selectedFSortType,
+					sort : state.selectedSubSort,
+					start: state.startTime,
+					end  : state.endTime,
+				};
+			} else if (state.selectedFSortType === 'comment') {
+				postData = {
+					type : state.selectedFSortType,
+					start: state.startTime,
+					end  : state.endTime,
+				};
+			} else if (state.selectedFSortType === 'book') {
+				postData = {
+					type : state.selectedFSortType,
+					sort : state.selectedSubSort
+				};
+			}
+			Vue.http.post(rootState.BASE_URL + '/analyzeAction/getDataDistribution', postData, {
 				headers: {
 					"X-Requested-With": "XMLHttpRequest"
 				},

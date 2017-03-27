@@ -220,7 +220,14 @@
 					this.$store.commit(SET_STARTTIME, '');
 					this.$store.commit(SET_ENDTIME, '');
 					this.getTableDataCount().then(function (response) {
-						self.getTableData();
+						return self.getTableData();
+					}).then(function (response) {
+						// 获取数据区间个数
+						return self.getChartData();
+					}).then(function (response) {
+						self.sum = response.total;
+						self.monthly = response.monthly;
+						self.initChart();
 					});
 				}
 			},
@@ -241,7 +248,14 @@
 					}
 
 					self.getTableDataCount().then(function (response) {
-						self.getTableData();
+						return self.getTableData();
+					}).then(function (response) {
+						// 获取数据区间个数
+						return self.getChartData();
+					}).then(function (response) {
+						self.sum = response.total;
+						self.monthly = response.monthly;
+						self.initChart();
 					});
 				}
 			},
@@ -261,7 +275,14 @@
 					}
 
 					self.getTableDataCount().then(function (response) {
-						self.getTableData();
+						return self.getTableData();
+					}).then(function (response) {
+						// 获取数据区间个数
+						return self.getChartData();
+					}).then(function (response) {
+						self.sum = response.total;
+						self.monthly = response.monthly;
+						self.initChart();
 					});
 				}
 			}

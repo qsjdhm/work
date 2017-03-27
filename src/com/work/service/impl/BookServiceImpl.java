@@ -17,12 +17,19 @@ public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements 
 	
 	/**
 	 *  获取数据分布
+	 *  @param sortId 图书类型id
 	 *  @return 分布数据值
 	 */
 	@Override
-	public List<Map<String,Object>> getBookDistribution() {
+	public List<Map<String,Object>> getBookDistribution(int SortId) {
 		
-		String sql = "select cycle,COUNT(*) as count from (select Sort_Name cycle from book) temp group by cycle";
+		String sql = "";
+		if (SortId == 0) {
+			sql = "select cycle,COUNT(*) as count from (select Sort_Name cycle from book) temp group by cycle";
+		} else {
+			sql = "select cycle,COUNT(*) as count from (select Sort_Name cycle from book where Sort_ID="+SortId+") temp group by cycle";
+		}
+		
 		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
 		if(mapList.size()>0){
 			return mapList;

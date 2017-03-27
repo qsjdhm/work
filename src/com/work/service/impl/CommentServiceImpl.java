@@ -16,12 +16,23 @@ public class CommentServiceImpl<T extends TComment> extends ServiceImpl<T> imple
 	
 	/**
 	 *  获取数据分布
+	 *  @param startTime 开始日期
+	 *  @param endTime 结束日期
 	 *  @return 分布数据值
 	 */
 	@Override
-	public List<Map<String,Object>> getCommentDistribution() {
+	public List<Map<String,Object>> getCommentDistribution(String startTime, String endTime) {
 		
-		String sql = "select cycle,COUNT(*) as count from (select left(Comment_Time, 7) cycle from comment) temp group by cycle";
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+		
+		String sql = "select cycle,COUNT(*) as count from (select left(Comment_Time, 7) cycle from comment where left(Comment_Time, 7) >= '"+startTime+"' and left(Comment_Time, 7) <= '"+endTime+"') temp group by cycle";
 		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
 		if(mapList.size()>0){
 			return mapList;
