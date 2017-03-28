@@ -1,0 +1,80 @@
+/**
+ *  分析 - 数据概览样式（包含兼容eleme框架样式处理）
+ */
+
+.analyze-article-pv-page {
+
+    .container {
+
+        .container-tip {
+            margin-top: 7px;
+            font-size: 12px;
+
+            > span {
+                font-size: 16px;
+                margin: 0 20px 0 8px;
+            }
+        }
+
+        .container-filter {
+            text-align: right;
+            display: inline-block;
+            padding-top: 7px;
+            color: #bfcbd9;
+
+            .filter-sort {
+                width: 140px;
+                margin-right: 10px;
+
+                .el-input__icon::before {
+                    color: #ddd;
+                }
+
+                .el-input__inner {
+                    height: 24px;
+                    border: 1px solid #dfdfdf;
+                }
+            }
+
+            .filter-time {
+                width: 116px;
+
+                .el-input__inner {
+                    height: 24px;
+                    border: 1px solid #dfdfdf;
+                }
+            }
+        }
+
+        .container-data {
+
+            .container-chart {
+
+            }
+
+            .container-table {
+                margin-top: 10px;
+
+                .table-data {
+                    margin-bottom: 10px;
+
+                    thead {
+                        th {
+                            height: 30px;
+                        }
+                    }
+                }
+
+                .table-page {
+                    text-align: right;
+
+                    .el-pagination {
+                        padding: 2px 0px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+

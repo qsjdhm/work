@@ -224,6 +224,53 @@ public class AdminAnalyzeController {
 		response.getWriter().print(jsonObject); 
 	}
 	
+
+	/*
+	 * 功能：获取系统整个阅读量的分布情况
+	 * 参数：type 哪个表数据
+	 * 返回：json数据
+	 */
+	@RequestMapping(value="/getDataDistributionByRead", method = {RequestMethod.POST})
+	public void getDataDistributionByRead(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		String type = request.getParameter("type");
+		int sort = Integer.parseInt(request.getParameter("sort"));
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
+		
+		JSONArray dataJsonArray = new JSONArray();
+		List <Map<String,Object>> mapList = null;
+		mapList = articleService.getArticleDistributionByRead(type, sort, startTime, endTime);
+		
+		int total = 0;
+		int length = 0;
+		
+		for(int i=0; i<mapList.size(); i++, length++){
+			JSONObject itemJson = new JSONObject();
+			Map<String,Object> map = mapList.get(i);
+
+			itemJson.put("date", map.get("cycle"));
+			itemJson.put("sum", map.get("sum"));
+			
+			// 计算合计
+			total += Integer.parseInt(map.get("sum").toString());
+			
+			dataJsonArray.add(itemJson);
+		}
+		
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success", "1");
+		jsonObject.put("msg", "获取分析数据成功");
+		jsonObject.put("data", dataJsonArray);
+		jsonObject.put("total", total);
+		jsonObject.put("monthly", Math.round(total/length));
+		
+		response.setContentType("text/html;charset=utf-8");
+        response.setHeader("Cache-Control", "no-cache"); 
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().print(jsonObject); 
+	}
+	
 	
 	
 }

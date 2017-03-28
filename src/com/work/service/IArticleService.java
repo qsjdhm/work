@@ -10,6 +10,9 @@ public interface IArticleService <T extends TArticle> extends IService<T> {
 
 	// 根据类型获取数据分布
 	public List<Map<String, Object>> getArticleDistribution(String type, int sort, String startTime, String endTime);
+	
+	// 根据热度、类型获取数据分布
+	public List<Map<String, Object>> getArticleDistributionByRead(String type, int sort, String startTime, String endTime);
 		
 	// 根据分类、时间区间获取文章总个数
 	public int getArticleCount(int fSortId, String startTime, String endTime);

@@ -19,6 +19,7 @@ import login from './modules/login';
 import fremework from './modules/fremework';
 
 import analyzeDashboard from './modules/analyze/dashboard';
+import analyzeArticlePV from './modules/analyze/article/article-pv';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -35,7 +36,8 @@ export default new Vuex.Store({
 		login,
         fremework,
 
-		analyzeDashboard
+		analyzeDashboard,
+        analyzeArticlePV
 		//DashboardPage
 	},
 	strict: debug,

@@ -4,6 +4,7 @@
 
 import Vue from 'vue';
 
+// mutation的标志
 export const SET_OVERVIEWDATA = 'analyze-dashboard/SET_OVERVIEWDATA';  // 概览数据
 export const SET_FSORTTYPE = 'analyze-dashboard/SET_FSORTTYPE';  // 父分类类型
 export const SET_SUBSORTLIST = 'analyze-dashboard/SET_SUBSORTLIST';  // 子分类列表
@@ -14,6 +15,13 @@ export const SET_CHARTDATA = 'analyze-dashboard/SET_CHARTDATA';  // 当前图表
 export const SET_TABLECOUNT = 'analyze-dashboard/SET_TABLECOUNT';  // 当前表格数据总数
 export const SET_TABLEPAGE = 'analyze-dashboard/SET_TABLEPAGE';  // 当前表格当前页数
 export const SET_TABLEDATA = 'analyze-dashboard/SET_TABLEDATA';  // 当前表格当前数据
+
+// action的标志
+export const GET_ANALYZECOUNT = 'analyze-dashboard/GET_ANALYZECOUNT';  // 获取总览总数
+export const GET_SORTBYTYPE = 'analyze-dashboard/GET_SORTBYTYPE';  // 获取每个大分类下的小分类列表（例如：文章下的小分类）
+export const GET_CHARTDATA = 'analyze-dashboard/GET_CHARTDATA';  // 根据父分类、子分类、时间区间获取数据
+export const GET_TABLEDATACOUNT = 'analyze-dashboard/GET_TABLEDATACOUNT';  // 根据根据父分类、子分类、时间区间获取表格数据总数--用来设置page
+export const GET_TABLEDATA = 'analyze-dashboard/GET_TABLEDATA';  // 根据根据父分类、子分类、时间区间获取表格数据--用来设置表格
 
 const state  = {
 	overviewData : {},  // 概览数据
@@ -63,26 +71,26 @@ const getters = {
 
 // actions
 const actions = {
-	// 获取总览总数
-	getAnalyzeCount ({ dispatch, commit, state, rootState }) {
-		return new Promise((resolve, reject) => {
-			Vue.http.post(rootState.BASE_URL + '/analyzeAction/getAnalyzeCount', {}, {
-				headers: {
-					"X-Requested-With": "XMLHttpRequest"
-				},
-				emulateJSON: true
-			}).then(function(response) {
-				commit(SET_OVERVIEWDATA, response.data.countData);
-				resolve(response.data);
-			});
-		})
-	},
-    // 获取每个大分类下的小分类列表（例如：文章下的小分类）
-    getSortByType ({ dispatch, commit, state, rootState }) {
+    // 获取总览总数
+    [GET_ANALYZECOUNT] (context, payload) {
         return new Promise((resolve, reject) => {
-            Vue.http.post(rootState.BASE_URL + '/sortAction/byTypeGetSort', {
+            Vue.http.post(context.rootState.BASE_URL + '/analyzeAction/getAnalyzeCount', {}, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                context.commit(SET_OVERVIEWDATA, response.data.countData);
+                resolve(response.data);
+            });
+        })
+    },
+    // 获取每个大分类下的小分类列表（例如：文章下的小分类）
+    [GET_SORTBYTYPE] (context, payload) {
+        return new Promise((resolve, reject) => {
+            Vue.http.post(context.rootState.BASE_URL + '/sortAction/byTypeGetSort', {
                 // 参数部分
-                'type' : state.selectedFSortType
+                'type' : context.state.selectedFSortType
             }, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
@@ -99,167 +107,165 @@ const actions = {
                         tempSortList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
                     }
                 }
-                commit(SET_SUBSORTLIST, tempSortList);
+                context.commit(SET_SUBSORTLIST, tempSortList);
                 // 每一次获取子分类列表都要选中“全部”
-                commit(SET_SELECTEDSUBSORT, '0');
+                context.commit(SET_SELECTEDSUBSORT, '0');
                 resolve();
             }, function(response) {
-            	// 请求错误情况下只显示全部，并且是选中状态
-				commit(SET_SUBSORTLIST, [{value: '0', label: '全部'}]);
-				commit(SET_SELECTEDSUBSORT, '0');
+                // 请求错误情况下只显示全部，并且是选中状态
+                context.commit(SET_SUBSORTLIST, [{value: '0', label: '全部'}]);
+                context.commit(SET_SELECTEDSUBSORT, '0');
                 resolve(response.json());
             });
         })
     },
-	// 根据父分类、子分类、时间区间获取数据
-	getChartData ({ dispatch, commit, state, rootState }) {
-		// 根据父分类、子分类获取数据
-		return new Promise((resolve, reject) => {
-			let postData = {};
-			if (state.selectedFSortType === 'article') {
-				postData = {
-					type : state.selectedFSortType,
-					sort : state.selectedSubSort,
-					start: state.startTime,
-					end  : state.endTime,
-				};
-			} else if (state.selectedFSortType === 'note') {
-				postData = {
-					type : state.selectedFSortType,
-					sort : state.selectedSubSort,
-					start: state.startTime,
-					end  : state.endTime,
-				};
-			} else if (state.selectedFSortType === 'comment') {
-				postData = {
-					type : state.selectedFSortType,
-					start: state.startTime,
-					end  : state.endTime,
-				};
-			} else if (state.selectedFSortType === 'book') {
-				postData = {
-					type : state.selectedFSortType,
-					sort : state.selectedSubSort
-				};
-			}
-			Vue.http.post(rootState.BASE_URL + '/analyzeAction/getDataDistribution', postData, {
-				headers: {
-					"X-Requested-With": "XMLHttpRequest"
-				},
-				emulateJSON: true
-			}).then(function(response) {
-                commit(SET_CHARTDATA, response.data.data);
-				resolve(response.data);
-			}, function(response) {
-				console.error(response);
-				resolve(response.json());
-			});
-		});
-	},
+    // 根据父分类、子分类、时间区间获取数据
+    [GET_CHARTDATA] (context, payload) {
+        return new Promise((resolve, reject) => {
+            let postData = {};
+            if (context.state.selectedFSortType === 'article') {
+                postData = {
+                    type : context.state.selectedFSortType,
+                    sort : context.state.selectedSubSort,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                };
+            } else if (context.state.selectedFSortType === 'note') {
+                postData = {
+                    type : context.state.selectedFSortType,
+                    sort : context.state.selectedSubSort,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                };
+            } else if (context.state.selectedFSortType === 'comment') {
+                postData = {
+                    type : context.state.selectedFSortType,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                };
+            } else if (context.state.selectedFSortType === 'book') {
+                postData = {
+                    type : context.state.selectedFSortType,
+                    sort : context.state.selectedSubSort
+                };
+            }
+            Vue.http.post(context.rootState.BASE_URL + '/analyzeAction/getDataDistribution', postData, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                context.commit(SET_CHARTDATA, response.data.data);
+                resolve(response.data);
+            }, function(response) {
+                console.error(response);
+                resolve(response.json());
+            });
+        });
+    },
     // 根据根据父分类、子分类、时间区间获取表格数据总数--用来设置page
-    getTableDataCount ({ dispatch, commit, state, rootState }) {
-		// 根据父分类、子分类获取数据
-		return new Promise((resolve, reject) => {
-			let postData = {};
-			let url = '';
-			if (state.selectedFSortType === 'article') {
-				postData = {
-					sort : state.selectedSubSort,
-					start: state.startTime,
-					end  : state.endTime,
-				};
-				url = rootState.BASE_URL + '/articleAction/getArticleCount';
-			} else if (state.selectedFSortType === 'note') {
-				postData = {
-					sort : state.selectedSubSort,
-					start: state.startTime,
-					end  : state.endTime,
-				};
-				url = rootState.BASE_URL + '/noteAction/getNoteCount';
-			} else if (state.selectedFSortType === 'comment') {
-				postData = {
-					start: state.startTime,
-					end  : state.endTime,
-				};
-				url = rootState.BASE_URL + '/commentAction/getCommentCount';
-			} else if (state.selectedFSortType === 'book') {
-				postData = {
-					sort : state.selectedSubSort
-				};
-				url = rootState.BASE_URL + '/bookAction/getBookCount';
-			}
+    [GET_TABLEDATACOUNT] (context, payload) {
+        return new Promise((resolve, reject) => {
+            let postData = {};
+            let url = '';
+            if (context.state.selectedFSortType === 'article') {
+                postData = {
+                    sort : context.state.selectedSubSort,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                };
+                url = context.rootState.BASE_URL + '/articleAction/getArticleCount';
+            } else if (context.state.selectedFSortType === 'note') {
+                postData = {
+                    sort : context.state.selectedSubSort,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                };
+                url = context.rootState.BASE_URL + '/noteAction/getNoteCount';
+            } else if (context.state.selectedFSortType === 'comment') {
+                postData = {
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                };
+                url = context.rootState.BASE_URL + '/commentAction/getCommentCount';
+            } else if (context.state.selectedFSortType === 'book') {
+                postData = {
+                    sort : context.state.selectedSubSort
+                };
+                url = context.rootState.BASE_URL + '/bookAction/getBookCount';
+            }
 
-			Vue.http.post(url, postData, {
-				headers: {
-					"X-Requested-With": "XMLHttpRequest"
-				},
-				emulateJSON: true
-			}).then(function(response) {
-				// 初始化表格总数和当前页索引
-				commit(SET_TABLECOUNT, response.data.data);
-				commit(SET_TABLEPAGE, 1);
-				resolve(response.data.data);
-			}, function(response) {
-				console.error(response);
-				resolve(response.json());
-			});
-		});
+            Vue.http.post(url, postData, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                // 初始化表格总数和当前页索引
+                context.commit(SET_TABLECOUNT, response.data.data);
+                context.commit(SET_TABLEPAGE, 1);
+                resolve(response.data.data);
+            }, function(response) {
+                console.error(response);
+                resolve(response.json());
+            });
+        });
     },
     // 根据根据父分类、子分类、时间区间获取表格数据--用来设置表格
-    getTableData ({ dispatch, commit, state, rootState }) {
+    [GET_TABLEDATA] (context, payload) {
         return new Promise((resolve, reject) => {
-			let postData = {};
-			let url = '';
-			if (state.selectedFSortType === 'article') {
-				postData = {
-					sort : state.selectedSubSort,
-					start: state.startTime,
-					end  : state.endTime,
-					page : state.tablePage,
-					size : 20
-				};
-				url = rootState.BASE_URL + '/articleAction/getArticleList';
-			} else if (state.selectedFSortType === 'note') {
-				postData = {
-					sort : state.selectedSubSort,
-					start: state.startTime,
-					end  : state.endTime,
-					page : state.tablePage,
-					size : 20
-				};
-				url = rootState.BASE_URL + '/noteAction/getNoteList';
-			} else if (state.selectedFSortType === 'comment') {
-				postData = {
-					start: state.startTime,
-					end  : state.endTime,
-					page : state.tablePage,
-					size : 20
-				};
-				url = rootState.BASE_URL + '/commentAction/getCommentList';
-			} else if (state.selectedFSortType === 'book') {
-				postData = {
-					sort : state.selectedSubSort,
-					page : state.tablePage,
-					size : 20
-				};
-				url = rootState.BASE_URL + '/bookAction/getBookList';
-			}
+            let postData = {};
+            let url = '';
+            if (context.state.selectedFSortType === 'article') {
+                postData = {
+                    sort : context.state.selectedSubSort,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                    page : context.state.tablePage,
+                    size : 20
+                };
+                url = context.rootState.BASE_URL + '/articleAction/getArticleList';
+            } else if (context.state.selectedFSortType === 'note') {
+                postData = {
+                    sort : context.state.selectedSubSort,
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                    page : context.state.tablePage,
+                    size : 20
+                };
+                url = context.rootState.BASE_URL + '/noteAction/getNoteList';
+            } else if (context.state.selectedFSortType === 'comment') {
+                postData = {
+                    start: context.state.startTime,
+                    end  : context.state.endTime,
+                    page : context.state.tablePage,
+                    size : 20
+                };
+                url = context.rootState.BASE_URL + '/commentAction/getCommentList';
+            } else if (context.state.selectedFSortType === 'book') {
+                postData = {
+                    sort : context.state.selectedSubSort,
+                    page : context.state.tablePage,
+                    size : 20
+                };
+                url = context.rootState.BASE_URL + '/bookAction/getBookList';
+            }
 
-			Vue.http.post(url, postData, {
-				headers: {
-					"X-Requested-With": "XMLHttpRequest"
-				},
-				emulateJSON: true
-			}).then(function(response) {
-				// 初始化表格数据
-				commit(SET_TABLEDATA, response.data.data);
-				resolve(response.data.data);
-			}, function(response) {
-				commit(SET_TABLEDATA, []);
-				resolve(response.json());
-			});
+            Vue.http.post(url, postData, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                // 初始化表格数据
+                context.commit(SET_TABLEDATA, response.data.data);
+                resolve(response.data.data);
+            }, function(response) {
+                context.commit(SET_TABLEDATA, []);
+                resolve(response.json());
+            });
         })
-    },
+    }
 };
 
 // mutations

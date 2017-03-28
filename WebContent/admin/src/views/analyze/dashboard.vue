@@ -177,7 +177,13 @@
 		SET_STARTTIME,
 		SET_ENDTIME,
         SET_TABLEPAGE,
-		SET_TABLEDATA
+		SET_TABLEDATA,
+
+        GET_ANALYZECOUNT,
+        GET_SORTBYTYPE,
+        GET_CHARTDATA,
+        GET_TABLEDATACOUNT,
+        GET_TABLEDATA
     } from '../../vuex/modules/analyze/dashboard';
 
     export default {
@@ -219,16 +225,16 @@
 					this.$store.commit(SET_SELECTEDSUBSORT, newSort);
 					this.$store.commit(SET_STARTTIME, '');
 					this.$store.commit(SET_ENDTIME, '');
-					this.getTableDataCount().then(function (response) {
-						return self.getTableData();
-					}).then(function (response) {
-						// 获取数据区间个数
-						return self.getChartData();
-					}).then(function (response) {
-						self.sum = response.total;
-						self.monthly = response.monthly;
-						self.initChart();
-					});
+                    this.$store.dispatch(GET_TABLEDATACOUNT).then(function (response) {
+                        return self.$store.dispatch(GET_TABLEDATA);
+                    }).then(function (response) {
+                        // 获取数据区间个数
+                        return self.$store.dispatch(GET_CHARTDATA);
+                    }).then(function (response) {
+                        self.sum = response.total;
+                        self.monthly = response.monthly;
+                        self.initChart();
+                    });
 				}
 			},
 			// 时间区间切换事件
@@ -247,16 +253,16 @@
 						self.$store.commit(SET_STARTTIME, year+'-'+month);
 					}
 
-					self.getTableDataCount().then(function (response) {
-						return self.getTableData();
-					}).then(function (response) {
-						// 获取数据区间个数
-						return self.getChartData();
-					}).then(function (response) {
-						self.sum = response.total;
-						self.monthly = response.monthly;
-						self.initChart();
-					});
+                    this.$store.dispatch(GET_TABLEDATACOUNT).then(function (response) {
+                        return self.$store.dispatch(GET_TABLEDATA);
+                    }).then(function (response) {
+                        // 获取数据区间个数
+                        return self.$store.dispatch(GET_CHARTDATA);
+                    }).then(function (response) {
+                        self.sum = response.total;
+                        self.monthly = response.monthly;
+                        self.initChart();
+                    });
 				}
 			},
 			endTimeValue: {
@@ -274,16 +280,16 @@
 						self.$store.commit(SET_ENDTIME, year + '-' + month);
 					}
 
-					self.getTableDataCount().then(function (response) {
-						return self.getTableData();
-					}).then(function (response) {
-						// 获取数据区间个数
-						return self.getChartData();
-					}).then(function (response) {
-						self.sum = response.total;
-						self.monthly = response.monthly;
-						self.initChart();
-					});
+                    this.$store.dispatch(GET_TABLEDATACOUNT).then(function (response) {
+                        return self.$store.dispatch(GET_TABLEDATA);
+                    }).then(function (response) {
+                        // 获取数据区间个数
+                        return self.$store.dispatch(GET_CHARTDATA);
+                    }).then(function (response) {
+                        self.sum = response.total;
+                        self.monthly = response.monthly;
+                        self.initChart();
+                    });
 				}
 			}
         },
@@ -321,29 +327,29 @@
 					this.$store.commit(SET_STARTTIME, '');
 					this.$store.commit(SET_ENDTIME, '');
             		if (type !== 'comment') {
-            			// 有子分类的获取子分类，再获取数据
-						this.getSortByType().then(function () {
-							return self.getTableDataCount();
-						}).then(function () {
-							return self.getTableData();
+                        // 有子分类的获取子分类，再获取数据
+                        self.$store.dispatch(GET_SORTBYTYPE).then(function (response) {
+                            return self.$store.dispatch(GET_TABLEDATACOUNT);
+                        }).then(function (response) {
+                            return self.$store.dispatch(GET_TABLEDATA);
                         }).then(function (response) {
                             // 获取数据区间个数
-                            return self.getChartData();
+                            return self.$store.dispatch(GET_CHARTDATA);
                         }).then(function (response) {
-							self.sum = response.total;
-							self.monthly = response.monthly;
+                            self.sum = response.total;
+                            self.monthly = response.monthly;
                             self.initChart();
                         });
 					} else {
-            			// 评论没有分类，直接获取数据
-						this.getTableDataCount().then(function () {
-							return self.getTableData();
+                        // 评论没有分类，直接获取数据
+                        self.$store.dispatch(GET_TABLEDATACOUNT).then(function (response) {
+                            return self.$store.dispatch(GET_TABLEDATA);
                         }).then(function (response) {
                             // 获取数据区间个数
-                            return self.getChartData();
+                            return self.$store.dispatch(GET_CHARTDATA);
                         }).then(function (response) {
-							self.sum = response.total;
-							self.monthly = response.monthly;
+                            self.sum = response.total;
+                            self.monthly = response.monthly;
                             self.initChart();
                         });
 					}
@@ -353,7 +359,7 @@
             tablePageChange(val) {
                 this.$store.commit(SET_TABLEPAGE, val);
                 // 重新获取当前页的table表数据
-				this.getTableData();
+                self.$store.dispatch(GET_TABLEDATA);
             },
             // 初始化图表
             initChart() {
@@ -468,26 +474,24 @@
             // 设置table高度
 			this.tableHeight = document.getElementById("frameworkContainer").offsetHeight - 260;
 
-    		// 先获取文章、笔记、评论、图书的总数
-			this.getAnalyzeCount().then(function (response) {
+            // 先获取文章、笔记、评论、图书的总数
+            self.$store.dispatch(GET_ANALYZECOUNT).then(function (response) {
                 // 再根据当前父分类获取子分类列表
-                return self.getSortByType();
+                return self.$store.dispatch(GET_SORTBYTYPE);
             }).then(function (response) {
                 // 获取数据总个数
-                return self.getTableDataCount();
+                return self.$store.dispatch(GET_TABLEDATACOUNT);
             }).then(function (response) {
-            	// 获取表中数据
-                return self.getTableData();
-			}).then(function (response) {
-				// 获取数据区间个数
-				return self.getChartData();
+                // 获取表中数据
+                return self.$store.dispatch(GET_TABLEDATA);
             }).then(function (response) {
-				self.sum = response.total;
-				self.monthly = response.monthly;
+                // 获取数据区间个数
+                return self.$store.dispatch(GET_CHARTDATA);
+            }).then(function (response) {
+                self.sum = response.total;
+                self.monthly = response.monthly;
                 self.initChart();
             });
-
-
 		},
 
     }
