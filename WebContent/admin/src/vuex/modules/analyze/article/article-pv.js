@@ -10,9 +10,8 @@ export const SET_STARTTIME = 'analyze-article-pv/SET_STARTTIME';  // 起始日�
 export const SET_ENDTIME = 'analyze-article-pv/SET_ENDTIME';  // 结束日期
 export const SET_CHARTDATA = 'analyze-article-pv/SET_CHARTDATA';  // 当前图表数据总数
 
-
-export const GET_CHARTDATA = 'analyze-article-pv/GET_CHARTDATA';
-
+export const GET_SORTBYTYPE = 'analyze-article-pv/GET_SORTBYTYPE';  // 获取每个大分类下的小分类列表（例如：文章下的小分类）
+export const GET_CHARTDATA = 'analyze-article-pv/GET_CHARTDATA';  // 根据父分类、子分类、时间区间获取数据
 
 
 const state  = {
@@ -31,9 +30,9 @@ const getters = {
 // actions
 const actions = {
     // 获取每个大分类下的小分类列表（例如：文章下的小分类）
-    getSortByType ({ dispatch, commit, state, rootState }) {
+    [GET_SORTBYTYPE] (context, payload) {
         return new Promise((resolve, reject) => {
-            Vue.http.post(rootState.BASE_URL + '/sortAction/byTypeGetSort', {
+            Vue.http.post(context.rootState.BASE_URL + '/sortAction/byTypeGetSort', {
                 // 参数部分
                 'type' : 'article'
             }, {
@@ -52,23 +51,22 @@ const actions = {
                         tempSortList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
                     }
                 }
-                commit(SET_SUBSORTLIST, tempSortList);
+                context.commit(SET_SUBSORTLIST, tempSortList);
                 // 每一次获取子分类列表都要选中“全部”
-                commit(SET_SELECTEDSUBSORT, '0');
+                context.commit(SET_SELECTEDSUBSORT, '0');
                 resolve();
             }, function(response) {
-            	// 请求错误情况下只显示全部，并且是选中状态
-				commit(SET_SUBSORTLIST, [{value: '0', label: '全部'}]);
-				commit(SET_SELECTEDSUBSORT, '0');
+                // 请求错误情况下只显示全部，并且是选中状态
+                context.commit(SET_SUBSORTLIST, [{value: '0', label: '全部'}]);
+                context.commit(SET_SELECTEDSUBSORT, '0');
                 resolve(response.json());
             });
         })
     },
-
+    // 根据父分类、子分类、时间区间获取数据
     [GET_CHARTDATA] (context, payload) {
         // 根据子分类获取数据
         return new Promise((resolve, reject) => {
-            console.info(6666666);
             Vue.http.post(context.rootState.BASE_URL + '/analyzeAction/getDataDistributionByRead', {
                 type : 'article',
                 sort : context.state.selectedSubSort,
@@ -88,32 +86,6 @@ const actions = {
             });
         });
     },
-	// 根据父分类、子分类、时间区间获取数据
-	getChartData ({ dispatch, commit, state, rootState }) {
-		// 根据子分类获取数据
-		return new Promise((resolve, reject) => {
-            console.info(1111111111111111);
-            console.info(1111111111111111);
-            console.info(1111111111111111);
-			Vue.http.post(rootState.BASE_URL + '/analyzeAction/getDataDistributionByRead', {
-                type : 'article',
-                sort : state.selectedSubSort,
-                start: state.startTime,
-                end  : state.endTime,
-            }, {
-				headers: {
-					"X-Requested-With": "XMLHttpRequest"
-				},
-				emulateJSON: true
-			}).then(function(response) {
-                commit(SET_CHARTDATA, response.data.data);
-				resolve(response.data);
-			}, function(response) {
-				console.error(response);
-				resolve(response.json());
-			});
-		});
-	},
 };
 
 // mutations
@@ -154,6 +126,17 @@ const mutations = {
                     color: '#84b8f1',
                 }
             },
+            data : dataValue
+        },
+        {
+            name : '本月总数',
+            type : 'bar',
+            itemStyle : {
+                normal : {
+                    color: '#25d6a7',
+                }
+            },
+            barWidth: 10,
             data : dataValue
         }];
         state.chartData = returnData;

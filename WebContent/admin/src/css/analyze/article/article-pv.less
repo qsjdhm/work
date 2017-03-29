@@ -4,11 +4,59 @@
 
 .analyze-article-pv-page {
 
+    .header {
+        margin-top: 5px;
+
+
+        .header-tip {
+            color: #333;
+            border-bottom: 1px solid #dfdfdf;
+            margin-top: 5px;
+            padding-bottom: 15px;
+        }
+
+        .header-sort {
+            margin-top: 10px;
+
+            .sort-item {
+                color: #999;
+                display: inline-block;
+                margin-right: 40px;
+                font-size: 13px;
+                padding: 0 5px 10px;
+            }
+            .sort-item:hover {
+                cursor: pointer;
+            }
+            .sort-item-active {
+                color: #333;
+                font-weight: bold;
+                border-bottom: 2px solid #387EED;
+            }
+        }
+
+        .header-filter {
+            margin-top: 10px;
+            text-align: right;
+
+            .header-time {
+                width: 116px;
+
+                .el-input__inner {
+                    height: 24px;
+                    border: 1px solid #dfdfdf;
+                }
+            }
+
+        }
+    }
+
     .container {
 
         .container-tip {
-            margin-top: 7px;
             font-size: 12px;
+            margin-bottom: 10px;
+            margin-top: 7px;
 
             > span {
                 font-size: 16px;

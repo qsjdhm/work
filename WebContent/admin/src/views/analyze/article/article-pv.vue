@@ -1,38 +1,50 @@
 <template>
     <div class="analyze-article-pv-page">
-        <div class="container">
+        <div class="header">
             <el-row :gutter="20">
-                <el-col class="container-tip" :span="6">
-                    阅读总量合计<span>{{sum}}</span>
-                    月均热度<span>{{monthly}}</span>
+                <el-col class="header-tip" :span="24">
+                    整体趋势
                 </el-col>
-                <el-col class="container-filter" :span="18">
-                    <el-select class="filter-sort" v-model="subSortValue" placeholder="请选择">
-                        <el-option
-                            v-for="(item, key) in subSortList"
-                            :label="item.label"
-                            :value="item.value"
-                            :key="key">
-                        </el-option>
-                    </el-select>
+            </el-row>
+            <el-row :gutter="20">
+                <el-col class="header-sort" :span="10">
+                    <div class="sort-item"
+                         :class="[selectedSubSort==item.value ? 'sort-item-active' : '']"
+                         v-for="(item, key) in subSortList"
+                         :index="item.value"
+                         :key="key"
+                         @click="sortClick(item.value)" title="点击可查看此分类下数据分析"
+                    >
+                         {{item.label}}
+                    </div>
+                </el-col>
+                <el-col class="header-filter" :span="14">
                     <el-date-picker
-                        class="filter-time"
+                        class="header-time"
                         v-model="startTimeValue"
                         type="month"
                         placeholder="起始日期">
                     </el-date-picker>
                     <span> - </span>
                     <el-date-picker
-                        class="filter-time"
+                        class="header-time"
                         v-model="endTimeValue"
                         type="month"
                         placeholder="至今">
                     </el-date-picker>
                 </el-col>
             </el-row>
+        </div>
+        <div class="container">
+            <el-row :gutter="20">
+                <el-col class="container-tip" :span="24">
+                    阅读总量合计<span>{{sum}}</span>
+                    月均热度<span>{{monthly}}</span>
+                </el-col>
+            </el-row>
             <el-row class="container-data" :gutter="20">
                 <el-col id="chart_pack" class="container-chart" :span="24">
-                    <div id="main" :style="{ width: '100%', height: tableHeight + 180 + 'px' }"></div>
+                    <div id="main" :style="{ width: '100%', height: tableHeight + 100 + 'px' }"></div>
                 </el-col>
             </el-row>
         </div>
@@ -64,7 +76,11 @@
         SET_SELECTEDSUBSORT,
         SET_STARTTIME,
         SET_ENDTIME,
-        GET_CHARTDATA
+
+        GET_SORTBYTYPE,
+        GET_CHARTDATA,
+        GET_TABLEDATACOUNT,
+        GET_TABLEDATA
     } from '../../../vuex/modules/analyze/article/article-pv';
 
     export default {
@@ -87,6 +103,7 @@
                 endTime: state => state.analyzeArticlePV.endTime,
                 chartData: state => state.analyzeArticlePV.chartData,
             }),
+            //sortClick
             // 子分类切换事件
             subSortValue: {
                 get: function () { return this.selectedSubSort; },
@@ -123,12 +140,7 @@
                         self.$store.commit(SET_STARTTIME, year+'-'+month);
                     }
 
-                    self.getTableDataCount().then(function (response) {
-                        return self.getTableData();
-                    }).then(function (response) {
-                        // 获取数据区间个数
-                        return self.getChartData();
-                    }).then(function (response) {
+                    self.$store.dispatch(GET_CHARTDATA).then(function (response) {
                         self.sum = response.total;
                         self.monthly = response.monthly;
                         self.initChart();
@@ -150,12 +162,7 @@
                         self.$store.commit(SET_ENDTIME, year + '-' + month);
                     }
 
-                    self.getTableDataCount().then(function (response) {
-                        return self.getTableData();
-                    }).then(function (response) {
-                        // 获取数据区间个数
-                        return self.getChartData();
-                    }).then(function (response) {
+                    self.$store.dispatch(GET_CHARTDATA).then(function (response) {
                         self.sum = response.total;
                         self.monthly = response.monthly;
                         self.initChart();
@@ -172,13 +179,18 @@
                 'getSortByType',
                 'getChartData',
             ]),
-//            ...mapActions({
-//                setActiveTopMenu: state => state.fremework.setActiveTopMenu,
-//                setActiveChildMenu: state => state.fremework.setActiveChildMenu,
-//
-//                getSortByType: state => state.analyzeArticlePV.getSortByType,
-//                getChartData: state => state.analyzeArticlePV.getChartData,
-//            }),
+            // 分类点击事件
+            sortClick(newSort) {
+                const self = this;
+                this.$store.commit(SET_SELECTEDSUBSORT, newSort);
+                this.$store.commit(SET_STARTTIME, '');
+                this.$store.commit(SET_ENDTIME, '');
+                this.$store.dispatch(GET_CHARTDATA).then(function (response) {
+                    self.sum = response.total;
+                    self.monthly = response.monthly;
+                    self.initChart();
+                });
+            },
             // 初始化图表
             initChart() {
                 let self = this;
@@ -191,7 +203,7 @@
                         trigger: 'axis'
                     },
                     grid: {
-                        height: self.tableHeight + 130,
+                        height: self.tableHeight + 50,
                         top: 10,
                         left: '3%',
                         right: '4%',
@@ -247,12 +259,10 @@
             // 设置table高度
             this.tableHeight = document.getElementById("frameworkContainer").offsetHeight - 260;
             // 获取分类列表
-            this.getSortByType().then(function (response) {
+            self.$store.dispatch(GET_SORTBYTYPE).then(function (response) {
                 // 获取数据区间个数
                 return self.$store.dispatch(GET_CHARTDATA);
             }).then(function (response) {
-                console.info(4444);
-                console.info(response);
                 self.sum = response.total;
                 self.monthly = response.monthly;
                 self.initChart();

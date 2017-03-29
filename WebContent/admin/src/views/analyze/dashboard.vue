@@ -311,12 +311,6 @@
             ...mapActions([
                 'setActiveTopMenu',
                 'setActiveChildMenu',
-
-				'getAnalyzeCount',
-                'getSortByType',
-				'getChartData',
-                'getTableDataCount',
-                'getTableData'
             ]),
 			// 概览项点击事件
             dashboardClick : function (type) {
