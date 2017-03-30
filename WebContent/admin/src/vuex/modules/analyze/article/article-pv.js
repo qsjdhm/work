@@ -9,9 +9,12 @@ export const SET_SELECTEDSUBSORT = 'analyze-article-pv/SET_SELECTEDSUBSORT';  //
 export const SET_STARTTIME = 'analyze-article-pv/SET_STARTTIME';  // 起始日期
 export const SET_ENDTIME = 'analyze-article-pv/SET_ENDTIME';  // 结束日期
 export const SET_CHARTDATA = 'analyze-article-pv/SET_CHARTDATA';  // 当前图表数据总数
+export const SET_TABLEDATA = 'analyze-article-pv/SET_TABLEDATA';  // 当前表格当前数据
+
 
 export const GET_SORTBYTYPE = 'analyze-article-pv/GET_SORTBYTYPE';  // 获取每个大分类下的小分类列表（例如：文章下的小分类）
 export const GET_CHARTDATA = 'analyze-article-pv/GET_CHARTDATA';  // 根据父分类、子分类、时间区间获取数据
+export const GET_TABLEDATA = 'analyze-article-pv/GET_TABLEDATA';  // 根据根据子分类、时间区间获取表格数据--用来设置表格
 
 
 const state  = {
@@ -20,6 +23,7 @@ const state  = {
 	startTime : '',  // 起始日期
 	endTime : '',  // 结束日期
     chartData : {},  // 图表数据
+    tableData : [],  // 表格数据
 };
 
 // getters
@@ -86,6 +90,30 @@ const actions = {
             });
         });
     },
+    // 根据根据子分类、时间区间获取表格数据--用来设置表格
+    [GET_TABLEDATA] (context, payload) {
+        return new Promise((resolve, reject) => {
+            Vue.http.post(context.rootState.BASE_URL + '/articleAction/getHeatArticleList', {
+                sort : context.state.selectedSubSort,
+                start: context.state.startTime,
+                end  : context.state.endTime,
+                page : 1,
+                size : 20
+            }, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                // 初始化表格数据
+                context.commit(SET_TABLEDATA, response.data.data);
+                resolve(response.data.data);
+            }, function(response) {
+                context.commit(SET_TABLEDATA, []);
+                resolve(response.json());
+            });
+        })
+    }
 };
 
 // mutations
@@ -140,6 +168,19 @@ const mutations = {
             data : dataValue
         }];
         state.chartData = returnData;
+    },
+    [SET_TABLEDATA](state , tableData){
+        let tempData = [];
+        // 根据不同的父类型，要处理下数据
+        for (let i = 0, len = tableData.length; i < len; i++) {
+            tempData.push({
+                'id' : tableData[i].Article_ID,
+                'name' : tableData[i].Article_Title,
+                'heat' : tableData[i].Read_Num
+            });
+        }
+
+        state.tableData = tempData;
     },
 };
 

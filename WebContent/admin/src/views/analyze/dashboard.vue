@@ -109,11 +109,11 @@
 					</el-col>
 				</el-row>
                 <el-row class="container-data" :gutter="20">
-                    <el-col id="chart_pack" class="container-chart" :span="13">
+                    <el-col id="chart_pack" class="container-chart" :span="14">
 						<div id="main" :style="{ width: '100%', height: tableHeight + 50 + 'px' }"></div>
                     </el-col>
-					<el-col class="container-table" :span="1">
-					</el-col>
+					<!--<el-col class="container-table" :span="1">
+					</el-col>-->
                     <el-col class="container-table" :span="10">
                         <div class="table-data">
 							<el-table
@@ -353,7 +353,7 @@
             tablePageChange(val) {
                 this.$store.commit(SET_TABLEPAGE, val);
                 // 重新获取当前页的table表数据
-                self.$store.dispatch(GET_TABLEDATA);
+                this.$store.dispatch(GET_TABLEDATA);
             },
             // 初始化图表
             initChart() {

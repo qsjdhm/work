@@ -287,6 +287,31 @@
 		/*.framework-breadcrumb {
 			margin: 10px 0;
 		}*/
+
+        // 做表格统一样式改写
+
+        .el-table {
+            tbody {
+                td {
+                    div,p {
+                        display: -webkit-box;
+                        -webkit-line-clamp: 1;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    }
+
+                    p {
+                        margin: 4px 0;
+                    }
+                }
+            }
+
+            thead {
+                th {
+                    height: 30px;
+                }
+            }
+        }
 	}
 
 	.framework-footer {

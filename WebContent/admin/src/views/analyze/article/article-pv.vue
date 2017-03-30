@@ -43,8 +43,44 @@
                 </el-col>
             </el-row>
             <el-row class="container-data" :gutter="20">
-                <el-col id="chart_pack" class="container-chart" :span="24">
+                <el-col id="chart_pack" class="container-chart" :span="12">
                     <div id="main" :style="{ width: '100%', height: tableHeight + 100 + 'px' }"></div>
+                </el-col>
+                <el-col class="container-table" :span="12">
+                    <div class="table-data">
+                        <el-table
+                            :data="tableData"
+                            :height="tableHeight+80"
+                            border
+                            style="width: 100%">
+                            <el-table-column
+                                label="热度TOP20">
+                                <el-table-column
+                                    label="ID"
+                                    width="65">
+                                    <template scope="scope">
+                                        <p :class="{'heat-top': scope.$index<3}">{{ scope.row.id }}</p>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="名称">
+                                    <template scope="scope">
+                                        <p :class="{'heat-top': scope.$index<3}">
+                                            <i class="fa fa-fire" v-if="scope.$index<3"></i>
+                                            {{ scope.row.name }}
+                                        </p>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="阅读量"
+                                    width="80">
+                                    <template scope="scope">
+                                        <p :class="{'heat-top': scope.$index<3}">{{ scope.row.heat }}</p>
+                                    </template>
+                                </el-table-column>
+                            </el-table-column>
+                        </el-table>
+                    </div>
                 </el-col>
             </el-row>
         </div>
@@ -57,6 +93,7 @@
     require('echarts/lib/chart/line');
     require('echarts/lib/chart/bar');
     require('echarts/lib/component/toolbox');
+    require('echarts/lib/component/dataZoom');
     require('echarts/lib/component/tooltip');
     require('echarts/lib/component/grid');
     require('echarts/lib/component/legend');
@@ -79,7 +116,6 @@
 
         GET_SORTBYTYPE,
         GET_CHARTDATA,
-        GET_TABLEDATACOUNT,
         GET_TABLEDATA
     } from '../../../vuex/modules/analyze/article/article-pv';
 
@@ -102,6 +138,7 @@
                 startTime: state => state.analyzeArticlePV.startTime,
                 endTime: state => state.analyzeArticlePV.endTime,
                 chartData: state => state.analyzeArticlePV.chartData,
+                tableData: state => state.analyzeArticlePV.tableData,
             }),
             //sortClick
             // 子分类切换事件
@@ -112,15 +149,12 @@
                     this.$store.commit(SET_SELECTEDSUBSORT, newSort);
                     this.$store.commit(SET_STARTTIME, '');
                     this.$store.commit(SET_ENDTIME, '');
-                    this.getTableDataCount().then(function (response) {
-                        return self.getTableData();
-                    }).then(function (response) {
-                        // 获取数据区间个数
-                        return self.getChartData();
-                    }).then(function (response) {
-                        self.monthly = response.monthly;
+
+                    self.$store.dispatch(GET_CHARTDATA).then(function (response) {
                         self.sum = response.total;
+                        self.monthly = response.monthly;
                         self.initChart();
+                        self.$store.dispatch(GET_TABLEDATA);
                     });
                 }
             },
@@ -144,6 +178,7 @@
                         self.sum = response.total;
                         self.monthly = response.monthly;
                         self.initChart();
+                        self.$store.dispatch(GET_TABLEDATA);
                     });
                 }
             },
@@ -166,6 +201,7 @@
                         self.sum = response.total;
                         self.monthly = response.monthly;
                         self.initChart();
+                        self.$store.dispatch(GET_TABLEDATA);
                     });
                 }
             }
@@ -175,9 +211,6 @@
             ...mapActions([
                 'setActiveTopMenu',
                 'setActiveChildMenu',
-
-                'getSortByType',
-                'getChartData',
             ]),
             // 分类点击事件
             sortClick(newSort) {
@@ -189,6 +222,7 @@
                     self.sum = response.total;
                     self.monthly = response.monthly;
                     self.initChart();
+                    self.$store.dispatch(GET_TABLEDATA);
                 });
             },
             // 初始化图表
@@ -203,12 +237,18 @@
                         trigger: 'axis'
                     },
                     grid: {
-                        height: self.tableHeight + 50,
+                        height: self.tableHeight + 20,
                         top: 10,
                         left: '3%',
                         right: '4%',
                         containLabel: true
                     },
+                    dataZoom: [
+                        {
+                            start: 0,
+                            end: 80,
+                        }
+                    ],
                     xAxis: {
                         nameLocation: 'start',
                         data: self.chartData.xAxis,
@@ -266,6 +306,7 @@
                 self.sum = response.total;
                 self.monthly = response.monthly;
                 self.initChart();
+                self.$store.dispatch(GET_TABLEDATA);
             });
         },
     }

@@ -124,6 +124,45 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 	}
 	
 	/**
+	 *  根据总分类、开始日期、结束日期、页数、每页个数获取此分类下的热门文章列表
+	 *  @param fSortId 文章总类型id
+	 *  @param startTime 开始时间
+	 *  @param endTime 结束时间
+	 *  @param pageId 当前页
+	 *  @param pageNum 每页个数
+	 *  @return 文章列表
+	 */
+	
+	@Override
+	public List<Map<String, Object>> getHeatArticleList(int fSortId, String startTime, String endTime, int pageId, int pageNum) {
+		if (endTime.equals("")) {
+			int year;
+	        int month;
+	        Calendar calendar = Calendar.getInstance();
+	        year = calendar.get(Calendar.YEAR);
+	        month = calendar.get(Calendar.MONTH) + 1;
+	        endTime = year + "-" + ( month<10 ? "0" + month : month);
+		}
+		// 首先需要根据页数和每页个数计算出起始数和终止数
+		int start = pageNum*(pageId-1);
+		int end = pageNum;
+		String sql = "";
+		
+		if(fSortId==0){
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID<>8 order by Read_Num desc limit "+ start + " , " + end;
+		}else{  // 分类查询
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID="+fSortId+" order by Read_Num desc limit "+ start + " , " + end;
+		}
+		
+		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);
+		if(mapList.size()>0){
+			return mapList;
+		}
+		
+		return null;
+	}
+	
+	/**
 	 *  根据分类、时间区间获取笔记全部的数据
 	 *  @param sortId 笔记子类型
 	 *  @param startTime 开始时间

@@ -185,6 +185,46 @@ public class AdminArticleController {
 		response.getWriter().print(jsonObject); 
 	}
 	
+	@RequestMapping(value = "/getHeatArticleList")
+	public void getHeatArticleList(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		int sort = Integer.parseInt(request.getParameter("sort"));
+		String startTime = request.getParameter("start");
+		String endTime = request.getParameter("end");
+		int page = Integer.parseInt(request.getParameter("page"));
+		int size = Integer.parseInt(request.getParameter("size"));
+		List <Map<String,Object>> articleList = articleService.getHeatArticleList(sort, startTime, endTime, page, size);
+		
+		JSONArray articleJsonArray = new JSONArray();
+		for(int i=0; i<articleList.size(); i++){
+			JSONObject articleJson = new JSONObject();
+			Map <String,Object> article = articleList.get(i);
+			
+			articleJson.put("Article_ID", article.get("Article_ID").toString());
+			articleJson.put("Article_Title", article.get("Article_Title").toString());
+			articleJson.put("Article_Date", article.get("Article_Date").toString());
+			articleJson.put("Article_Tag", article.get("Article_Tag").toString());
+			articleJson.put("Sort_ID", article.get("Sort_ID").toString());
+			articleJson.put("Sort_Name", article.get("Sort_Name").toString());
+			articleJson.put("F_Sort_ID", article.get("F_Sort_ID").toString());
+			articleJson.put("Recommend_Num", article.get("Recommend_Num").toString());
+			articleJson.put("Read_Num", article.get("Read_Num").toString());
+			
+			articleJsonArray.add(articleJson);
+		}
+		
+		// 3.返回添加状态信息
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success", "1");
+		jsonObject.put("msg", "获取热门文章列表成功");
+		jsonObject.put("data", articleJsonArray);
+		
+		response.setContentType("text/html;charset=utf-8");
+        response.setHeader("Cache-Control", "no-cache"); 
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().print(jsonObject); 
+	}
+	
 	@RequestMapping(value = "/addArticle")
 	public void addArticle(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
