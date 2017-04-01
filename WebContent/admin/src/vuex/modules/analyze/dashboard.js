@@ -360,7 +360,7 @@ const mutations = {
 			} else if (state.selectedFSortType === 'comment') {
 				tempData.push({
 					'id' : tableData[i].Comment_ID,
-					'name' : tableData[i].Comment_ArticleTitle
+					'name' : tableData[i].Comment_Content
 				});
 			} else if (state.selectedFSortType === 'book') {
 				tempData.push({
