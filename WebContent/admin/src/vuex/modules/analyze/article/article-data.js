@@ -183,8 +183,6 @@ const mutations = {
             },
             data : dataValue
         }];
-        console.info(returnData);
-        console.info(returnData);
         state.chartData = returnData;
     },
     [SET_TABLECOUNT](state , tableCount){
