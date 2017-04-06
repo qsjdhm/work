@@ -74,6 +74,7 @@ var webpackConfig = {
     }),
     new HtmlWebpackPlugin({
       filename: config.init.index,
+      favicon: path.resolve(__dirname, '../src/assets/favicon.ico'), //favicon路径
       template: path.join(__dirname, '../src/template/dev_index.html'),
       inject: true,
       minify: {

@@ -1,7 +1,7 @@
 <template>
 	<div>
         数据管理 - 文章管理 - 添加笔记 - /home/data-note-add
-		<router-link to="/home/analyze-comment-territory">评论分析-地域分析</router-link>
+		<router-link to="/home/analyze-article-data">评论分析-地域分析</router-link>
 	</div>
 
 </template>
@@ -37,10 +37,6 @@
             let path = this.$route.path;
             const self = this;
             if (this.topActiveMenu !== pId) {
-                this.setActiveTopMenu(pId).then(function () {
-                    self.setActiveChildMenu(path);
-                });
-
                 this.setChildMenuShow(false).then(function () {
                     return self.setActiveTopMenu(pId);
                 }).then(function () {
@@ -49,6 +45,8 @@
                 }).then(function () {
                     self.setActiveChildMenu(path);
                 });
+            } else {
+                this.setActiveChildMenu(path);
             }
         },
     }

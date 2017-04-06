@@ -48,20 +48,64 @@ const state  = {
 		},
 		{
 			'id' : '2', 'icon' : 'fa-database', 'name' : '数据管理', 'level' : 1, 'childMenu' : [
-				//{
-				//	'id' : '2-1', 'pId': '2', 'icon' : 'fa-line-chart', 'name' : '功能地图', 'level' : 2, 'path' : '/home/data-dashboard'
-				//},
 				{
-					'id' : '2-2', 'icon' : 'fa-line-chart', 'name' : '文章管理', 'level' : 2, 'childMenu' : [
+					'id' : '2-1', 'pId': '2', 'icon' : 'fa-television', 'name' : '功能地图', 'level' : 2, 'path' : '/home/data-dashboard'
+				},
+				{
+					'id' : '2-2', 'icon' : 'fa-file-text-o', 'name' : '文章管理', 'level' : 2, 'childMenu' : [
 						{'id' : '2-2-1', 'pId': '2', 'name' : '新增文章', 'level' : 3, 'path' : '/home/data-article-add'},
-						{'id' : '2-2-2', 'pId': '2', 'name' : '删除文章', 'level' : 3, 'path' : '/home/data-article-del'}
+                        {'id' : '2-2-2', 'pId': '2', 'name' : '编辑文章', 'level' : 3, 'path' : '/home/data-article-edit'},
+						{'id' : '2-2-3', 'pId': '2', 'name' : '删除文章', 'level' : 3, 'path' : '/home/data-article-del'}
 					]
 				},
 				{
-					'id' : '2-3', 'icon' : 'fa-line-chart', 'name' : '笔记管理', 'level' : 2, 'childMenu' : [
-						{'id' : '2-3-1', 'pId': '1', 'name' : '新增笔记', 'level' : 3, 'path' : '/home/data-note-add'}
+					'id' : '2-3', 'icon' : 'fa-file-code-o', 'name' : '笔记管理', 'level' : 2, 'childMenu' : [
+						{'id' : '2-3-1', 'pId': '2', 'name' : '新增笔记', 'level' : 3, 'path' : '/home/data-note-add'},
+                        {'id' : '2-3-2', 'pId': '2', 'name' : '编辑笔记', 'level' : 3, 'path' : '/home/data-note-edit'},
+                        {'id' : '2-3-3', 'pId': '2', 'name' : '删除笔记', 'level' : 3, 'path' : '/home/data-note-del'}
 					]
-				}
+				},
+                {
+                    'id' : '2-4', 'icon' : 'fa-commenting-o', 'name' : '评论管理', 'level' : 2, 'childMenu' : [
+                        {'id' : '2-4-1', 'pId': '2', 'name' : '编辑评论', 'level' : 3, 'path' : '/home/data-comment-edit'},
+                        {'id' : '2-4-2', 'pId': '2', 'name' : '删除评论', 'level' : 3, 'path' : '/home/data-comment-del'}
+                    ]
+                },
+                {
+                    'id' : '2-5', 'icon' : 'fa-book', 'name' : '图书管理', 'level' : 2, 'childMenu' : [
+                        {'id' : '2-5-1', 'pId': '2', 'name' : '新增图书', 'level' : 3, 'path' : '/home/data-book-add'},
+                        {'id' : '2-5-2', 'pId': '2', 'name' : '编辑图书', 'level' : 3, 'path' : '/home/data-book-edit'},
+                        {'id' : '2-5-3', 'pId': '2', 'name' : '删除图书', 'level' : 3, 'path' : '/home/data-book-del'}
+                    ]
+                },
+                {
+                    'id' : '2-6', 'icon' : 'fa-qrcode', 'name' : '分类管理', 'level' : 2, 'childMenu' : [
+                        {'id' : '2-6-1', 'pId': '2', 'name' : '新增分类', 'level' : 3, 'path' : '/home/data-classify-add'},
+                        {'id' : '2-6-2', 'pId': '2', 'name' : '编辑分类', 'level' : 3, 'path' : '/home/data-classify-edit'},
+                        {'id' : '2-6-3', 'pId': '2', 'name' : '删除分类', 'level' : 3, 'path' : '/home/data-classify-del'}
+                    ]
+                },
+                {
+                    'id' : '2-7', 'icon' : 'fa-chain', 'name' : '外链管理', 'level' : 2, 'childMenu' : [
+                        {'id' : '2-7-1', 'pId': '2', 'name' : '新增外链', 'level' : 3, 'path' : '/home/data-link-add'},
+                        {'id' : '2-7-2', 'pId': '2', 'name' : '编辑外链', 'level' : 3, 'path' : '/home/data-link-edit'},
+                        {'id' : '2-7-3', 'pId': '2', 'name' : '删除外链', 'level' : 3, 'path' : '/home/data-link-del'}
+                    ]
+                },
+                {
+                    'id' : '2-8', 'icon' : 'fa-thumbs-o-up', 'name' : '推荐管理', 'level' : 2, 'childMenu' : [
+                        {'id' : '2-8-1', 'pId': '2', 'name' : '文章推荐量', 'level' : 3, 'path' : '/home/data-article-recom'},
+                        {'id' : '2-8-2', 'pId': '2', 'name' : '笔记推荐量', 'level' : 3, 'path' : '/home/data-note-recom'},
+                        {'id' : '2-8-3', 'pId': '2', 'name' : '图书推荐量', 'level' : 3, 'path' : '/home/data-book-recom'}
+                    ]
+                },
+                {
+                    'id' : '2-9', 'icon' : 'fa-user-o', 'name' : '用户管理', 'level' : 2, 'childMenu' : [
+                        {'id' : '2-9-1', 'pId': '2', 'name' : '新增用户', 'level' : 3, 'path' : '/home/data-user-add'},
+                        {'id' : '2-9-2', 'pId': '2', 'name' : '编辑用户', 'level' : 3, 'path' : '/home/data-user-edit'},
+                        {'id' : '2-9-3', 'pId': '2', 'name' : '删除用户', 'level' : 3, 'path' : '/home/data-user-del'}
+                    ]
+                }
 			],
 		},
 		{

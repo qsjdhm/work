@@ -42,6 +42,7 @@ const analyzeNoteData           = resolve => require(['../views/analyze/note/not
 const analyzeCommentHeat        = resolve => require(['../views/analyze/comment/comment-heat'], resolve);
 const analyzeBookHeat           = resolve => require(['../views/analyze/book/book-heat'], resolve);
 // 数据管理菜单
+const dataDashboard             = resolve => require(['../views/data/dashboard'], resolve);
 const dataArticleAdd            = resolve => require(['../views/data/article/article-add'], resolve);
 const dataArticleDel            = resolve => require(['../views/data/article/article-del'], resolve);
 const dataNoteAdd               = resolve => require(['../views/data/note/note-add'], resolve);
@@ -104,7 +105,12 @@ export default new Router({
 					component: analyzeBookHeat
 				},
 
-
+                {
+                    meta: { pId: '2' },  // 用来给每个子页面做当前顶级菜单对比，看看是否需要跳转顶级菜单
+                    path: 'data-dashboard',
+                    name: '功能地图',
+                    component: dataDashboard
+                },
                 {
                     meta: { pId: '2' },
                     path: 'data-article-add',

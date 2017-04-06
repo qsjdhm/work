@@ -22,6 +22,9 @@ import analyzeDashboard from './modules/analyze/dashboard';
 import analyzeArticlePV from './modules/analyze/article/article-pv';
 import analyzeArticleData from './modules/analyze/article/article-data';
 
+import dataDashboard from './modules/data/dashboard';
+import dataArticleAdd from './modules/data/article/article-add';
+
 const debug = process.env.NODE_ENV !== 'production';
 
 Vue.use(ElementUI);
@@ -39,7 +42,10 @@ export default new Vuex.Store({
 
 		analyzeDashboard,
         analyzeArticlePV,
-        analyzeArticleData
+        analyzeArticleData,
+
+        dataDashboard,
+        dataArticleAdd
 		//DashboardPage
 	},
 	strict: debug,

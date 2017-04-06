@@ -29,6 +29,7 @@ module.exports = merge(baseWebpackConfig, {
     // duplicated CSS from different components can be deduped.
     new HtmlWebpackPlugin({
       filename: '../index.html',
+      favicon: path.resolve(__dirname, '../src/assets/favicon.ico'), //favicon路径
       //template: '../src/template/dev_index.html',
       template: path.resolve(__dirname, '../src/template/dev_index.html'),
       //chunks: ['app'],

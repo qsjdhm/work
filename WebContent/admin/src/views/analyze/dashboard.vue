@@ -309,6 +309,7 @@
         methods: {
             // 映射 this.setActiveTopMenu() 为 action中的方法  this.$store.dispatch('setActiveTopMenu')
             ...mapActions([
+                'setChildMenuShow',
                 'setActiveTopMenu',
                 'setActiveChildMenu',
             ]),
@@ -455,11 +456,19 @@
 			const pId = this.$route.meta.pId;
 			const path = this.$route.path;
             const self = this;
-            // 如果路由中当前页面的state中的选中菜单不同再设置顶级菜单和子显示状态
+            // 如果路由中当前页面的state中的选中顶级菜单不同需要设置顶级菜单和与之对应的子菜单
             if (this.topActiveMenu !== pId) {
-                this.setActiveTopMenu(pId).then(function () {
+                this.setChildMenuShow(false).then(function () {
+                    return self.setActiveTopMenu(pId);
+                }).then(function () {
+                    // 通过v-if，使每次切换顶级菜单时，让浏览器重新渲染子菜单组件，达到切换顶级菜单后默认选中第一个子菜单
+                    return self.setChildMenuShow(true);
+                }).then(function () {
                     self.setActiveChildMenu(path);
                 });
+            } else {
+                // 否则只需要设置子菜单选中项
+                this.setActiveChildMenu(path);
             }
         },
 		// 此声明周期挂载dom已经开始，适用于处理dom操作

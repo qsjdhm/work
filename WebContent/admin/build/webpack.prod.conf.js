@@ -51,6 +51,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       filename: process.env.NODE_ENV === 'testing'
         ? 'index.html'
         : config.build.index,
+      favicon: path.resolve(__dirname, '../src/assets/favicon.ico'), //favicon路径
       template: path.join(__dirname, '../src/template/pro_index.html'),
       inject: true,
       minify: {
