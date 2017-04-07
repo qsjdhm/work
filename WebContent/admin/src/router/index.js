@@ -44,6 +44,7 @@ const analyzeBookHeat           = resolve => require(['../views/analyze/book/boo
 // 数据管理菜单
 const dataDashboard             = resolve => require(['../views/data/dashboard'], resolve);
 const dataArticleAdd            = resolve => require(['../views/data/article/article-add'], resolve);
+const dataArticleEdit           = resolve => require(['../views/data/article/article-edit'], resolve);
 const dataArticleDel            = resolve => require(['../views/data/article/article-del'], resolve);
 const dataNoteAdd               = resolve => require(['../views/data/note/note-add'], resolve);
 
@@ -116,6 +117,12 @@ export default new Router({
                     path: 'data-article-add',
                     name: '新增文章',
                     component: dataArticleAdd
+                },
+                {
+                    meta: { pId: '2' },
+                    path: 'data-article-edit',
+                    name: '编辑文章',
+                    component: dataArticleEdit
                 },
                 {
                     meta: { pId: '2' },

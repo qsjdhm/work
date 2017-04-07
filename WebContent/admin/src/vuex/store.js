@@ -24,6 +24,7 @@ import analyzeArticleData from './modules/analyze/article/article-data';
 
 import dataDashboard from './modules/data/dashboard';
 import dataArticleAdd from './modules/data/article/article-add';
+import dataArticleEdit from './modules/data/article/article-edit';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -40,12 +41,15 @@ export default new Vuex.Store({
 		login,
         fremework,
 
+        // 分析
 		analyzeDashboard,
         analyzeArticlePV,
         analyzeArticleData,
 
+        // 数据
         dataDashboard,
-        dataArticleAdd
+        dataArticleAdd,
+        dataArticleEdit
 		//DashboardPage
 	},
 	strict: debug,
