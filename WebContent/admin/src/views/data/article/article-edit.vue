@@ -38,7 +38,7 @@
                     <div class="table-data">
                         <el-table
                             :data="tableData"
-                            :height="tableHeight+130"
+                            :height="tableHeight+145"
                             style="width: 100%">
                             <el-table-column
                                 prop="Article_ID"
