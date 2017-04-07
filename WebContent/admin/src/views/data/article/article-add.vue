@@ -1,6 +1,6 @@
 <template>
 	<div class="data-article-add-page">
-        <el-select class="classify" v-model="classifyValue" placeholder="请选择">
+        <el-select class="classify" :disabled="isSubmit" v-model="classifyValue" placeholder="请选择">
             <el-option
                 v-for="(item, key) in sortList"
                 :label="item.label"
@@ -8,20 +8,37 @@
                 :key="key">
             </el-option>
         </el-select>
-        <el-input class="name" v-model="name" placeholder="请输入文章标题"></el-input>
+        <el-input class="name" :disabled="isSubmit" v-model="nameValue" placeholder="请输入文章标题"></el-input>
         <script id="content" name="content" type="text/plain"></script>
-        <el-select
-            v-model="selectedTag"
-            multiple
-            placeholder="请选择文章标签">
-            <el-option
-                v-for="(item, key) in tagList"
-                :label="item.label"
-                :value="item.value"
-                :key="key">
-            </el-option>
-        </el-select>
-        <el-button @click="submitData" type="primary">上传<i class="el-icon-upload el-icon--right"></i></el-button>
+        <div class="tag-package">
+            <el-select
+                class="tags"
+                v-model="selectedTag"
+                :disabled="isSubmit"
+                multiple
+                placeholder="请选择文章标签">
+                <el-option
+                    v-for="(item, key) in tagList"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="key">
+                </el-option>
+            </el-select>
+        </div>
+        <el-button
+            v-if="!isSubmit"
+            @click="submitData"
+            type="primary">
+            <i class="fa fa-cloud-upload"></i>
+            新增文章
+        </el-button>
+        <el-button
+            v-if="isSubmit"
+            type="primary"
+            :loading="true">
+            提交文章中
+        </el-button>
+        <el-button @click="resetData">重置数据</el-button>
     </div>
 </template>
 
@@ -46,8 +63,10 @@
         SET_SORTLIST,
         SET_CLASSIFY,
         SET_NAME,
+        SET_CONTENT,
         SET_TAGLIST,
         SET_TAG,
+        SET_ISSUBMIT,
 
         GET_SORTLIST,
         GET_TAGLIST,
@@ -71,7 +90,8 @@
                 classify: state => state.dataArticleAdd.classify,
                 name: state => state.dataArticleAdd.name,
                 tagList: state => state.dataArticleAdd.tagList,
-                tag: state => state.dataArticleAdd.tag
+                tag: state => state.dataArticleAdd.tag,
+                isSubmit: state => state.dataArticleAdd.isSubmit,
             }),
             // 分类切换
             classifyValue: {
@@ -80,7 +100,15 @@
                     this.$store.commit(SET_CLASSIFY, newClassify);
                 }
             },
+            // 名称切换
+            nameValue: {
+                get: function () { return this.name; },
+                set: function (newName) {
+                    this.$store.commit(SET_NAME, newName);
+                }
+            }
         },
+
         methods: {
             // 映射 this.setActiveTopMenu() 为 action中的方法  this.$store.dispatch('setActiveTopMenu')
             ...mapActions([
@@ -90,9 +118,37 @@
             ]),
             // 添加文章
             submitData: function (event) {
-                this.$store.commit(SET_TAG, this.selectedTag);
-                this.$store.dispatch(SUBMIT_DATA);
+                // 设置当前from不可编辑
+                let self = this;
+                self.$store.commit(SET_ISSUBMIT, true);
+                self.editor.setDisabled();
 
+                // 设置内容
+                self.$store.commit(SET_CONTENT, UE.getEditor("content").getContent());
+                // 设置标签
+                self.$store.commit(SET_TAG, this.selectedTag);
+                // 触发action提交文章内容
+                self.$store.dispatch(SUBMIT_DATA).then(function(response){
+                    // 设置当前from可编辑
+                    self.$store.commit(SET_ISSUBMIT, false);
+                    self.editor.setEnabled();
+                    if (response.data.success === '1') {
+                        self.$message({
+                            message: response.data.msg,
+                            type: 'success'
+                        });
+                    } else {
+                        self.$message.error('添加文章出错');
+                    }
+                });
+            },
+            // 重置当前数据
+            resetData: function (event) {
+                this.$store.commit(SET_CLASSIFY, this.sortList[0].value);
+                this.$store.commit(SET_NAME, '');
+                this.$store.commit(SET_CONTENT, '');
+                this.editor.setContent('');
+                this.selectedTag = [];
             }
         },
         created: function () {

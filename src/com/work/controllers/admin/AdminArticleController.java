@@ -231,7 +231,7 @@ public class AdminArticleController {
 		String title = URLDecoder.decode(URLDecoder.decode(request.getParameter("title"), "utf-8"), "utf-8");
 		String date = "";
 		String cover = "";
-		String content = request.getParameter("content");
+		String content = URLDecoder.decode(URLDecoder.decode(request.getParameter("content"), "utf-8"), "utf-8");
 		String tags = URLDecoder.decode(URLDecoder.decode(request.getParameter("tags"), "utf-8"), "utf-8");
 		int sortId = Integer.parseInt(request.getParameter("sortId"));
 		String sortName = URLDecoder.decode(URLDecoder.decode(request.getParameter("sortName"), "utf-8"), "utf-8");

@@ -7,9 +7,10 @@ import Vue from 'vue';
 export const SET_SORTLIST = 'data-article-add/SET_SORTLIST';
 export const SET_CLASSIFY = 'data-article-add/SET_CLASSIFY';
 export const SET_NAME = 'data-article-add/SET_NAME';
+export const SET_CONTENT = 'data-article-add/SET_CONTENT';
 export const SET_TAGLIST = 'data-article-add/SET_TAGLIST';
 export const SET_TAG = 'data-article-add/SET_TAG';
-
+export const SET_ISSUBMIT = 'data-article-add/SET_ISSUBMIT';
 
 export const GET_SORTLIST = 'data-article-add/GET_SORTLIST';
 export const GET_TAGLIST = 'data-article-add/GET_TAGLIST';
@@ -20,8 +21,10 @@ const state  = {
     sortList : [],  // 分类数据列表
     classify : '',  // 选中的分类
     name : '',  // 起始日期
+    content : '',  // 内容
     tagList : [],  // 标签列表
     tag : [],  // 选中的标签
+    isSubmit: false  // 当前是否是提交数据状态
 };
 
 // getters
@@ -76,7 +79,7 @@ const actions = {
                 var data = response.data.data;
                 var tempTagList = [];
                 for (var i = 0; i < data.length; i++) {
-                    tempTagList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
+                    tempTagList.push({value: data[i].Sort_Name, label: data[i].Sort_Name});
                 }
                 context.commit(SET_TAGLIST, tempTagList);
                 resolve();
@@ -85,34 +88,36 @@ const actions = {
             });
         })
     },
-
     // 添加文章
     [SUBMIT_DATA] (context, payload) {
+        let self = this;
         return new Promise((resolve, reject) => {
-            console.info(context.state.tag);
-            console.info(context.state.tag);
-            console.info(context.state.tag);
-            console.info(context.state.tag);
-            //Vue.http.post(context.rootState.BASE_URL + '/sortAction/byTypeGetSort', {
-            //    // 参数部分
-            //    'type' : 'tag'
-            //}, {
-            //    headers: {
-            //        "X-Requested-With": "XMLHttpRequest"
-            //    },
-            //    emulateJSON: true
-            //}).then(function(response) {
-            //    // 处理下分类数据
-            //    var data = response.data.data;
-            //    var tempTagList = [];
-            //    for (var i = 0; i < data.length; i++) {
-            //        tempTagList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
-            //    }
-            //    context.commit(SET_TAGLIST, tempTagList);
-            //    resolve();
-            //}, function(response) {
-            //    resolve(response.json());
-            //});
+            // 处理下分类名称
+            let classifyName = '';
+            for (let i = 0, len = context.state.sortList.length; i < len; i++) {
+                if (context.state.sortList[i].value === context.state.classify) {
+                    classifyName = context.state.sortList[i].label;
+                    break;
+                }
+            }
+            Vue.http.post(context.rootState.BASE_URL + '/articleAction/addArticle', {
+                // 参数部分
+                "sortId"   : context.state.classify,
+                "sortName" : encodeURI(encodeURI(classifyName)),
+                "title"    : encodeURI(encodeURI(context.state.name)),
+                "content"  : encodeURI(encodeURI(context.state.content)),
+                "tags"     : encodeURI(encodeURI(context.state.tag.join(",")))
+            }, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                //context.commit(SET_TAGLIST, tempTagList);
+                resolve(response);
+            }, function(response) {
+                resolve(response.json());
+            });
         })
     },
 };
@@ -129,19 +134,18 @@ const mutations = {
     [SET_NAME](state , name){
         state.name = name;
     },
+    [SET_CONTENT](state , content){
+        state.content = content;
+    },
     [SET_TAGLIST](state , tagList){
         state.tagList = tagList;
     },
     [SET_TAG](state , tag){
-        console.info(tag);
-        console.info(tag);
-        console.info(tag);
-        console.info(tag);
-        console.info(tag);
-
         state.tag = tag;
     },
-
+    [SET_ISSUBMIT](state , isSubmit){
+        state.isSubmit = isSubmit;
+    },
 };
 
 export default {
