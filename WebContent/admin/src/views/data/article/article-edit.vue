@@ -3,32 +3,34 @@
         <div class="header">
             <el-row :gutter="20">
                 <el-col class="header-title" :span="24">
-                    <el-select class="filter-sort" v-model="classifyValue" placeholder="请选择">
-                        <el-option
-                            v-for="(item, key) in sortList"
-                            :label="item.label"
-                            :value="item.value"
-                            :key="key">
-                        </el-option>
-                    </el-select>
-                    <el-date-picker
-                        class="filter-time"
-                        v-model="startTimeValue"
-                        type="month"
-                        placeholder="起始日期">
-                    </el-date-picker>
-                    <span> - </span>
-                    <el-date-picker
-                        class="filter-time"
-                        v-model="endTimeValue"
-                        type="month"
-                        placeholder="至今">
-                    </el-date-picker>
-                    <el-button type="primary" @click="searchData">
-                        <i class="fa fa-search"></i>
-                        查询
-                    </el-button>
-                    <el-button @click="resetFilter">重置条件</el-button>
+					<div class="filter-package">
+						<el-select class="filter-sort" v-model="classifyValue" placeholder="请选择">
+							<el-option
+									v-for="(item, key) in sortList"
+									:label="item.label"
+									:value="item.value"
+									:key="key">
+							</el-option>
+						</el-select>
+						<el-date-picker
+								class="filter-time"
+								v-model="startTimeValue"
+								type="month"
+								placeholder="起始日期">
+						</el-date-picker>
+						<span> - </span>
+						<el-date-picker
+								class="filter-time"
+								v-model="endTimeValue"
+								type="month"
+								placeholder="至今">
+						</el-date-picker>
+						<el-button type="primary" @click="searchData">
+							<i class="fa fa-search"></i>
+							查询
+						</el-button>
+						<el-button @click="resetFilter">重置条件</el-button>
+					</div>
                 </el-col>
             </el-row>
         </div>
@@ -38,7 +40,7 @@
                     <div class="table-data">
                         <el-table
                             :data="tableData"
-                            :height="tableHeight+145"
+                            :height="tableHeight+141"
                             style="width: 100%">
                             <el-table-column
                                 prop="Article_ID"
@@ -48,10 +50,14 @@
                             <el-table-column
                                 prop="Article_Title"
                                 label="名称">
+								<template scope="scope">
+									<a :href="'#/home/data-article-edit/' + scope.row.Article_ID" >{{scope.row.Article_Title}}</a>
+								</template>
                             </el-table-column>
                             <el-table-column
                                 prop="Sort_Name"
-                                label="分类">
+                                label="分类"
+								width="120">
                             </el-table-column>
                             <el-table-column
                                 prop="Article_Tag"
@@ -66,14 +72,19 @@
                                     </el-tag>
                                 </template>
                             </el-table-column>
+							<el-table-column
+								prop="Comment_Num"
+								label="总评论"
+								width="90">
+							</el-table-column>
+							<el-table-column
+								prop="Uncomment_Num"
+								label="未读评论"
+								width="120">
+							</el-table-column>
                             <el-table-column
                                 prop="Read_Num"
                                 label="点击"
-                                width="90">
-                            </el-table-column>
-                            <el-table-column
-                                prop="Recommend_Num"
-                                label="推荐"
                                 width="90">
                             </el-table-column>
                             <el-table-column

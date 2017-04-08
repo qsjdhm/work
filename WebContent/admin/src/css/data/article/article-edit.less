@@ -3,21 +3,44 @@
  */
 
 .data-article-edit-page {
-    padding-top: 10px;
+    padding-top: 0px;
 
     .header {
         margin-bottom: 10px;
 
-        .el-select {
-            margin-right: 10px;
-        }
+        .filter-package {
+            color: black;
+            background: #eef1f6;
+            padding: 10px;
+            border-radius: 5px;
 
-        .el-button {
-            margin-left: 10px;
+            .el-input__inner {
+                height: 30px;
+            }
+
+            .el-select {
+                margin-right: 10px;
+            }
+
+            .el-button {
+                margin-left: 10px;
+                padding: 7px 15px;
+            }
         }
     }
 
     .container {
+
+        .el-table__body-wrapper {
+
+            a {
+                color: #20a0ff;
+                text-decoration: inherit;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        }
 
         .el-tag {
             margin-right: 5px;

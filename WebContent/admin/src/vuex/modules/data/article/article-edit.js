@@ -148,7 +148,10 @@ const mutations = {
                 'Article_Title' : tableData[i].Article_Title,
                 'Sort_Name' : tableData[i].Sort_Name,
                 'Article_Tag' : tableData[i].Article_Tag,
-                'Recommend_Num' : tableData[i].Recommend_Num,
+                'Comment_Num' : tableData[i].Comment_Num,
+				'Comment_List' : tableData[i].Comment_List,
+				'Uncomment_Num' : tableData[i].Uncomment_Num,
+				'Uncomment_List' : tableData[i].Uncomment_List,
                 'Read_Num' : tableData[i].Read_Num,
                 'Article_Date' : tableData[i].Article_Date
             });

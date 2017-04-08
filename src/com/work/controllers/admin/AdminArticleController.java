@@ -159,6 +159,35 @@ public class AdminArticleController {
 		for(int i=0; i<articleList.size(); i++){
 			JSONObject articleJson = new JSONObject();
 			Map <String,Object> article = articleList.get(i);
+			int id = Integer.parseInt(article.get("Article_ID").toString());
+			
+			// 调用服务查询出评论数据
+			List <TComment> comments = commentService.getCommentByArticleID(id);
+			JSONArray commentJsonArray = new JSONArray();
+			JSONArray UncommentJsonArray = new JSONArray();
+			int commentSize = comments.size();
+			int unReadSize = 0;
+			if(comments!=null){
+				
+				for(int j=0; j<commentSize; j++){
+					JSONObject commentJson = new JSONObject();
+					TComment pComment = comments.get(j);
+					commentJson.put("id", pComment.getComment_ID());
+					commentJson.put("userName", pComment.getComment_Person_Name());
+					commentJson.put("time", pComment.getComment_Time());
+					commentJson.put("sortID", pComment.getParent_CommentID());
+					commentJson.put("content", pComment.getComment_Content());
+					commentJson.put("isRead", pComment.getComment_Read());
+					
+					commentJsonArray.add(commentJson);
+					
+					// 返回未读评论信息
+					if (pComment.getComment_Read() == 0) {
+						unReadSize++;
+						UncommentJsonArray.add(commentJson);
+					}
+				}
+			}
 			
 			articleJson.put("Article_ID", article.get("Article_ID").toString());
 			articleJson.put("Article_Title", article.get("Article_Title").toString());
@@ -169,6 +198,11 @@ public class AdminArticleController {
 			articleJson.put("F_Sort_ID", article.get("F_Sort_ID").toString());
 			articleJson.put("Recommend_Num", article.get("Recommend_Num").toString());
 			articleJson.put("Read_Num", article.get("Read_Num").toString());
+			articleJson.put("Comment_Num", commentSize);
+			articleJson.put("Comment_List", commentJsonArray);
+			articleJson.put("Uncomment_Num", unReadSize);
+			articleJson.put("Uncomment_List", UncommentJsonArray);
+			
 			
 			articleJsonArray.add(articleJson);
 		}
@@ -369,7 +403,7 @@ public class AdminArticleController {
 		String title = URLDecoder.decode(URLDecoder.decode(request.getParameter("title"), "utf-8"), "utf-8");
 		String date = "";
 		String cover = "";
-		String content = request.getParameter("content");
+		String content = URLDecoder.decode(URLDecoder.decode(request.getParameter("content"), "utf-8"), "utf-8");
 		String tags = URLDecoder.decode(URLDecoder.decode(request.getParameter("tags"), "utf-8"), "utf-8");
 		int sortId = Integer.parseInt(request.getParameter("sortId"));
 		String sortName = URLDecoder.decode(URLDecoder.decode(request.getParameter("sortName"), "utf-8"), "utf-8");
