@@ -8,6 +8,9 @@ export const SET_SORTLIST = 'data-article-edit/SET_SORTLIST';
 export const SET_CLASSIFY = 'data-article-edit/SET_CLASSIFY';
 export const SET_STARTTIME = 'data-article-edit/SET_STARTTIME';  // 起始日期
 export const SET_ENDTIME = 'data-article-edit/SET_ENDTIME';  // 结束日期
+export const SET_SEQ = 'data-article-edit/SET_SEQ';  // 排序字段
+export const SET_DESC = 'data-article-edit/SET_DESC';  // 排序规则
+
 export const SET_TABLECOUNT = 'data-article-edit/SET_TABLECOUNT';  // 当前表格数据总数
 export const SET_TABLEPAGE = 'data-article-edit/SET_TABLEPAGE';  // 当前表格当前页数
 export const SET_TABLEDATA = 'data-article-edit/SET_TABLEDATA';  // 当前表格当前数据
@@ -23,6 +26,8 @@ const state  = {
     classify : '',  // 选中的分类
     startTime : '',  // 起始日期
     endTime : '',  // 结束日期
+	seq : 'Article_ID',  // 排序字段
+	desc : 'desc',  // 排序规则
     tableCount : 0,  // 表格数据总数
     tablePage : 1,  // 表格当前页
     tableData : [],  // 表格数据
@@ -63,8 +68,8 @@ const actions = {
                 resolve();
             }, function(response) {
                 // 请求错误情况下只显示全部，并且是选中状态
-                context.commit(SET_SUBSORTLIST, [{value: '0', label: '全部'}]);
-                context.commit(SET_SELECTEDSUBSORT, '0');
+                context.commit(SET_SORTLIST, [{value: '0', label: '全部'}]);
+                context.commit(SET_CLASSIFY, '');
                 resolve(response.json());
             });
         })
@@ -72,6 +77,7 @@ const actions = {
     // 根据根据分类、时间区间获取表格数据总数--用来设置page
     [GET_TABLEDATACOUNT] (context, payload) {
         return new Promise((resolve, reject) => {
+            console.info(context.state.classify);
             Vue.http.post(context.rootState.BASE_URL + '/articleAction/getArticleCount', {
                 sort : context.state.classify,
                 start: context.state.startTime,
@@ -99,6 +105,8 @@ const actions = {
                 sort : context.state.classify,
                 start: context.state.startTime,
                 end  : context.state.endTime,
+				seq  : context.state.seq,
+				desc : context.state.desc,
                 page : context.state.tablePage,
                 size : 20
             }, {
@@ -133,6 +141,12 @@ const mutations = {
     [SET_ENDTIME](state , endTime){
         state.endTime = endTime;
     },
+	[SET_SEQ](state , seq){
+		state.seq = seq;
+	},
+	[SET_DESC](state , desc){
+		state.desc = desc;
+	},
     [SET_TABLECOUNT](state , tableCount){
         state.tableCount = tableCount;
     },

@@ -151,9 +151,18 @@ public class AdminArticleController {
 		int sort = Integer.parseInt(request.getParameter("sort"));
 		String startTime = request.getParameter("start");
 		String endTime = request.getParameter("end");
+		String seq = request.getParameter("seq");
+		String desc = request.getParameter("desc");
+		// 做一下新老接口数据参数兼容
+	    if (seq == null || seq == "") {
+	    	seq = "Article_ID";
+	    }
+	    if (desc == null || desc == "") {
+	    	desc = "desc";
+	    }
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		List <Map<String,Object>> articleList = articleService.getArticleList(sort, startTime, endTime, page, size);
+		List <Map<String,Object>> articleList = articleService.getArticleList(sort, startTime, endTime, seq, desc, page, size);
 		
 		JSONArray articleJsonArray = new JSONArray();
 		for(int i=0; i<articleList.size(); i++){

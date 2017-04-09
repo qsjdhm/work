@@ -41,11 +41,14 @@
                         <el-table
                             :data="tableData"
                             :height="tableHeight+141"
+							:default-sort = "{prop: seq, order: desc}"
+							@sort-change="sortChangeHandle"
                             style="width: 100%">
                             <el-table-column
                                 prop="Article_ID"
                                 label="ID"
-                                width="65">
+								sortable="custom"
+                                width="80">
                             </el-table-column>
                             <el-table-column
                                 prop="Article_Title"
@@ -73,19 +76,65 @@
                                 </template>
                             </el-table-column>
 							<el-table-column
-								prop="Comment_Num"
-								label="总评论"
-								width="90">
+								prop="Uncomment_Num"
+								label="新增评论"
+								align="right"
+								class-name="uncomment"
+								width="100">
+								<template scope="scope">
+									<el-popover
+											v-if="scope.row.Uncomment_List.length>0"
+											trigger="hover"
+											placement="top">
+										<div
+											style="border-bottom: 1px solid #dfe6ec;"
+											v-for="(item, key) in scope.row.Uncomment_List"
+											v-if="scope.row.Uncomment_List.length>0"
+											:key="key">
+											<p>姓名: {{ item.userName }}</p>
+											<p>内容: {{ item.content }}</p>
+										</div>
+										<div slot="reference" class="name-wrapper">
+											{{ scope.row.Uncomment_Num }}
+										</div>
+									</el-popover>
+									<div
+										v-if="scope.row.Uncomment_List.length==0"
+										slot="reference"
+										class="name-wrapper">
+										{{ scope.row.Uncomment_Num }}
+									</div>
+								</template>
 							</el-table-column>
 							<el-table-column
-								prop="Uncomment_Num"
-								label="未读评论"
-								width="120">
+								prop="Comment_Num"
+								label="总评论"
+								align="right"
+								width="80">
+								<template scope="scope">
+									<el-popover v-if="scope.row.Comment_List.length>0" trigger="hover" placement="top">
+										<div
+											style="border-bottom: 1px solid #dfe6ec;"
+											v-for="(item, key) in scope.row.Comment_List"
+											:key="key">
+											<p>姓名: {{ item.userName }}</p>
+											<p>内容: {{ item.content }}</p>
+										</div>
+										<div slot="reference" class="name-wrapper">
+											{{ scope.row.Comment_Num }}
+										</div>
+									</el-popover>
+									<div v-if="scope.row.Comment_List.length==0" slot="reference" class="name-wrapper">
+										{{ scope.row.Comment_Num }}
+									</div>
+								</template>
 							</el-table-column>
                             <el-table-column
                                 prop="Read_Num"
-                                label="点击"
-                                width="90">
+                                label="点击量"
+								align="right"
+								class-name="uncomment"
+                                width="80">
                             </el-table-column>
                             <el-table-column
                                 prop="Article_Date"
@@ -124,6 +173,8 @@
         SET_CLASSIFY,
         SET_STARTTIME,
         SET_ENDTIME,
+		SET_SEQ,
+		SET_DESC,
         SET_TABLEPAGE,
 
         GET_SORTLIST,
@@ -135,6 +186,7 @@
         data: function () {
             return {
                 tableHeight : 0, // table的高度
+				sortRequest : false  // 是否允许排序字段远程请求数据
             }
         },
         computed: {
@@ -146,6 +198,8 @@
                 classify: state => state.dataArticleEdit.classify,
                 startTime: state => state.dataArticleEdit.startTime,
                 endTime: state => state.dataArticleEdit.endTime,
+				seq: state => state.dataArticleEdit.seq,
+				desc: state => state.dataArticleEdit.desc,
                 tableCount: state => state.dataArticleEdit.tableCount,
                 tablePage: state => state.dataArticleEdit.tablePage,
                 tableData: state => state.dataArticleEdit.tableData,
@@ -222,6 +276,24 @@
                 // 重新获取当前页的table表数据
                 this.$store.dispatch(GET_TABLEDATA);
             },
+			// 列排序事件
+			sortChangeHandle(prop) {
+            	// 排序事件会在vue的生命周期mounted之前，所以添加一个sortRequest限制排序远程请求数据什么时候可以开始请求
+				if (prop.order && prop.prop && this.sortRequest) {
+					let desc = '';
+					if (prop.order === 'ascending') {
+						desc = 'asc';
+					} else {
+						desc = 'desc';
+					}
+					let self = this;
+					self.$store.commit(SET_DESC, desc);
+					self.$store.commit(SET_SEQ, prop.prop);
+					self.$store.dispatch(GET_TABLEDATACOUNT).then(function (response) {
+						self.$store.dispatch(GET_TABLEDATA);
+					});
+				}
+			}
         },
         created: function () {
             // 打开此view应该设置顶部菜单和子级菜单的选中状态
@@ -252,6 +324,7 @@
             }).then(function (response) {
                 // 获取数据区间个数
                 self.$store.dispatch(GET_TABLEDATA);
+                self.sortRequest = true;
             });
         }
     }

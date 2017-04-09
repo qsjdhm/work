@@ -71,7 +71,7 @@
 					<el-col v-if="selectedFSortType=='comment'" class="header-desc" :span="4">评论数据分布</el-col>
 					<el-col v-if="selectedFSortType=='book'" class="header-desc" :span="4">图书数据分布</el-col>
 					<el-col class="header-details" :span="20">
-						<router-link to="/home/data-note-add">查看详情</router-link>
+						<router-link to="/home/data-article-edit">查看详情</router-link>
 						<i class="fa fa-download"></i>
 					</el-col>
 				</el-row>
