@@ -64,7 +64,7 @@
                     <div class="table-data">
                         <el-table
                             :data="tableData"
-                            :height="tableHeight+88"
+                            :height="tableHeight+109"
                             style="width: 100%"
                             :default-sort = "{prop: seq, order: descValue}"
                             ref="table"

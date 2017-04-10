@@ -40,7 +40,7 @@
                     <div class="table-data">
                         <el-table
                             :data="tableData"
-                            :height="tableHeight+141"
+                            :height="tableHeight+148"
 							:default-sort = "{prop: seq, order: descValue}"
 							@sort-change="sortChangeHandle"
                             style="width: 100%">
