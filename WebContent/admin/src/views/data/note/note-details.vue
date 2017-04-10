@@ -1,9 +1,9 @@
 <template>
-	<div class="data-article-details-page">
+	<div class="data-note-details-page">
 		<div class="header">
 			<el-breadcrumb separator="/">
 				<el-breadcrumb-item :to="{ path: '/home/data-dashboard' }">功能地图</el-breadcrumb-item>
-				<el-breadcrumb-item :to="{ path: '/home/data-article-edit' }">文章列表</el-breadcrumb-item>
+				<el-breadcrumb-item :to="{ path: '/home/data-note-edit' }">笔记列表</el-breadcrumb-item>
 				<el-breadcrumb-item>ID : {{id}} - 名称 :  {{name}}</el-breadcrumb-item>
 			</el-breadcrumb>
 		</div>
@@ -16,7 +16,7 @@
 						:key="key">
 				</el-option>
 			</el-select>
-			<el-input class="name" :disabled="isSubmit" v-model="nameValue" placeholder="请输入文章标题"></el-input>
+			<el-input class="name" :disabled="isSubmit" v-model="nameValue" placeholder="请输入笔记标题"></el-input>
 			<script id="content" name="content" type="text/plain"></script>
 			<div class="tag-package">
 				<el-select
@@ -24,7 +24,7 @@
 						v-model="selectedTag"
 						:disabled="isSubmit"
 						multiple
-						placeholder="请选择文章标签">
+						placeholder="请选择笔记标签">
 					<el-option
 							v-for="(item, key) in tagList"
 							:label="item.label"
@@ -38,13 +38,13 @@
 					@click="submitData"
 					type="primary">
 				<i class="fa fa-cloud-upload"></i>
-				修改文章
+				修改笔记
 			</el-button>
 			<el-button
 					v-if="isSubmit"
 					type="primary"
 					:loading="true">
-				提交文章中
+				提交笔记中
 			</el-button>
 			<el-button @click="resetData">重置数据</el-button>
 		</div>
@@ -59,7 +59,7 @@
 	import '../../../assets/ueditor1.6.1/lang/zh-cn/zh-cn';
 	import '../../../assets/ueditor1.6.1/themes/default/css/ueditor.css';
 
-	import '../../../css/data/article/article-details.less';
+	import '../../../css/data/note/note-details.less';
 
 	import { mapGetters, mapState, mapActions } from 'vuex';
 	import {
@@ -80,10 +80,10 @@
 
 		GET_SORTLIST,
 		GET_TAGLIST,
-		GET_ARTICLE,
+        GET_NOTE,
 
 		SUBMIT_DATA
-	} from '../../../vuex/modules/data/article/article-details';
+	} from '../../../vuex/modules/data/note/note-details';
 
 
     export default {
@@ -98,14 +98,14 @@
             ...mapState({
                 topActiveMenu: state => state.fremework.topActiveMenu,
 
-				sortList: state => state.dataArticleDetails.sortList,
-				classify: state => state.dataArticleDetails.classify,
-				id: state => state.dataArticleDetails.id,
-				name: state => state.dataArticleDetails.name,
-				content: state => state.dataArticleDetails.content,
-				tagList: state => state.dataArticleDetails.tagList,
-				tag: state => state.dataArticleDetails.tag,
-				isSubmit: state => state.dataArticleDetails.isSubmit,
+				sortList: state => state.dataNoteDetails.sortList,
+				classify: state => state.dataNoteDetails.classify,
+				id: state => state.dataNoteDetails.id,
+				name: state => state.dataNoteDetails.name,
+				content: state => state.dataNoteDetails.content,
+				tagList: state => state.dataNoteDetails.tagList,
+				tag: state => state.dataNoteDetails.tag,
+				isSubmit: state => state.dataNoteDetails.isSubmit,
             }),
 			// 分类切换
 			classifyValue: {
@@ -130,7 +130,7 @@
                 'setActiveTopMenu',
                 'setActiveChildMenu'
             ]),
-			// 添加文章
+			// 添加笔记
 			submitData: function (event) {
 				// 设置当前from不可编辑
 				let self = this;
@@ -141,7 +141,7 @@
 				self.$store.commit(SET_CONTENT, UE.getEditor("content").getContent());
 				// 设置标签
 				self.$store.commit(SET_TAG, this.selectedTag);
-				// 触发action提交文章内容
+				// 触发action提交笔记内容
 				self.$store.dispatch(SUBMIT_DATA).then(function(response){
 					// 设置当前from可编辑
 					self.$store.commit(SET_ISSUBMIT, false);
@@ -152,7 +152,7 @@
 							type: 'success'
 						});
 					} else {
-						self.$message.error('修改文章出错');
+						self.$message.error('修改笔记出错');
 					}
 				});
 			},
@@ -208,7 +208,7 @@
 				return self.$store.dispatch(GET_TAGLIST);
 			}).then(function(response){
 				self.$store.commit(SET_ID, self.$route.params.detailsId);
-				return self.$store.dispatch(GET_ARTICLE);
+				return self.$store.dispatch(GET_NOTE);
 			}).then(function(response){
 				self.editor.setContent(self.content);
 				for (let i = 0, len = self.tag.length; i < len; i++) {

@@ -28,6 +28,11 @@ import dataArticleEdit from './modules/data/article/article-edit';
 import dataArticleDetails from './modules/data/article/article-details';
 import dataArticleDel from './modules/data/article/article-del';
 
+import dataNoteAdd from './modules/data/note/note-add';
+import dataNoteEdit from './modules/data/note/note-edit';
+import dataNoteDetails from './modules/data/note/note-details';
+import dataNoteDel from './modules/data/note/note-del';
+
 const debug = process.env.NODE_ENV !== 'production';
 
 Vue.use(ElementUI);
@@ -54,6 +59,11 @@ export default new Vuex.Store({
         dataArticleEdit,
 		dataArticleDetails,
         dataArticleDel,
+
+        dataNoteAdd,
+        dataNoteEdit,
+        dataNoteDetails,
+        dataNoteDel,
 	},
 	strict: debug,
 	middlewares: middlewares,

@@ -172,7 +172,7 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 	 *  @return 笔记列表
 	 */
 	@Override
-	public List<Map<String, Object>> getNoteList(int sortId, String startTime, String endTime, int pageId, int pageNum) {
+	public List<Map<String, Object>> getNoteList(int sortId, String startTime, String endTime, String seq, String desc, int pageId, int pageNum) {
 		
 		if (endTime.equals("")) {
 			int year;
@@ -187,9 +187,9 @@ public class ArticleServiceImpl<T extends TArticle> extends ServiceImpl<T> imple
 		int end = pageNum;
 		String sql = "";
 		if(sortId==0){
-			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID=8 order by Article_ID desc limit "+ start + " , " + end;
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and F_Sort_ID=8 order by "+seq+" "+desc+" limit "+ start + " , " + end;
 		}else{
-			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and Sort_ID="+sortId+" order by Article_ID limit "+ start + " , " + end;
+			sql = "select Article_ID,Article_Title,Article_Date,Article_Tag,Sort_ID,Sort_Name,F_Sort_ID,Recommend_Num,Read_Num from article where left(Article_Date, 7) >= '"+startTime+"' and left(Article_Date, 7) <= '"+endTime+"' and Sort_ID="+sortId+" order by "+seq+" "+desc+" limit "+ start + " , " + end;
 		}
 
 		List<Map<String,Object>> mapList = this.getDao().sqlQuery(sql);

@@ -24,7 +24,7 @@ public interface IArticleService <T extends TArticle> extends IService<T> {
 	public List<Map<String, Object>> getArticleList(int fSortId, String startTime, String endTime, String seq, String desc, int pageId, int pageNum);
 		
 	// 根据分类获取笔记数据列表
-	public List<Map<String, Object>> getNoteList(int sortId, String startTime, String endTime, int pageId, int pageNum);
+	public List<Map<String, Object>> getNoteList(int fSortId, String startTime, String endTime, String seq, String desc, int pageId, int pageNum);
 
 	// 根据总分类、开始日期、结束日期、页数、每页个数获取此分类下的热门文章列表
 	public List<Map<String, Object>> getHeatArticleList(int fSortId, String startTime, String endTime, int pageId, int pageNum);

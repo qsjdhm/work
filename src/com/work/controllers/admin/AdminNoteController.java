@@ -89,115 +89,6 @@ public class AdminNoteController {
 	}
 	
 	
-	/****************供页面加载转向的ACTION******************/
-	
-	
-	// 负责映射到新增笔记页面
-	@RequestMapping(value = "/addPage")
-	public ModelAndView addPage() throws Exception{
-
-		// 1.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 2.获取除了笔记下的子分类，并且选中第一个子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(8, 1, 10000);
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, noteFirstSortID);
-		// 3.获取标签分类
-		List <TSort> tags = sortService.getSort(4, 0, 1000);
-		String tagsHtml = generateHtml.generateAdminTagsHtml(tags);
-		// 4.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("tagsHtml", tagsHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/note/add_note");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
-	// 负责映射到删除笔记页面
-	@RequestMapping(value = "/delPage/{sort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView delPage(
-			@PathVariable(value="sort") Integer sort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取除了笔记下的子分类，并且选中第一个子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(8, 1, 10000);
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, sort);
-		// 2.根据分类获得此类型下的笔记总个数
-		int count = articleService.getArticleSubSortLength(sort);
-		// 3.根据分类、页数获取笔记列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TArticle> notes = articleService.getArticleSubSort(sort, page, 6);
-		String noteHtml = generateHtml.generateAdminArticleDelHtml(notes);
-		// 4.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 5.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("sortId", sort);  // 当前分类
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("noteHtml", noteHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/note/del_note");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	// 负责映射到修改笔记页面
-	@RequestMapping(value = "/updatePage/{sort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView updatePage(
-			@PathVariable(value="sort") Integer sort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取除了笔记下的子分类，并且选中第一个子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(8, 1, 10000);
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, sort);
-		// 2.根据分类获得此类型下的笔记总个数
-		int count = articleService.getArticleSubSortLength(sort);
-		// 3.根据分类、页数获取笔记列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TArticle> notes = articleService.getArticleSubSort(sort, page, 6);
-		String noteHtml = generateHtml.generateAdminArticleUpdateHtml(notes);
-		// 4.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 5.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("sortId", sort);  // 当前分类
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("noteHtml", noteHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/note/update_note");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
 	/****************供AJAX请求的ACTION******************/
 	
 	@RequestMapping(value = "/getNoteCount")
@@ -225,14 +116,52 @@ public class AdminNoteController {
 		int sort = Integer.parseInt(request.getParameter("sort"));
 		String startTime = request.getParameter("start");
 		String endTime = request.getParameter("end");
+		String seq = request.getParameter("seq");
+		String desc = request.getParameter("desc");
+		// 做一下新老接口数据参数兼容
+	    if (seq == null || seq == "") {
+	    	seq = "Article_Date";
+	    }
+	    if (desc == null || desc == "") {
+	    	desc = "desc";
+	    }
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		List <Map<String,Object>> noteList = articleService.getNoteList(sort, startTime, endTime, page, size);
+		List <Map<String,Object>> noteList = articleService.getNoteList(sort, startTime, endTime, seq, desc, page, size);
 		
 		JSONArray noteJsonArray = new JSONArray();
 		for(int i=0; i<noteList.size(); i++){
 			JSONObject noteJson = new JSONObject();
 			Map <String,Object> note = noteList.get(i);
+			int id = Integer.parseInt(note.get("Article_ID").toString());
+			
+			// 调用服务查询出评论数据
+			List <TComment> comments = commentService.getCommentByArticleID(id);
+			JSONArray commentJsonArray = new JSONArray();
+			JSONArray UncommentJsonArray = new JSONArray();
+			int commentSize = comments.size();
+			int unReadSize = 0;
+			if(comments!=null){
+				
+				for(int j=0; j<commentSize; j++){
+					JSONObject commentJson = new JSONObject();
+					TComment pComment = comments.get(j);
+					commentJson.put("id", pComment.getComment_ID());
+					commentJson.put("userName", pComment.getComment_Person_Name());
+					commentJson.put("time", pComment.getComment_Time());
+					commentJson.put("sortID", pComment.getParent_CommentID());
+					commentJson.put("content", pComment.getComment_Content());
+					commentJson.put("isRead", pComment.getComment_Read());
+					
+					commentJsonArray.add(commentJson);
+					
+					// 返回未读评论信息
+					if (pComment.getComment_Read() == 0) {
+						unReadSize++;
+						UncommentJsonArray.add(commentJson);
+					}
+				}
+			}
 			
 			noteJson.put("Article_ID", note.get("Article_ID").toString());
 			noteJson.put("Article_Title", note.get("Article_Title").toString());
@@ -243,6 +172,10 @@ public class AdminNoteController {
 			noteJson.put("F_Sort_ID", note.get("F_Sort_ID").toString());
 			noteJson.put("Recommend_Num", note.get("Recommend_Num").toString());
 			noteJson.put("Read_Num", note.get("Read_Num").toString());
+			noteJson.put("Comment_Num", commentSize);
+			noteJson.put("Comment_List", commentJsonArray);
+			noteJson.put("Uncomment_Num", unReadSize);
+			noteJson.put("Uncomment_List", UncommentJsonArray);
 			
 			noteJsonArray.add(noteJson);
 		}
@@ -260,12 +193,12 @@ public class AdminNoteController {
 	}
 	
 	@RequestMapping(value = "/addNote")
-	public void addArticle(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public void addNote(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		String title = URLDecoder.decode(URLDecoder.decode(request.getParameter("title"), "utf-8"), "utf-8");
 		String date = "";
 		String cover = "";
-		String content = request.getParameter("content");
+		String content = URLDecoder.decode(URLDecoder.decode(request.getParameter("content"), "utf-8"), "utf-8");
 		String tags = URLDecoder.decode(URLDecoder.decode(request.getParameter("tags"), "utf-8"), "utf-8");
 		int sortId = Integer.parseInt(request.getParameter("sortId"));
 		String sortName = URLDecoder.decode(URLDecoder.decode(request.getParameter("sortName"), "utf-8"), "utf-8");
@@ -361,7 +294,7 @@ public class AdminNoteController {
 	}
 	
 	@RequestMapping(value = "/getNote")
-	public void getArticle(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public void getNote(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int selectId = Integer.parseInt(request.getParameter("selectId"));
 		
@@ -397,7 +330,7 @@ public class AdminNoteController {
 		String title = URLDecoder.decode(URLDecoder.decode(request.getParameter("title"), "utf-8"), "utf-8");
 		String date = "";
 		String cover = "";
-		String content = request.getParameter("content");
+		String content = URLDecoder.decode(URLDecoder.decode(request.getParameter("content"), "utf-8"), "utf-8");
 		String tags = URLDecoder.decode(URLDecoder.decode(request.getParameter("tags"), "utf-8"), "utf-8");
 		int sortId = Integer.parseInt(request.getParameter("sortId"));
 		String sortName = URLDecoder.decode(URLDecoder.decode(request.getParameter("sortName"), "utf-8"), "utf-8");

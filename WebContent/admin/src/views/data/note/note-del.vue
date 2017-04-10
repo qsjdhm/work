@@ -1,5 +1,5 @@
 <template>
-    <div class="data-article-del-page">
+    <div class="data-note-del-page">
         <div class="header">
             <el-row :gutter="20">
                 <el-col class="header-title" :span="24">
@@ -55,7 +55,7 @@
                             type="text"
                             @click.native.prevent="deleteSelectionRow"
                             size="small">
-                            清除所选文章
+                            清除所选笔记
                         </el-button>
                     </div>
                 </el-col>
@@ -124,7 +124,7 @@
                                             <p>内容: {{ item.content }}</p>
                                         </div>
                                         <div slot="reference" class="name-wrapper">
-                                            <a :href="'#/home/data-article-edit/' + scope.row.Article_ID" ><span class="remind"></span>{{scope.row.Uncomment_Num}}</a>
+                                            <a :href="'#/home/data-note-edit/' + scope.row.Article_ID" ><span class="remind"></span>{{scope.row.Uncomment_Num}}</a>
                                         </div>
                                     </el-popover>
                                     <div
@@ -150,7 +150,7 @@
                                             <p>内容: {{ item.content }}</p>
                                         </div>
                                         <div slot="reference" class="name-wrapper">
-                                            <a :href="'#/home/data-article-edit/' + scope.row.Article_ID" >{{scope.row.Comment_Num}}</a>
+                                            <a :href="'#/home/data-note-edit/' + scope.row.Article_ID" >{{scope.row.Comment_Num}}</a>
                                         </div>
                                     </el-popover>
                                     <div v-if="scope.row.Comment_List.length==0" slot="reference" class="name-wrapper">
@@ -205,7 +205,7 @@
 
 <script type="text/ecmascript-6">
 
-    import '../../../css/data/article/article-del.less';
+    import '../../../css/data/note/note-del.less';
 
     import { mapGetters, mapState, mapActions } from 'vuex';
     import {
@@ -226,14 +226,14 @@
         GET_SORTLIST,
         GET_TABLEDATACOUNT,
         GET_TABLEDATA,
-        DEL_ARTICLE
-    } from '../../../vuex/modules/data/article/article-del';
+        DEL_NOTE
+    } from '../../../vuex/modules/data/note/note-del';
 
     export default {
         data: function () {
             return {
                 tableHeight : 0, // table的高度
-                multipleSelection: [],  // 选中文章
+                multipleSelection: [],  // 选中笔记
                 sortRequest : false  // 是否允许排序字段远程请求数据
             }
         },
@@ -242,15 +242,15 @@
             ...mapState({
                 topActiveMenu: state => state.fremework.topActiveMenu,
 
-                sortList: state => state.dataArticleDel.sortList,
-                classify: state => state.dataArticleDel.classify,
-                startTime: state => state.dataArticleDel.startTime,
-                endTime: state => state.dataArticleDel.endTime,
-                seq: state => state.dataArticleDel.seq,
-                desc: state => state.dataArticleDel.desc,
-                tableCount: state => state.dataArticleDel.tableCount,
-                tablePage: state => state.dataArticleDel.tablePage,
-                tableData: state => state.dataArticleDel.tableData,
+                sortList: state => state.dataNoteDel.sortList,
+                classify: state => state.dataNoteDel.classify,
+                startTime: state => state.dataNoteDel.startTime,
+                endTime: state => state.dataNoteDel.endTime,
+                seq: state => state.dataNoteDel.seq,
+                desc: state => state.dataNoteDel.desc,
+                tableCount: state => state.dataNoteDel.tableCount,
+                tablePage: state => state.dataNoteDel.tablePage,
+                tableData: state => state.dataNoteDel.tableData,
             }),
             // 分类切换事件
             classifyValue: {
@@ -325,7 +325,7 @@
             },
             // 选中标签删除事件
             tagCloseHandle(tag) {
-                // 删除当前选中的文章
+                // 删除当前选中的笔记
                 this.$refs.table.toggleRowSelection(tag, false);
             },
             // 删除选中的行事件
@@ -337,14 +337,14 @@
                     selectionArray.push(item.Article_ID);
                 });
 
-                self.$store.dispatch(DEL_ARTICLE, selectionArray.join(';')).then(function(response) {
+                self.$store.dispatch(DEL_NOTE, selectionArray.join(';')).then(function(response) {
                     if (response.data.success === '1') {
                         self.$message({
                             message: response.data.msg,
                             type: 'success'
                         });
                     } else {
-                        self.$message.error('删除文章出错');
+                        self.$message.error('删除笔记出错');
                     }
                     // 然后清空当前选中的数据
                     self.$refs.table.clearSelection();
@@ -356,14 +356,14 @@
             // 删除单行选中数据事件
             deleteRow(index, id) {
                 let self = this;
-                self.$store.dispatch(DEL_ARTICLE, id).then(function(response) {
+                self.$store.dispatch(DEL_NOTE, id).then(function(response) {
                     if (response.data.success === '1') {
                         self.$message({
                             message: response.data.msg,
                             type: 'success'
                         });
                     } else {
-                        self.$message.error('删除文章出错');
+                        self.$message.error('删除笔记出错');
                     }
                     return self.$store.dispatch(GET_TABLEDATACOUNT);
                 }).then(function (response) {

@@ -155,7 +155,7 @@ public class AdminArticleController {
 		String desc = request.getParameter("desc");
 		// 做一下新老接口数据参数兼容
 	    if (seq == null || seq == "") {
-	    	seq = "Article_ID";
+	    	seq = "Article_Date";
 	    }
 	    if (desc == null || desc == "") {
 	    	desc = "desc";

@@ -1,9 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-//import LoginPage from '@/views/LoginPage'
-//import About from '@/components/About'
-//import About2 from '@/components/About2'
-
 import auth from '../utils/auth'
 
 Vue.use(Router)
@@ -47,7 +43,11 @@ const dataArticleAdd            = resolve => require(['../views/data/article/art
 const dataArticleEdit           = resolve => require(['../views/data/article/article-edit'], resolve);
 const dataArticleDetails        = resolve => require(['../views/data/article/article-details'], resolve);
 const dataArticleDel            = resolve => require(['../views/data/article/article-del'], resolve);
+
 const dataNoteAdd               = resolve => require(['../views/data/note/note-add'], resolve);
+const dataNoteEdit              = resolve => require(['../views/data/note/note-edit'], resolve);
+const dataNoteDetails           = resolve => require(['../views/data/note/note-details'], resolve);
+const dataNoteDel               = resolve => require(['../views/data/note/note-del'], resolve);
 
 
 export default new Router({
@@ -124,14 +124,6 @@ export default new Router({
                     path: 'data-article-edit',
                     name: '编辑文章',
                     component: dataArticleEdit,
-					// children: [
-					// 	{
-					// 		meta: { pId: '2' },
-					// 		path: ':id',
-					// 		name: '文章详情',
-					// 		component: dataArticleDetails
-					// 	}
-					// ]
                 },
 				{
 					meta: { pId: '2' },
@@ -142,7 +134,7 @@ export default new Router({
                 {
                     meta: { pId: '2' },
                     path: 'data-article-del',
-                    name: '删除文章22',
+                    name: '删除文章',
                     component: dataArticleDel
                 },
                 {
@@ -150,7 +142,26 @@ export default new Router({
                     path: 'data-note-add',
                     name: '新增笔记',
                     component: dataNoteAdd
-                }
+                },
+                {
+                    meta: { pId: '2' },
+                    path: 'data-note-edit',
+                    name: '编辑笔记',
+                    component: dataNoteEdit
+                },
+                {
+                    meta: { pId: '2' },
+                    path: 'data-note-edit/:detailsId',
+                    name: '笔记详情',
+                    component: dataNoteDetails
+                },
+                {
+                    meta: { pId: '2' },
+                    path: 'data-note-del',
+                    name: '删除笔记',
+                    component: dataNoteDel
+                },
+
             ]
         },
         //{

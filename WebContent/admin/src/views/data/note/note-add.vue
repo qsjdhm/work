@@ -1,27 +1,114 @@
 <template>
-	<div>
-        数据管理 - 文章管理 - 添加笔记 - /home/data-note-add
-		<router-link to="/home/analyze-article-data">评论分析-地域分析</router-link>
-	</div>
-
+    <div class="data-note-add-page">
+        <el-select class="classify" :disabled="isSubmit" v-model="classifyValue" placeholder="请选择">
+            <el-option
+                v-for="(item, key) in sortList"
+                :label="item.label"
+                :value="item.value"
+                :key="key">
+            </el-option>
+        </el-select>
+        <el-input class="name" :disabled="isSubmit" v-model="nameValue" placeholder="请输入笔记标题"></el-input>
+        <script id="content" name="content" type="text/plain"></script>
+        <div class="tag-package">
+            <el-select
+                class="tags"
+                v-model="selectedTag"
+                :disabled="isSubmit"
+                multiple
+                placeholder="请选择笔记标签">
+                <el-option
+                    v-for="(item, key) in tagList"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="key">
+                </el-option>
+            </el-select>
+        </div>
+        <el-button
+            v-if="!isSubmit"
+            @click="submitData"
+            type="primary">
+            <i class="fa fa-cloud-upload"></i>
+            新增笔记
+        </el-button>
+        <el-button
+            v-if="isSubmit"
+            type="primary"
+            :loading="true">
+            提交笔记中
+        </el-button>
+        <el-button @click="resetData">重置数据</el-button>
+    </div>
 </template>
 
 <script type="text/ecmascript-6">
+    // 富文本
+    import '../../../assets/ueditor1.6.1/ueditor.config';
+    import '../../../assets/ueditor1.6.1/ueditor.all.min';
+    import '../../../assets/ueditor1.6.1/ueditor.parse';
+    import '../../../assets/ueditor1.6.1/lang/zh-cn/zh-cn';
+    import '../../../assets/ueditor1.6.1/themes/default/css/ueditor.css';
+
+    import '../../../css/data/note/note-add.less';
+
     import { mapGetters, mapState, mapActions } from 'vuex';
     import {
-        SET_CHILDMENUSHOW,
         SET_TOPACTIVEMENU,
         SET_CHILDACTIVEMENU
     } from '../../../vuex/modules/fremework';
 
+    // 引入此页面派发器
+    import {
+        SET_SORTLIST,
+        SET_CLASSIFY,
+        SET_NAME,
+        SET_CONTENT,
+        SET_TAGLIST,
+        SET_TAG,
+        SET_ISSUBMIT,
+
+        GET_SORTLIST,
+        GET_TAGLIST,
+
+        SUBMIT_DATA
+    } from '../../../vuex/modules/data/note/note-add';
+
     export default {
+        data: function () {
+            return {
+                editor : null,
+                selectedTag : []
+            }
+        },
         computed: {
             // 因为用到了modules，所以正确的变量位置在store.state.LoginPage中
             ...mapState({
-                childMenuShow: state => state.fremework.childMenuShow,
                 topActiveMenu: state => state.fremework.topActiveMenu,
+
+                sortList: state => state.dataNoteAdd.sortList,
+                classify: state => state.dataNoteAdd.classify,
+                name: state => state.dataNoteAdd.name,
+                tagList: state => state.dataNoteAdd.tagList,
+                tag: state => state.dataNoteAdd.tag,
+                isSubmit: state => state.dataNoteAdd.isSubmit,
             }),
+            // 分类切换
+            classifyValue: {
+                get: function () { return this.classify; },
+                set: function (newClassify) {
+                    this.$store.commit(SET_CLASSIFY, newClassify);
+                }
+            },
+            // 名称切换
+            nameValue: {
+                get: function () { return this.name; },
+                set: function (newName) {
+                    this.$store.commit(SET_NAME, newName);
+                }
+            }
         },
+
         methods: {
             // 映射 this.setActiveTopMenu() 为 action中的方法  this.$store.dispatch('setActiveTopMenu')
             ...mapActions([
@@ -29,7 +116,40 @@
                 'setActiveTopMenu',
                 'setActiveChildMenu'
             ]),
+            // 添加笔记
+            submitData: function (event) {
+                // 设置当前from不可编辑
+                let self = this;
+                self.$store.commit(SET_ISSUBMIT, true);
+                self.editor.setDisabled();
 
+                // 设置内容
+                self.$store.commit(SET_CONTENT, UE.getEditor("content").getContent());
+                // 设置标签
+                self.$store.commit(SET_TAG, this.selectedTag);
+                // 触发action提交笔记内容
+                self.$store.dispatch(SUBMIT_DATA).then(function(response){
+                    // 设置当前from可编辑
+                    self.$store.commit(SET_ISSUBMIT, false);
+                    self.editor.setEnabled();
+                    if (response.data.success === '1') {
+                        self.$message({
+                            message: response.data.msg,
+                            type: 'success'
+                        });
+                    } else {
+                        self.$message.error('添加笔记出错');
+                    }
+                });
+            },
+            // 重置当前数据
+            resetData: function (event) {
+                this.$store.commit(SET_CLASSIFY, this.sortList[0].value);
+                this.$store.commit(SET_NAME, '');
+                this.$store.commit(SET_CONTENT, '');
+                this.editor.setContent('');
+                this.selectedTag = [];
+            }
         },
         created: function () {
             // 打开此view应该设置顶部菜单和子级菜单的选中状态
@@ -49,6 +169,24 @@
                 this.setActiveChildMenu(path);
             }
         },
+        mounted: function () {
+            let self = this;
+            // 初始化富文本组件
+            this.editor = new UE.ui.Editor({
+                initialContent: "",  // 初始化时显示的内容
+                focus: false,  // 是否聚焦
+                initialFrameWidth: 820,  // 设置宽度
+                initialFrameHeight: 400,  // 设置宽度
+                autoClearinitialContent: true,  // focus时自动清空初始化时的内容
+                autoHeightEnabled: false
+            });
+            this.editor.render("content");
+
+            // 获取分类列表
+            self.$store.dispatch(GET_SORTLIST).then(function(response){
+                self.$store.dispatch(GET_TAGLIST);
+            });
+        }
     }
 </script>
 
