@@ -4,20 +4,21 @@
 
 import Vue from 'vue';
 
-export const SET_SORTLIST = 'data-article-edit/SET_SORTLIST';
-export const SET_CLASSIFY = 'data-article-edit/SET_CLASSIFY';
-export const SET_STARTTIME = 'data-article-edit/SET_STARTTIME';  // 起始日期
-export const SET_ENDTIME = 'data-article-edit/SET_ENDTIME';  // 结束日期
-export const SET_SEQ = 'data-article-edit/SET_SEQ';  // 排序字段
-export const SET_DESC = 'data-article-edit/SET_DESC';  // 排序规则
+export const SET_SORTLIST = 'data-article-del/SET_SORTLIST';
+export const SET_CLASSIFY = 'data-article-del/SET_CLASSIFY';
+export const SET_STARTTIME = 'data-article-del/SET_STARTTIME';  // 起始日期
+export const SET_ENDTIME = 'data-article-del/SET_ENDTIME';  // 结束日期
+export const SET_SEQ = 'data-article-del/SET_SEQ';  // 排序字段
+export const SET_DESC = 'data-article-del/SET_DESC';  // 排序规则
 
-export const SET_TABLECOUNT = 'data-article-edit/SET_TABLECOUNT';  // 当前表格数据总数
-export const SET_TABLEPAGE = 'data-article-edit/SET_TABLEPAGE';  // 当前表格当前页数
-export const SET_TABLEDATA = 'data-article-edit/SET_TABLEDATA';  // 当前表格当前数据
+export const SET_TABLECOUNT = 'data-article-del/SET_TABLECOUNT';  // 当前表格数据总数
+export const SET_TABLEPAGE = 'data-article-del/SET_TABLEPAGE';  // 当前表格当前页数
+export const SET_TABLEDATA = 'data-article-del/SET_TABLEDATA';  // 当前表格当前数据
 
-export const GET_SORTLIST = 'data-article-edit/GET_SORTLIST';  // 获取分类列表
-export const GET_TABLEDATACOUNT = 'data-article-edit/GET_TABLEDATACOUNT';  // 根据根据父分类、子分类、时间区间获取表格数据总数--用来设置page
-export const GET_TABLEDATA = 'data-article-edit/GET_TABLEDATA';  // 根据根据子分类、时间区间获取表格数据--用来设置表格
+export const GET_SORTLIST = 'data-article-del/GET_SORTLIST';  // 获取分类列表
+export const GET_TABLEDATACOUNT = 'data-article-del/GET_TABLEDATACOUNT';  // 根据根据父分类、子分类、时间区间获取表格数据总数--用来设置page
+export const GET_TABLEDATA = 'data-article-del/GET_TABLEDATA';  // 根据根据子分类、时间区间获取表格数据--用来设置表格
+export const DEL_ARTICLE = 'data-article-del/DEL_ARTICLE';  // 删除文章
 
 
 
@@ -118,6 +119,30 @@ const actions = {
                 // 初始化表格数据
                 context.commit(SET_TABLEDATA, response.data.data);
                 resolve(response.data.data);
+            }, function(response) {
+                context.commit(SET_TABLEDATA, []);
+                resolve(response.json());
+            });
+        })
+    },
+    // 删除文章
+    [DEL_ARTICLE] (context, payload) {
+        return new Promise((resolve, reject) => {
+            Vue.http.post(context.rootState.BASE_URL + '/articleAction/delArticle', {
+                selectId : payload
+            }, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                console.info(response.data);
+                console.info(response.data);
+                console.info(response.data);
+                console.info(response.data);
+                // 初始化表格数据
+                //context.commit(SET_TABLEDATA, response.data.data);
+                resolve(response);
             }, function(response) {
                 context.commit(SET_TABLEDATA, []);
                 resolve(response.json());

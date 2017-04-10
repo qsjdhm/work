@@ -41,7 +41,7 @@
                         <el-table
                             :data="tableData"
                             :height="tableHeight+141"
-							:default-sort = "{prop: seq, order: desc}"
+							:default-sort = "{prop: seq, order: descValue}"
 							@sort-change="sortChangeHandle"
                             style="width: 100%">
                             <el-table-column
@@ -95,14 +95,14 @@
 											<p>内容: {{ item.content }}</p>
 										</div>
 										<div slot="reference" class="name-wrapper">
-											{{ scope.row.Uncomment_Num }}
-										</div>
+                                            <a :href="'#/home/data-article-edit/' + scope.row.Article_ID" ><span class="remind"></span>{{scope.row.Uncomment_Num}}</a>
+                                        </div>
 									</el-popover>
 									<div
 										v-if="scope.row.Uncomment_List.length==0"
 										slot="reference"
 										class="name-wrapper">
-										{{ scope.row.Uncomment_Num }}
+                                        {{ scope.row.Uncomment_Num }}
 									</div>
 								</template>
 							</el-table-column>
@@ -121,8 +121,8 @@
 											<p>内容: {{ item.content }}</p>
 										</div>
 										<div slot="reference" class="name-wrapper">
-											{{ scope.row.Comment_Num }}
-										</div>
+                                            <a :href="'#/home/data-article-edit/' + scope.row.Article_ID" >{{scope.row.Comment_Num}}</a>
+                                        </div>
 									</el-popover>
 									<div v-if="scope.row.Comment_List.length==0" slot="reference" class="name-wrapper">
 										{{ scope.row.Comment_Num }}
@@ -134,11 +134,14 @@
                                 label="点击量"
 								align="right"
 								class-name="uncomment"
-                                width="80">
+                                sortable="custom"
+                                width="100">
                             </el-table-column>
                             <el-table-column
                                 prop="Article_Date"
-                                label="时间">
+                                sortable="custom"
+                                label="时间"
+                                :formatter="formatterTableTime">
                             </el-table-column>
                         </el-table>
                     </div>
@@ -243,6 +246,10 @@
                         self.$store.commit(SET_ENDTIME, year + '-' + month);
                     }
                 }
+            },
+            // 排序顺序
+            descValue: function () {
+                return this.desc + 'ending';
             }
         },
 
@@ -293,7 +300,11 @@
 						self.$store.dispatch(GET_TABLEDATA);
 					});
 				}
-			}
+			},
+            // 格式化处理表格的时间数据格式
+            formatterTableTime(row, column) {
+                return row.Article_Date.split(' ')[0];
+            }
         },
         created: function () {
             // 打开此view应该设置顶部菜单和子级菜单的选中状态

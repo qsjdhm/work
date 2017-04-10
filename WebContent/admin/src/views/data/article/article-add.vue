@@ -170,6 +170,7 @@
             }
         },
         mounted: function () {
+            let self = this;
             // 初始化富文本组件
             this.editor = new UE.ui.Editor({
                 initialContent: "",  // 初始化时显示的内容
@@ -181,9 +182,7 @@
             });
             this.editor.render("content");
 
-
             // 获取分类列表
-            let self = this;
             self.$store.dispatch(GET_SORTLIST).then(function(response){
                 self.$store.dispatch(GET_TAGLIST);
             });

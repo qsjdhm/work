@@ -26,6 +26,7 @@ import dataDashboard from './modules/data/dashboard';
 import dataArticleAdd from './modules/data/article/article-add';
 import dataArticleEdit from './modules/data/article/article-edit';
 import dataArticleDetails from './modules/data/article/article-details';
+import dataArticleDel from './modules/data/article/article-del';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -51,8 +52,8 @@ export default new Vuex.Store({
         dataDashboard,
         dataArticleAdd,
         dataArticleEdit,
-		dataArticleDetails
-
+		dataArticleDetails,
+        dataArticleDel,
 	},
 	strict: debug,
 	middlewares: middlewares,
