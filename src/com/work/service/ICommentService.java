@@ -11,11 +11,11 @@ public interface ICommentService <T extends TComment> extends IService<T> {
 	// 获取评论的数据分布
 	public List<Map<String, Object>> getCommentDistribution(String startTime, String endTime);
 	
-	// 获取评论的总个数
-	public int getCommentLength(String startTime, String endTime);
+	// 根据类型、时间区间获取评论总个数
+	public int getCommentLength(String type, String startTime, String endTime);
 	
-	// 根据开始日期、结束日期、页数、每页个数获取评论列表
-	public List<Map<String, Object>> getCommentList(String startTime, String endTime, int pageId, int pageNum);
+	// 根据类型、开始日期、结束日期、页数、每页个数获取评论列表
+	public List<Map<String, Object>> getCommentList(String type, String startTime, String endTime, String seq, String desc, int pageId, int pageNum);
 	
 	
 	// 根据每页个数获取评论的总页数

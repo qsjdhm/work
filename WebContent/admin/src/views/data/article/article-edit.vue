@@ -141,7 +141,8 @@
                                 prop="Article_Date"
                                 sortable="custom"
                                 label="时间"
-                                :formatter="formatterTableTime">
+                                :formatter="formatterTableTime"
+								width="125">
                             </el-table-column>
                         </el-table>
                     </div>

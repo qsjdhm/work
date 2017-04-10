@@ -49,6 +49,9 @@ const dataNoteEdit              = resolve => require(['../views/data/note/note-e
 const dataNoteDetails           = resolve => require(['../views/data/note/note-details'], resolve);
 const dataNoteDel               = resolve => require(['../views/data/note/note-del'], resolve);
 
+const dataCommentEdit           = resolve => require(['../views/data/comment/comment-edit'], resolve);
+
+
 
 export default new Router({
     routes: [
@@ -161,7 +164,12 @@ export default new Router({
                     name: '删除笔记',
                     component: dataNoteDel
                 },
-
+				{
+					meta: { pId: '2' },
+					path: 'data-comment-edit',
+					name: '编辑评论',
+					component: dataCommentEdit
+				},
             ]
         },
         //{

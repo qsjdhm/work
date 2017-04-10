@@ -1,5 +1,5 @@
 <template>
-	<div class="data-note-edit-page">
+	<div class="data-comment-edit-page">
         <div class="header">
             <el-row :gutter="20">
                 <el-col class="header-title" :span="24">
@@ -45,105 +45,90 @@
 							@sort-change="sortChangeHandle"
                             style="width: 100%">
                             <el-table-column
-                                prop="Article_ID"
+                                prop="Comment_ID"
                                 label="ID"
 								sortable="custom"
                                 width="80">
                             </el-table-column>
-                            <el-table-column
-                                prop="Article_Title"
-                                label="名称">
-								<template scope="scope">
-									<a :href="'#/home/data-note-edit/' + scope.row.Article_ID" >{{scope.row.Article_Title}}</a>
-								</template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="Sort_Name"
-                                label="分类"
-								width="160">
-                            </el-table-column>
-                            <el-table-column
-                                prop="Article_Tag"
-                                label="标签">
-                                <template scope="scope">
-                                    <el-tag
-                                        v-if="scope.row.Article_Tag!=''"
-                                        v-for="(item, key) in scope.row.Article_Tag.split(',')"
-                                        :key="key"
-                                        type="primary">
-                                        {{ item }}
-                                    </el-tag>
-                                </template>
-                            </el-table-column>
 							<el-table-column
-								prop="Uncomment_Num"
-								label="新增评论"
-								align="right"
+								prop="Comment_ArticleTitle"
+								label="评论文章">
+								<template scope="scope">
+									<el-popover trigger="hover" placement="top">
+										<p>{{ scope.row.Comment_ArticleTitle }}</p>
+										<div slot="reference" class="name-wrapper">
+											{{ scope.row.Comment_ArticleTitle }}
+										</div>
+									</el-popover>
+								</template>
+							</el-table-column>
+							<el-table-column
+								prop="Comment_Content"
+								label="内容">
+								<template scope="scope">
+									<el-popover trigger="hover" placement="top">
+										<p>{{ scope.row.Comment_Content }}</p>
+										<div slot="reference" class="name-wrapper">
+											{{ scope.row.Comment_Content }}
+										</div>
+									</el-popover>
+								</template>
+							</el-table-column>
+							<el-table-column
+								prop="Comment_Person_Name"
+								label="评论人"
+								width="120">
+								<template scope="scope">
+									<el-popover v-if="scope.row.Comment_Person_Email!=''" trigger="hover" placement="top">
+										<p>需要回复此评论人（{{ scope.row.Comment_Person_Email }}）吗？</p>
+										<div style="text-align: right; margin: 0">
+											<el-button size="mini" type="text">取消</el-button>
+											<el-button type="primary" size="mini">回复</el-button>
+										</div>
+										<div slot="reference" class="name-wrapper">
+											{{ scope.row.Comment_Person_Name }}
+										</div>
+									</el-popover>
+									<div v-if="scope.row.Comment_Person_Email==''" slot="reference" class="name-wrapper">
+										{{ scope.row.Comment_Person_Name }}
+									</div>
+								</template>
+							</el-table-column>
+							<el-table-column
+								prop="Comment_Read"
 								class-name="uncomment"
+								sortable="custom"
+								label="状态"
 								width="100">
 								<template scope="scope">
-									<el-popover
-											v-if="scope.row.Uncomment_List.length>0"
-											trigger="hover"
-											placement="top">
-										<div
-											style="border-bottom: 1px solid #dfe6ec;"
-											v-for="(item, key) in scope.row.Uncomment_List"
-											v-if="scope.row.Uncomment_List.length>0"
-											:key="key">
-											<p>姓名: {{ item.userName }}</p>
-											<p>内容: {{ item.content }}</p>
-										</div>
-										<div slot="reference" class="name-wrapper">
-                                            <a :href="'#/home/data-note-edit/' + scope.row.Article_ID" ><span class="remind"></span>{{scope.row.Uncomment_Num}}</a>
-                                        </div>
-									</el-popover>
-									<div
-										v-if="scope.row.Uncomment_List.length==0"
-										slot="reference"
-										class="name-wrapper">
-                                        {{ scope.row.Uncomment_Num }}
+									<div v-if="scope.row.Comment_Read==0" style="color: #ff5500;" slot="reference" class="name-wrapper">
+										未读
 									</div>
-								</template>
-							</el-table-column>
-							<el-table-column
-								prop="Comment_Num"
-								label="总评论"
-								align="right"
-								width="80">
-								<template scope="scope">
-									<el-popover v-if="scope.row.Comment_List.length>0" trigger="hover" placement="top">
-										<div
-											style="border-bottom: 1px solid #dfe6ec;"
-											v-for="(item, key) in scope.row.Comment_List"
-											:key="key">
-											<p>姓名: {{ item.userName }}</p>
-											<p>内容: {{ item.content }}</p>
-										</div>
-										<div slot="reference" class="name-wrapper">
-                                            <a :href="'#/home/data-note-edit/' + scope.row.Article_ID" >{{scope.row.Comment_Num}}</a>
-                                        </div>
-									</el-popover>
-									<div v-if="scope.row.Comment_List.length==0" slot="reference" class="name-wrapper">
-										{{ scope.row.Comment_Num }}
+									<div v-if="scope.row.Comment_Read!=0" slot="reference" class="name-wrapper">
+										已读
 									</div>
 								</template>
 							</el-table-column>
                             <el-table-column
-                                prop="Read_Num"
-                                label="点击量"
-								align="right"
-								class-name="uncomment"
-                                sortable="custom"
-                                width="100">
-                            </el-table-column>
-                            <el-table-column
-                                prop="Article_Date"
+                                prop="Comment_Time"
                                 sortable="custom"
                                 label="时间"
                                 :formatter="formatterTableTime"
 								width="125">
                             </el-table-column>
+							<el-table-column
+									fixed="right"
+									label="操作"
+									width="120">
+								<template scope="scope">
+									<el-button
+											type="text"
+											size="small"
+											@click.native.prevent="editRow(scope.$index, scope.row)">
+										修改
+									</el-button>
+								</template>
+							</el-table-column>
                         </el-table>
                     </div>
                     <div class="table-page">
@@ -163,7 +148,7 @@
 
 <script type="text/ecmascript-6">
 
-    import '../../../css/data/note/note-edit.less';
+    import '../../../css/data/comment/comment-edit.less';
 
     import { mapGetters, mapState, mapActions } from 'vuex';
     import {
@@ -173,7 +158,6 @@
 
     // 引入此页面派发器
     import {
-        SET_SORTLIST,
         SET_CLASSIFY,
         SET_STARTTIME,
         SET_ENDTIME,
@@ -181,10 +165,9 @@
 		SET_DESC,
         SET_TABLEPAGE,
 
-        GET_SORTLIST,
         GET_TABLEDATACOUNT,
         GET_TABLEDATA
-    } from '../../../vuex/modules/data/note/note-edit';
+    } from '../../../vuex/modules/data/comment/comment-edit';
 
     export default {
         data: function () {
@@ -198,15 +181,15 @@
             ...mapState({
                 topActiveMenu: state => state.fremework.topActiveMenu,
 
-                sortList: state => state.dataNoteEdit.sortList,
-                classify: state => state.dataNoteEdit.classify,
-                startTime: state => state.dataNoteEdit.startTime,
-                endTime: state => state.dataNoteEdit.endTime,
-				seq: state => state.dataNoteEdit.seq,
-				desc: state => state.dataNoteEdit.desc,
-                tableCount: state => state.dataNoteEdit.tableCount,
-                tablePage: state => state.dataNoteEdit.tablePage,
-                tableData: state => state.dataNoteEdit.tableData,
+                sortList: state => state.dataCommentEdit.sortList,
+                classify: state => state.dataCommentEdit.classify,
+                startTime: state => state.dataCommentEdit.startTime,
+                endTime: state => state.dataCommentEdit.endTime,
+				seq: state => state.dataCommentEdit.seq,
+				desc: state => state.dataCommentEdit.desc,
+                tableCount: state => state.dataCommentEdit.tableCount,
+                tablePage: state => state.dataCommentEdit.tablePage,
+                tableData: state => state.dataCommentEdit.tableData,
             }),
             // 分类切换事件
             classifyValue: {
@@ -278,6 +261,27 @@
                     self.$store.dispatch(GET_TABLEDATA);
                 });
             },
+			// 编辑单行选中数据事件
+			editRow(index, row) {
+            	// 弹框，赋默认值
+				
+
+
+//				let self = this;
+//				self.$store.dispatch(DEL_ARTICLE, id).then(function(response) {
+//					if (response.data.success === '1') {
+//						self.$message({
+//							message: response.data.msg,
+//							type: 'success'
+//						});
+//					} else {
+//						self.$message.error('删除文章出错');
+//					}
+//					return self.$store.dispatch(GET_TABLEDATACOUNT);
+//				}).then(function (response) {
+//					self.$store.dispatch(GET_TABLEDATA);
+//				});
+			},
             // 翻页事件
             tablePageChange(val) {
                 this.$store.commit(SET_TABLEPAGE, val);
@@ -304,7 +308,7 @@
 			},
             // 格式化处理表格的时间数据格式
             formatterTableTime(row, column) {
-                return row.Article_Date.split(' ')[0];
+                return row.Comment_Time.split(' ')[0];
             }
         },
         created: function () {
@@ -329,14 +333,11 @@
             const self = this;
             // 设置table高度
             this.tableHeight = document.getElementById("frameworkContainer").offsetHeight - 260;
-            // 获取分类列表
-            self.$store.dispatch(GET_SORTLIST).then(function (response) {
-                // 获取数据总个数
-                return self.$store.dispatch(GET_TABLEDATACOUNT);
-            }).then(function (response) {
-                // 获取数据区间个数
-                self.$store.dispatch(GET_TABLEDATA);
-                self.sortRequest = true;
+			// 获取数据总个数
+            self.$store.dispatch(GET_TABLEDATACOUNT).then(function (response) {
+				// 获取数据区间个数
+				self.$store.dispatch(GET_TABLEDATA);
+				self.sortRequest = true;
             });
         }
     }

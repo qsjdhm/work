@@ -33,6 +33,8 @@ import dataNoteEdit from './modules/data/note/note-edit';
 import dataNoteDetails from './modules/data/note/note-details';
 import dataNoteDel from './modules/data/note/note-del';
 
+import dataCommentEdit from './modules/data/comment/comment-edit';
+
 const debug = process.env.NODE_ENV !== 'production';
 
 Vue.use(ElementUI);
@@ -64,6 +66,8 @@ export default new Vuex.Store({
         dataNoteEdit,
         dataNoteDetails,
         dataNoteDel,
+
+		dataCommentEdit
 	},
 	strict: debug,
 	middlewares: middlewares,

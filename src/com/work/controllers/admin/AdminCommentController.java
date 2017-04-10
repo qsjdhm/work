@@ -91,9 +91,10 @@ public class AdminCommentController {
 	@RequestMapping(value = "/getCommentCount")
 	public void getCommentCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
+		String type = request.getParameter("type");
 		String startTime = request.getParameter("start");
 		String endTime = request.getParameter("end");
-		int count = commentService.getCommentLength(startTime, endTime);
+		int count = commentService.getCommentLength(type, startTime, endTime);
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
@@ -125,11 +126,21 @@ public class AdminCommentController {
 	@RequestMapping(value = "/getCommentList")
 	public void getCommentList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
+		String type  = request.getParameter("type");
 		String startTime = request.getParameter("start");
 		String endTime = request.getParameter("end");
+		String seq = request.getParameter("seq");
+		String desc = request.getParameter("desc");
+		// 做一下新老接口数据参数兼容
+	    if (seq == null || seq == "") {
+	    	seq = "Comment_Time";
+	    }
+	    if (desc == null || desc == "") {
+	    	desc = "desc";
+	    }
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		List <Map<String,Object>> commentList = commentService.getCommentList(startTime, endTime, page, size);
+		List <Map<String,Object>> commentList = commentService.getCommentList(type, startTime, endTime, seq, desc, page, size);
 		
 		JSONArray commentJsonArray = new JSONArray();
 		for(int i=0; i<commentList.size(); i++){

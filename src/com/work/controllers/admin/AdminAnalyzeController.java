@@ -103,7 +103,7 @@ public class AdminAnalyzeController {
 		// 获取各个表的总数据
 		int articleCount = articleService.getArticleCount(0, "", "");
 		int noteCount    = articleService.getNoteCount(0, "", "");
-		int commentCount = commentService.getCommentLength("", "");
+		int commentCount = commentService.getCommentLength("2", "", "");
 		int bookCount    = bookService.getBookLength(0);
 		
 		// 计算环比

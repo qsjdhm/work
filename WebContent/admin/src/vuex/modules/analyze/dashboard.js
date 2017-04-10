@@ -184,6 +184,7 @@ const actions = {
                 url = context.rootState.BASE_URL + '/noteAction/getNoteCount';
             } else if (context.state.selectedFSortType === 'comment') {
                 postData = {
+                	type : '2',
                     start: context.state.startTime,
                     end  : context.state.endTime,
                 };
@@ -236,6 +237,7 @@ const actions = {
                 url = context.rootState.BASE_URL + '/noteAction/getNoteList';
             } else if (context.state.selectedFSortType === 'comment') {
                 postData = {
+					type : '2',
                     start: context.state.startTime,
                     end  : context.state.endTime,
                     page : context.state.tablePage,
