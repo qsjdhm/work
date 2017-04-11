@@ -58,6 +58,7 @@ const actions = {
                 for (var i = 0; i < data.length; i++) {
                     if (i === 0) {
                         tempSortList.push({value: '0', label: '全部'});
+						tempSortList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
                     } else {
                         tempSortList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
                     }

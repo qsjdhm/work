@@ -51,6 +51,7 @@ const dataNoteDel               = resolve => require(['../views/data/note/note-d
 
 const dataCommentEdit           = resolve => require(['../views/data/comment/comment-edit'], resolve);
 const dataCommentArticle        = resolve => require(['../views/data/comment/comment-article'], resolve);
+const dataCommentDetails        = resolve => require(['../views/data/comment/comment-details'], resolve);
 
 
 
@@ -178,6 +179,13 @@ export default new Router({
                     name: '文章评论列表',
                     component: dataCommentArticle
                 },
+				{
+					meta: { pId: '2' },
+					path: 'data-comment-edit/details/:commentId',
+					name: '评论详情',
+					component: dataCommentDetails
+				},
+
             ]
         },
         //{

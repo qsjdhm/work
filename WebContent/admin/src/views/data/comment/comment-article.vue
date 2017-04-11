@@ -161,23 +161,22 @@
             ]),
             // 回复评论
             replyRow(index, row) {
-                console.info(row);
                 let self = this;
                 // 弹框，赋默认值
                 this.replyModelVisible = true;
                 this.$store.commit(SET_SELECTEDCOMMENT, {
-                    name: row.Reply_Name,
-                    email: row.Reply_Email,
-                    content: row.Comment_Content,
-                    articleID: self.articleId,
-                    articleTitle: self.articleTitle,
-                    fCommentID: row.Parent_CommentID
+					Comment_Person_Name: row.Comment_Person_Name,
+					Comment_Content: row.Comment_Content,
+					Comment_ArticleID: self.articleId,
+					Comment_ArticleTitle: self.articleTitle,
+					Comment_ID: row.Comment_ID
                 });
             },
             // 回复评论提交数据事件
             submitReplyForm: function (formName) {
                 let self = this;
                 this.$refs[formName].validate(function(valid) {
+                	console.info(self.replyRuleForm);
                     if (valid) {
                         // 验证成功提交数据
                         self.$store.dispatch(REPLY_COMMENT, {

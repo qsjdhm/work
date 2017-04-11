@@ -51,25 +51,20 @@
                                 width="80">
                             </el-table-column>
 							<el-table-column
-								prop="Comment_ArticleTitle"
-								label="评论文章">
+								prop="Comment_Content"
+								label="评论内容">
+								<template scope="scope">
+									<a :href="'#/home/data-comment-edit/details/' + scope.row.Comment_ID" >{{scope.row.Comment_Content}}</a>
+								</template>
+							</el-table-column>
+							<el-table-column
+									prop="Comment_ArticleTitle"
+									label="评论文章">
 								<template scope="scope">
 									<el-popover trigger="hover" placement="top">
 										<p>{{ scope.row.Comment_ArticleTitle }}</p>
 										<div slot="reference" class="name-wrapper">
 											{{ scope.row.Comment_ArticleTitle }}
-										</div>
-									</el-popover>
-								</template>
-							</el-table-column>
-							<el-table-column
-								prop="Comment_Content"
-								label="内容">
-								<template scope="scope">
-									<el-popover trigger="hover" placement="top">
-										<p>{{ scope.row.Comment_Content }}</p>
-										<div slot="reference" class="name-wrapper">
-											{{ scope.row.Comment_Content }}
 										</div>
 									</el-popover>
 								</template>
@@ -101,8 +96,8 @@
 								label="状态"
 								width="100">
 								<template scope="scope">
-									<div v-if="scope.row.Comment_Read==0" style="color: #ff5500;" slot="reference" class="name-wrapper">
-										未读
+									<div v-if="scope.row.Comment_Read==0" style="" slot="reference" class="name-wrapper">
+										<a :href="'#/home/data-comment-edit/details/' + scope.row.Comment_ID" >未读</a>
 									</div>
 									<div v-if="scope.row.Comment_Read!=0" slot="reference" class="name-wrapper">
 										已读

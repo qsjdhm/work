@@ -314,6 +314,7 @@ public class AdminCommentController {
 		//TComment comment = commentService.getCommentByID(selectId);
 		String userName = comment.getComment_Person_Name();
 		String content = comment.getComment_Content();
+		String articleTitle = comment.getComment_ArticleTitle();
 		int read = comment.getComment_Read();
 		
 		// 3.返回添加状态信息
@@ -323,6 +324,7 @@ public class AdminCommentController {
 		jsonObject.put("id", selectId);
 		jsonObject.put("userName", userName);
 		jsonObject.put("content", content);
+		jsonObject.put("articleTitle", articleTitle);
 		jsonObject.put("read", read);
 		
 		response.setContentType("text/html;charset=utf-8");

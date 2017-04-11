@@ -108,8 +108,6 @@ const mutations = {
     },
     [SET_SELECTEDCOMMENT](state , commentData){
         state.selectedComment = commentData;
-        console.info(11111111111);
-        console.info(state.selectedComment);
     },
 };
 
