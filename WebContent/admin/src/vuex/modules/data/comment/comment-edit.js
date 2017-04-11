@@ -43,7 +43,6 @@ const actions = {
     // 根据根据分类、时间区间获取表格数据总数--用来设置page
     [GET_TABLEDATACOUNT] (context, payload) {
         return new Promise((resolve, reject) => {
-            console.info(context.state.classify);
             Vue.http.post(context.rootState.BASE_URL + '/commentAction/getCommentCount', {
                 type : context.state.classify,
                 start: context.state.startTime,

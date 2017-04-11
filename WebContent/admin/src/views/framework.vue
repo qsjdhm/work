@@ -32,8 +32,10 @@
                         </div>
                         <span class="slicer">|</span>
                         <div class="system-settings">
-                            <el-badge :value="unreadComment" class="item unread-message">
-                                <i class="fa fa-bell-o"></i>
+                            <el-badge
+                                :value="unreadComment"
+                                class="item unread-message">
+                                <i @click="skipUnreadComment" class="fa fa-bell-o"></i>
                             </el-badge>
                             <i class="setting fa fa-cog"></i>
                             <i class="user fa fa-user-circle-o"><span>张三</span></i>
@@ -179,6 +181,10 @@
 				delete localStorage.workUser;
 				window.location.href = this.$store.state.BASE_URL + '/admin';
 			},
+            // 跳转到未读评论列表
+            skipUnreadComment: function() {
+                window.location.href = this.$store.state.BASE_URL + '/admin/#/home/data-comment-edit/0';
+            },
 
 
             // 功能性方法

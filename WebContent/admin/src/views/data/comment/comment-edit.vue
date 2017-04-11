@@ -145,7 +145,7 @@
         </div>
 
         <!-- 修改评论弹框 -->
-        <el-dialog title="修改评论" v-model="editModelVisible">
+        <el-dialog title="修改评论" :close-on-click-modal="false" :close-on-press-escape="false" v-model="editModelVisible">
             <el-form :model="editRuleForm" :rules="editRules" ref="editRuleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="评论人" prop="Comment_Person_Name">
                     <el-input :disabled="true" v-model="editRuleForm.Comment_Person_Name"></el-input>
@@ -164,7 +164,7 @@
         </el-dialog>
 
         <!-- 回复评论弹框 -->
-        <el-dialog title="回复评论" v-model="replyModelVisible">
+        <el-dialog title="回复评论" :close-on-click-modal="false" :close-on-press-escape="false" v-model="replyModelVisible">
             <el-form :model="replyRuleForm" :rules="replyRules" ref="replyRuleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="评论文章" prop="Comment_ArticleTitle">
                     <el-input :disabled="true" v-model="replyRuleForm.Article_Title"></el-input>
@@ -202,6 +202,7 @@
 		SET_SEQ,
 		SET_DESC,
         SET_TABLEPAGE,
+        SET_TABLEDATA,
         SET_SELECTEDCOMMENT,
 
         GET_TABLEDATACOUNT,
@@ -442,10 +443,17 @@
             }
         },
         created: function () {
+            const self = this;
             // 打开此view应该设置顶部菜单和子级菜单的选中状态
             let pId = this.$route.meta.pId;
+            let params = this.$route.params;
             let path = this.$route.path;
-            const self = this;
+            // 如果是url后带有type参数，要默认选中
+            if (params.type) {
+                path = path.split('/'+params.type)[0] + '/2';
+                this.$store.commit(SET_CLASSIFY, params.type);
+            }
+
             if (this.topActiveMenu !== pId) {
                 this.setChildMenuShow(false).then(function () {
                     return self.setActiveTopMenu(pId);

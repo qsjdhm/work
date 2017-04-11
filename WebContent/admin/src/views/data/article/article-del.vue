@@ -64,7 +64,7 @@
                     <div class="table-data">
                         <el-table
                             :data="tableData"
-                            :height="tableHeight+109"
+                            :height="tableHeight+108"
                             style="width: 100%"
                             :default-sort = "{prop: seq, order: descValue}"
                             ref="table"
@@ -124,7 +124,7 @@
                                             <p>内容: {{ item.content }}</p>
                                         </div>
                                         <div slot="reference" class="name-wrapper">
-                                            <a :href="'#/home/data-article-edit/' + scope.row.Article_ID" ><span class="remind"></span>{{scope.row.Uncomment_Num}}</a>
+                                            <a :href="'#/home/data-comment-edit/list/' + scope.row.Article_ID" ><span class="remind"></span>{{scope.row.Uncomment_Num}}</a>
                                         </div>
                                     </el-popover>
                                     <div
@@ -150,7 +150,7 @@
                                             <p>内容: {{ item.content }}</p>
                                         </div>
                                         <div slot="reference" class="name-wrapper">
-                                            <a :href="'#/home/data-article-edit/' + scope.row.Article_ID" >{{scope.row.Comment_Num}}</a>
+                                            <a :href="'#/home/data-comment-edit/list/' + scope.row.Article_ID" >{{scope.row.Comment_Num}}</a>
                                         </div>
                                     </el-popover>
                                     <div v-if="scope.row.Comment_List.length==0" slot="reference" class="name-wrapper">

@@ -67,7 +67,7 @@ const state  = {
 				},
                 {
                     'id' : '2-4', 'icon' : 'fa-commenting-o', 'name' : '评论管理', 'level' : 2, 'childMenu' : [
-                        {'id' : '2-4-1', 'pId': '2', 'name' : '编辑评论', 'level' : 3, 'path' : '/home/data-comment-edit'},
+                        {'id' : '2-4-1', 'pId': '2', 'name' : '编辑评论', 'level' : 3, 'path' : '/home/data-comment-edit/2'},
                         {'id' : '2-4-2', 'pId': '2', 'name' : '删除评论', 'level' : 3, 'path' : '/home/data-comment-del'}
                     ]
                 },

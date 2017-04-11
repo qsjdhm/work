@@ -172,6 +172,44 @@ public class AdminCommentController {
 		response.getWriter().print(jsonObject); 
 	}
 	
+
+	/*
+	 * 功能：根据文章ID，获取此文章下的评论数据
+	 * 参数：id  文章ID
+	 * 返回：json数据
+	 */
+	@RequestMapping(value="/getCommentByArticle", method = {RequestMethod.POST})
+	public void getCommentByArticle(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
+		int id= Integer.parseInt(request.getParameter("id"));
+		
+		// 调用服务查询出评论数据
+		List <TComment> comments = commentService.getCommentByArticleID(id);
+		JSONArray commentJsonArray = new JSONArray();
+		if(comments!=null){
+			int size = comments.size();
+			for(int i=0; i<size; i++){
+				JSONObject commentJson = new JSONObject();
+				TComment pComment = comments.get(i);
+				commentJson.put("Comment_ID", pComment.getComment_ID());
+				commentJson.put("Comment_Person_Name", pComment.getComment_Person_Name());
+				commentJson.put("Comment_Time", pComment.getComment_Time());
+				commentJson.put("Parent_CommentID", pComment.getParent_CommentID());
+				commentJson.put("Comment_Content", pComment.getComment_Content());
+				commentJson.put("Comment_Read", pComment.getComment_Read());
+				
+				commentJsonArray.add(commentJson);
+			}
+		}
+		
+		response.setCharacterEncoding("UTF-8");
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("success", "1");
+		jsonObject.put("data", commentJsonArray);
+		
+		response.getWriter().print(jsonObject); 
+	}
+	
 	@RequestMapping(value = "/addComment")
 	public void addComment(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		

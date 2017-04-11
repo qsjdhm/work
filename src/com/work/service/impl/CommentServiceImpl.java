@@ -183,7 +183,7 @@ public class CommentServiceImpl<T extends TComment> extends ServiceImpl<T> imple
 	public List<T> getCommentByArticleID(int id) {
 		
 		// 首先需要根据页数和每页个数计算出起始数和终止数
-		String sql = "select comment from TComment comment where Comment_ArticleID="+id+" order by Comment_ID desc ";
+		String sql = "select comment from TComment comment where Comment_ArticleID="+id+" order by Comment_Time desc ";
 		List<T> comments = this.getDao().pageQuery(sql, 0, 1000);
 		//if(comments.size()>0){
 			return comments;
