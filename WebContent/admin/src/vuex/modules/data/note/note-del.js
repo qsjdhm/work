@@ -136,10 +136,6 @@ const actions = {
                 },
                 emulateJSON: true
             }).then(function(response) {
-                console.info(response.data);
-                console.info(response.data);
-                console.info(response.data);
-                console.info(response.data);
                 // 初始化表格数据
                 //context.commit(SET_TABLEDATA, response.data.data);
                 resolve(response);

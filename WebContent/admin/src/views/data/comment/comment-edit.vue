@@ -83,7 +83,7 @@
 										<p>需要回复此评论人（{{ scope.row.Comment_Person_Email }}）吗？</p>
 										<div style="text-align: right; margin: 0">
 											<el-button size="mini" type="text">取消</el-button>
-											<el-button type="primary" size="mini">回复</el-button>
+											<el-button type="primary" size="mini" @click.native.prevent="replyRow(scope.$index, scope.row)">回复</el-button>
 										</div>
 										<div slot="reference" class="name-wrapper">
 											{{ scope.row.Comment_Person_Name }}
@@ -117,14 +117,14 @@
 								width="125">
                             </el-table-column>
 							<el-table-column
-									fixed="right"
-									label="操作"
-									width="120">
+                                fixed="right"
+                                label="操作"
+                                width="120">
 								<template scope="scope">
 									<el-button
-											type="text"
-											size="small"
-											@click.native.prevent="editRow(scope.$index, scope.row)">
+                                        type="text"
+                                        size="small"
+                                        @click.native.prevent="editRow(scope.$index, scope.row)">
 										修改
 									</el-button>
 								</template>
@@ -143,6 +143,44 @@
                 </el-col>
             </el-row>
         </div>
+
+        <!-- 修改评论弹框 -->
+        <el-dialog title="修改评论" v-model="editModelVisible">
+            <el-form :model="editRuleForm" :rules="editRules" ref="editRuleForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="评论人" prop="Comment_Person_Name">
+                    <el-input :disabled="true" v-model="editRuleForm.Comment_Person_Name"></el-input>
+                </el-form-item>
+                <el-form-item label="评论文章" prop="Comment_ArticleTitle">
+                    <el-input :disabled="true" v-model="editRuleForm.Comment_ArticleTitle"></el-input>
+                </el-form-item>
+                <el-form-item label="评论内容" prop="Comment_Content">
+                    <el-input type="textarea" v-model="editRuleForm.Comment_Content" :autosize="{ minRows: 4, maxRows: 6}"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editModelVisible=false">取 消</el-button>
+                <el-button type="primary" @click="submitEditForm('editRuleForm')">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <!-- 回复评论弹框 -->
+        <el-dialog title="回复评论" v-model="replyModelVisible">
+            <el-form :model="replyRuleForm" :rules="replyRules" ref="replyRuleForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="评论文章" prop="Comment_ArticleTitle">
+                    <el-input :disabled="true" v-model="replyRuleForm.Article_Title"></el-input>
+                </el-form-item>
+                <el-form-item label="评论内容" prop="Comment_Content">
+                    <el-input :disabled="true" type="textarea" v-model="replyRuleForm.Comment_Content" :autosize="{ minRows: 4, maxRows: 8}"></el-input>
+                </el-form-item>
+                <el-form-item label="回复内容" prop="Reply_Content">
+                    <el-input type="textarea" v-model="replyRuleForm.Reply_Content" :autosize="{ minRows: 4, maxRows: 6}"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="replyModelVisible=false">取 消</el-button>
+                <el-button type="primary" @click="submitReplyForm('replyRuleForm')">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -164,16 +202,33 @@
 		SET_SEQ,
 		SET_DESC,
         SET_TABLEPAGE,
+        SET_SELECTEDCOMMENT,
 
         GET_TABLEDATACOUNT,
-        GET_TABLEDATA
+        GET_TABLEDATA,
+        UPDATE_COMMENT,
+        REPLY_COMMENT
     } from '../../../vuex/modules/data/comment/comment-edit';
 
     export default {
         data: function () {
             return {
                 tableHeight : 0, // table的高度
-				sortRequest : false  // 是否允许排序字段远程请求数据
+				sortRequest : false,  // 是否允许排序字段远程请求数据
+
+                editModelVisible: false,
+                editRules: {
+                    Comment_Person_Name: [{required: true, message: '请输入评论人名称', trigger: 'blur'}],
+                    Comment_ArticleTitle: [{required: true, message: '请输入评论文章名称', trigger: 'blur'}],
+                    Comment_Content: [{required: true, message: '请输入评论内容', trigger: 'blur'}],
+                },
+
+                replyModelVisible: false,
+                replyRules: {
+                    Article_Title: [{required: true, message: '请输入评论文章名称', trigger: 'blur'}],
+                    Comment_Content: [{required: true, message: '请输入评论内容', trigger: 'blur'}],
+                    Reply_Content: [{required: true, message: '请输入回复内容', trigger: 'blur'}],
+                }
             }
         },
         computed: {
@@ -190,7 +245,31 @@
                 tableCount: state => state.dataCommentEdit.tableCount,
                 tablePage: state => state.dataCommentEdit.tablePage,
                 tableData: state => state.dataCommentEdit.tableData,
+                selectedComment: state => state.dataCommentEdit.selectedComment,
             }),
+            // 编辑评论的数据
+            editRuleForm: function () {
+                let self = this;
+                return {
+                    Comment_ID : self.selectedComment.Comment_ID,
+                    Comment_Person_Name : self.selectedComment.Comment_Person_Name,
+                    Comment_ArticleTitle : self.selectedComment.Comment_ArticleTitle,
+                    Comment_Content : self.selectedComment.Comment_Content
+                };
+            },
+            // 回复评论的数据
+            replyRuleForm: function () {
+                let self = this;
+                return {
+                    Reply_Name : '52doit系统消息',
+                    Reply_Email : 'qsjdhm@163.com',
+                    Reply_Content : '',
+                    Article_ID : self.selectedComment.Comment_ArticleID,
+                    Article_Title : self.selectedComment.Comment_ArticleTitle,
+                    fComment_ID : self.selectedComment.Comment_ID,
+                    Comment_Content : self.selectedComment.Comment_Content,
+                };
+            },
             // 分类切换事件
             classifyValue: {
                 get: function () { return this.classify; },
@@ -264,24 +343,75 @@
 			// 编辑单行选中数据事件
 			editRow(index, row) {
             	// 弹框，赋默认值
-
-
-
-//				let self = this;
-//				self.$store.dispatch(DEL_ARTICLE, id).then(function(response) {
-//					if (response.data.success === '1') {
-//						self.$message({
-//							message: response.data.msg,
-//							type: 'success'
-//						});
-//					} else {
-//						self.$message.error('删除文章出错');
-//					}
-//					return self.$store.dispatch(GET_TABLEDATACOUNT);
-//				}).then(function (response) {
-//					self.$store.dispatch(GET_TABLEDATA);
-//				});
+                this.editModelVisible = true;
+                this.$store.commit(SET_SELECTEDCOMMENT, row);
 			},
+            // 回复评论
+            replyRow(index, row) {
+                // 弹框，赋默认值
+                this.replyModelVisible = true;
+                this.$store.commit(SET_SELECTEDCOMMENT, row);
+            },
+            // 编辑评论提交数据事件
+            submitEditForm: function (formName) {
+                let self = this;
+                this.$refs[formName].validate(function(valid) {
+                    if (valid) {
+                        // 验证成功提交数据
+                        self.$store.commit(SET_SELECTEDCOMMENT, self.editRuleForm);
+                        self.$store.dispatch(UPDATE_COMMENT).then(function (response) {
+                            self.editModelVisible = false;
+                            if (response.data.success === '1') {
+                                self.$message({
+                                    message: response.data.msg,
+                                    type: 'success'
+                                });
+                            } else {
+                                self.$message.error('修改评论出错');
+                            }
+                            return self.$store.dispatch(GET_TABLEDATACOUNT);
+                        }).then(function (response) {
+                            self.$store.dispatch(GET_TABLEDATA);
+                        });
+                    } else {
+                        console.log('error update!!');
+                        return false;
+                    }
+                });
+            },
+            // 编辑评论提交数据事件
+            submitReplyForm: function (formName) {
+                let self = this;
+                this.$refs[formName].validate(function(valid) {
+                    if (valid) {
+                        // 验证成功提交数据
+                        self.$store.dispatch(REPLY_COMMENT, {
+                            name: self.replyRuleForm.Reply_Name,
+                            email: self.replyRuleForm.Reply_Email,
+                            content: self.replyRuleForm.Reply_Content,
+                            articleID: self.replyRuleForm.Article_ID,
+                            articleTitle: self.replyRuleForm.Article_Title,
+                            fCommentID: self.replyRuleForm.fComment_ID
+                        }).then(function (response) {
+                            self.replyModelVisible = false;
+                            if (response.data.success === '1') {
+                                self.$message({
+                                    message: response.data.msg,
+                                    type: 'success'
+                                });
+                            } else {
+                                self.$message.error('回复评论出错');
+                            }
+                            return self.$store.dispatch(GET_TABLEDATACOUNT);
+                        }).then(function (response) {
+                            self.$store.dispatch(GET_TABLEDATA);
+                        });
+                    } else {
+                        console.log('error update!!');
+                        return false;
+                    }
+                });
+            },
             // 翻页事件
             tablePageChange(val) {
                 this.$store.commit(SET_TABLEPAGE, val);
