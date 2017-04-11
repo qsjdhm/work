@@ -380,7 +380,7 @@
                     }
                 });
             },
-            // 编辑评论提交数据事件
+            // 回复评论提交数据事件
             submitReplyForm: function (formName) {
                 let self = this;
                 this.$refs[formName].validate(function(valid) {

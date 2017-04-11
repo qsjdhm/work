@@ -7,16 +7,19 @@ import Vue from 'vue';
 export const SET_ARTICLEID = 'data-comment-article/SET_ARTICLEID';
 export const SET_ARTICLETITLE = 'data-comment-article/SET_ARTICLETITLE';
 export const SET_COMMENTLIST = 'data-comment-article/SET_COMMENTLIST';
+export const SET_SELECTEDCOMMENT = 'data-comment-article/SET_SELECTEDCOMMENT';  // 当前选中的评论
 
 
 export const GET_ARTICLE = 'data-comment-article/GET_ARTICLE';
 export const GET_COMMENTLIST = 'data-comment-article/GET_COMMENTLIST';
+export const REPLY_COMMENT = 'data-comment-article/REPLY_COMMENT';  // 回复评论
 
 
 const state  = {
     articleId : '',  // 文章id
     articleTitle : '',  // 文章标题
-    commentList : []  // 文章的评论列表
+    commentList : [],  // 文章的评论列表
+    selectedComment : {},  // 当前选中的评论
 };
 
 // getters
@@ -66,6 +69,29 @@ const actions = {
             });
         })
     },
+    // 回复评论
+    [REPLY_COMMENT] (context, payload) {
+        return new Promise((resolve, reject) => {
+            Vue.http.post(context.rootState.BASE_URL + '/commentAction/addComment', {
+                // 参数部分
+                "name"         : encodeURI(encodeURI(payload.name)),
+                "email"        : encodeURI(encodeURI(payload.email)),
+                "content"      : encodeURI(encodeURI(payload.content)),
+                "articleID"    : payload.articleID,
+                "articleTitle" : encodeURI(encodeURI(payload.articleTitle)),
+                "fCommentID"   : payload.fCommentID,
+            }, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                emulateJSON: true
+            }).then(function(response) {
+                resolve(response);
+            }, function(response) {
+                resolve(response.json());
+            });
+        })
+    },
 };
 
 // mutations
@@ -79,6 +105,11 @@ const mutations = {
     },
     [SET_COMMENTLIST](state , commentList){
         state.commentList = commentList;
+    },
+    [SET_SELECTEDCOMMENT](state , commentData){
+        state.selectedComment = commentData;
+        console.info(11111111111);
+        console.info(state.selectedComment);
     },
 };
 
