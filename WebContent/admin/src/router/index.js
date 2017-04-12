@@ -52,6 +52,7 @@ const dataNoteDel               = resolve => require(['../views/data/note/note-d
 const dataCommentEdit           = resolve => require(['../views/data/comment/comment-edit'], resolve);
 const dataCommentArticle        = resolve => require(['../views/data/comment/comment-article'], resolve);
 const dataCommentDetails        = resolve => require(['../views/data/comment/comment-details'], resolve);
+const dataCommentDel            = resolve => require(['../views/data/comment/comment-del'], resolve);
 
 
 
@@ -185,7 +186,12 @@ export default new Router({
 					name: '评论详情',
 					component: dataCommentDetails
 				},
-
+				{
+					meta: { pId: '2' },
+					path: 'data-comment-del',
+					name: '删除评论',
+					component: dataCommentDel
+				},
             ]
         },
         //{
