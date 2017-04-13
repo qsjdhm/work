@@ -83,113 +83,6 @@ public class AdminBookController {
 		this.commentService = commentService;
 	}
 	
-	
-	/****************供页面加载转向的ACTION******************/
-	
-	
-	// 负责映射到新增图书页面
-	@RequestMapping(value = "/addPage")
-	public ModelAndView addPage() throws Exception{
-
-		// 1.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		// 2.获取图书下的分类，并且选中第一个子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(3, 1, 10000);
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, bookFirstSortID);
-		// 3.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/book/add_book");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
-	// 负责映射到删除图书页面
-	@RequestMapping(value = "/delPage/{sort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView delPage(
-			@PathVariable(value="sort") Integer sort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取图书下的分类，并且选中第一个子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(3, 1, 10000);
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, sort);
-		// 2.根据分类获得此类型下的图书总个数
-		int count = bookService.getBookLength(sort);
-		// 3.根据分类、页数获取图书列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TBook> books = bookService.getBook(sort, page, 6);
-		String bookHtml = generateHtml.generateAdminBookDelHtml(books);
-		// 4.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 5.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("sortId", sort);  // 当前分类
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("bookHtml", bookHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/book/del_book");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	// 负责映射到修改笔记页面
-	@RequestMapping(value = "/updatePage/{sort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView updatePage(
-			@PathVariable(value="sort") Integer sort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取图书下的分类，并且选中第一个子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(3, 1, 10000);
-		String sortHtml = generateHtml.generateAdminSortHtml(sorts, sort);
-		// 2.根据分类获得此类型下的图书总个数
-		int count = bookService.getBookLength(sort);
-		// 3.根据分类、页数获取图书列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TBook> books = bookService.getBook(sort, page, 6);
-		String bookHtml = generateHtml.generateAdminBookUpdateHtml(books);
-		// 4.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 5.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("sortId", sort);  // 当前分类
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("bookHtml", bookHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/book/update_book");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
 	/****************供AJAX请求的ACTION******************/
 
 	@RequestMapping(value = "/getBookCount")
@@ -214,7 +107,17 @@ public class AdminBookController {
 		int sort = Integer.parseInt(request.getParameter("sort"));
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
-		List <TBook> books = bookService.getBook(sort, page, size);
+		String seq = request.getParameter("seq");
+		String desc = request.getParameter("desc");
+		// 做一下新老接口数据参数兼容
+	    if (seq == null || seq == "") {
+	    	seq = "Comment_Time";
+	    }
+	    if (desc == null || desc == "") {
+	    	desc = "desc";
+	    }
+	    
+		List <TBook> books = bookService.getBook(sort, page, size, seq, desc);
 		
 		JSONArray bookJsonArray = new JSONArray();
 		for(int i=0; i<books.size(); i++){
@@ -222,6 +125,8 @@ public class AdminBookController {
 			TBook book = books.get(i);
 			bookJson.put("Book_ID", book.getBook_ID());
 			bookJson.put("Book_Name", book.getBook_Name());
+			bookJson.put("Book_Height", book.getBook_Height());
+			bookJson.put("Book_Cover", book.getBook_Cover());
 			bookJson.put("Sort_Name", book.getSort_Name());
 			bookJson.put("Recommend_Num", book.getRecommend_Num());
 			bookJson.put("Download_Num", book.getDownload_Num());

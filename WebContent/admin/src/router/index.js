@@ -55,6 +55,7 @@ const dataCommentDetails        = resolve => require(['../views/data/comment/com
 const dataCommentDel            = resolve => require(['../views/data/comment/comment-del'], resolve);
 
 const dataBookAdd               = resolve => require(['../views/data/book/book-add'], resolve);
+const dataBookEdit              = resolve => require(['../views/data/book/book-edit'], resolve);
 
 
 export default new Router({
@@ -198,6 +199,12 @@ export default new Router({
                     name: '新增图书',
                     component: dataBookAdd
                 },
+				{
+					meta: { pId: '2' },
+					path: 'data-book-edit',
+					name: '编辑图书',
+					component: dataBookEdit
+				},
 
             ]
         },

@@ -17,8 +17,8 @@ public interface IBookService <T extends TBook> extends IService<T> {
 	// 根据总分类和每页个数获取此分类下图书的总页数
 	public int getBookPageCount(int SortId, int pageNum);
 	
-	// 根据总分类、页数、每页个数获取此分类下的图书列表
-	public List<T> getBook(int SortId, int pageId, int pageNum);
+	// 根据总分类、页数、每页个数、排序字段获取此分类下的图书列表
+	public List<T> getBook(int SortId, int pageId, int pageNum, String seq, String desc);
 
 	// 根据推荐数获取图书的前3个
 	public List<T> getBookByRecom(int number);

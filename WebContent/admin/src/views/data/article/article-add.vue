@@ -1,5 +1,8 @@
 <template>
 	<div class="data-article-add-page">
+		<div class="header">
+			当您填写文章信息的时候请尽量填写完整, 以保证内容、标签的正常使用.
+		</div>
         <el-select class="classify" :disabled="isSubmit" v-model="classifyValue" placeholder="请选择">
             <el-option
                 v-for="(item, key) in sortList"

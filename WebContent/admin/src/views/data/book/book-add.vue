@@ -1,8 +1,11 @@
 <template>
 	<div class="data-book-add-page">
+		<div class="header">
+			当您填写图书信息的时候请尽量填写完整, 以保证封面、下载链接的正常使用.
+		</div>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="所属分类">
-                <el-select :disabled="isSubmit" v-model="ruleForm.sort" placeholder="请选择">
+			<el-form-item label="所属分类">
+                <el-select class="filter-sort" :disabled="isSubmit" v-model="ruleForm.sort" placeholder="请选择">
                     <el-option
                         v-for="(item, key) in ruleForm.list"
                         :label="item.label"
@@ -11,24 +14,25 @@
                     </el-option>
                 </el-select>
             </el-form-item>
+			<el-form-item label="图书封面" prop="coverList">
+				<el-upload
+						class="upload-demo"
+						:action="uploadUrl"
+						:multiple="false"
+						:on-success="uploadHandle"
+						:file-list="ruleForm.coverList"
+						list-type="picture">
+					<el-button :disabled="isSubmit" size="small" type="primary">点击上传</el-button>
+					<div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+				</el-upload>
+			</el-form-item>
             <el-form-item label="图书名称" prop="name">
                 <el-input :disabled="isSubmit" v-model="ruleForm.name"></el-input>
             </el-form-item>
             <el-form-item label="图书高度" prop="height">
                 <el-input :disabled="isSubmit" v-model="ruleForm.height" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="图书封面" prop="coverList">
-                <el-upload
-                    class="upload-demo"
-                    :action="uploadUrl"
-                    :multiple="false"
-                    :on-success="uploadHandle"
-                    :file-list="ruleForm.coverList"
-                    list-type="picture">
-                    <el-button :disabled="isSubmit" size="small" type="primary">点击上传</el-button>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                </el-upload>
-            </el-form-item>
+
             <el-form-item label="下载链接" prop="link">
                 <el-input :disabled="isSubmit" type="textarea" v-model="ruleForm.link"></el-input>
             </el-form-item>

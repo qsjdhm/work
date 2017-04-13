@@ -86,19 +86,21 @@ public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements 
 	 *  @param sortId 图书类型id
 	 *  @param pageId 当前页
 	 *  @param pageNum 每页个数
+	 *  @param seq 排序字段
+	 *  @param desc 排序顺序
 	 *  @return 图书列表
 	 */
 	@Override
-	public List<T> getBook(int sortId, int pageId, int pageNum) {
+	public List<T> getBook(int sortId, int pageId, int pageNum, String seq, String desc) {
 		
 		// 首先需要根据页数和每页个数计算出起始数和终止数
 		int start = pageNum*(pageId-1);
 		int end = pageNum;
 		String sql = "";
 		if(sortId==0){
-			sql = "select book from TBook book order by Book_ID desc ";
+			sql = "select book from TBook book order by "+seq+" "+desc;
 		}else{
-			sql = "select book from TBook book where Sort_ID="+sortId+" order by Book_ID desc ";
+			sql = "select book from TBook book where Sort_ID="+sortId+" order by "+seq+" "+desc;
 		}
 		List<T> books = this.getDao().pageQuery(sql, start, end);
 		if(books.size()>0){
