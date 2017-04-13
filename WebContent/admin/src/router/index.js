@@ -54,7 +54,7 @@ const dataCommentArticle        = resolve => require(['../views/data/comment/com
 const dataCommentDetails        = resolve => require(['../views/data/comment/comment-details'], resolve);
 const dataCommentDel            = resolve => require(['../views/data/comment/comment-del'], resolve);
 
-
+const dataBookAdd               = resolve => require(['../views/data/book/book-add'], resolve);
 
 
 export default new Router({
@@ -192,6 +192,13 @@ export default new Router({
 					name: '删除评论',
 					component: dataCommentDel
 				},
+                {
+                    meta: { pId: '2' },
+                    path: 'data-book-add',
+                    name: '新增图书',
+                    component: dataBookAdd
+                },
+
             ]
         },
         //{

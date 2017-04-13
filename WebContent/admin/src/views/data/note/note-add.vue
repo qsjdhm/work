@@ -38,7 +38,7 @@
             :loading="true">
             提交笔记中
         </el-button>
-        <el-button @click="resetData">重置数据</el-button>
+        <el-button :disabled="isSubmit" @click="resetData">重置数据</el-button>
     </div>
 </template>
 
