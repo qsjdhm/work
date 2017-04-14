@@ -1,23 +1,27 @@
 /**
- * 数据模块 - 新增图书模块
+ * 数据模块 - 编辑图书详情
  */
 
 import Vue from 'vue';
 
 export const SET_SORTLIST = 'data-book-add/SET_SORTLIST';
 export const SET_CLASSIFY = 'data-book-add/SET_CLASSIFY';
+export const SET_ID = 'data-book-add/SET_ID';
 export const SET_NAME = 'data-book-add/SET_NAME';
 export const SET_HEIGHT = 'data-book-add/SET_HEIGHT';
 export const SET_COVER = 'data-book-add/SET_COVER';
 export const SET_LINK = 'data-book-add/SET_LINK';
 export const SET_ISSUBMIT = 'data-book-add/SET_ISSUBMIT';
 
-export const GET_SORTLIST = 'data-book-add/GET_SORTLIST';
-export const SUBMIT_DATA = 'data-book-add/SUBMIT_DATA';
+export const GET_SORTLIST = 'data-book-details/GET_SORTLIST';
+export const GET_BOOK = 'data-book-details/GET_BOOK';
+
+export const SUBMIT_DATA = 'data-book-details/SUBMIT_DATA';
 
 const state  = {
     sortList : [],  // 分类数据列表
     classify : '',  // 选中的分类
+    id : '',  // id
     name : '',  // 名称
     height : '',  // 高度
     cover : '',  // 封面
@@ -32,7 +36,7 @@ const getters = {
 
 // actions
 const actions = {
-    // 获取每个大分类下的小分类列表（例如：文章下的小分类）
+    // 获取每个大分类下的小分类列表（例如：笔记下的小分类）
     [GET_SORTLIST] (context, payload) {
         return new Promise((resolve, reject) => {
             Vue.http.post(context.rootState.BASE_URL + '/sortAction/byTypeGetSort', {
@@ -61,9 +65,32 @@ const actions = {
             });
         })
     },
-    // 添加图书
+    // 根据id获取图书
+	[GET_BOOK] (context, payload) {
+		return new Promise((resolve, reject) => {
+			Vue.http.post(context.rootState.BASE_URL + '/bookAction/getBook', {
+				// 参数部分
+				"selectId"   : context.state.id,
+			}, {
+				headers: {
+					"X-Requested-With": "XMLHttpRequest"
+				},
+				emulateJSON: true
+			}).then(function(response) {
+				// 设置页面元素内容
+				context.commit(SET_CLASSIFY, response.data.sortId);
+                context.commit(SET_NAME, response.data.name);
+                context.commit(SET_HEIGHT, response.data.height);
+                context.commit(SET_COVER, response.data.cover);
+                context.commit(SET_LINK, response.data.link);
+				resolve(response);
+			}, function(response) {
+				resolve(response.json());
+			});
+		})
+	},
+    // 修改笔记
     [SUBMIT_DATA] (context, payload) {
-        let self = this;
         return new Promise((resolve, reject) => {
             // 处理下分类名称
             let classifyName = '';
@@ -73,8 +100,8 @@ const actions = {
                     break;
                 }
             }
-            Vue.http.post(context.rootState.BASE_URL + '/bookAction/addBook', {
-                // 参数部分
+            Vue.http.post(context.rootState.BASE_URL + '/bookAction/updateBook', {
+                "id"       : context.state.id,
                 "name"     : encodeURI(encodeURI(context.state.name)),
                 "sortId"   : context.state.classify,
                 "sortName" : encodeURI(encodeURI(classifyName)),
@@ -104,6 +131,9 @@ const mutations = {
     },
     [SET_CLASSIFY](state , classify){
         state.classify = classify;
+    },
+    [SET_ID](state , id){
+        state.id = id;
     },
     [SET_NAME](state , name){
         state.name = name;

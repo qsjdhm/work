@@ -11,14 +11,14 @@ public interface IBookService <T extends TBook> extends IService<T> {
 	// 获取评论的数据分布
 	public List<Map<String, Object>> getBookDistribution(int SortId);
 	
-	// 根据总分类获得此类型下的图书总个数
-	public int getBookLength(int SortId);
+	// 根据总分类、名称获得此类型下的图书总个数
+	public int getBookLength(int SortId, String name);
 	
 	// 根据总分类和每页个数获取此分类下图书的总页数
 	public int getBookPageCount(int SortId, int pageNum);
 	
-	// 根据总分类、页数、每页个数、排序字段获取此分类下的图书列表
-	public List<T> getBook(int SortId, int pageId, int pageNum, String seq, String desc);
+	// 根据分类、名称、页数、每页个数获取此分类下的图书列表
+	public List<T> getBook(int SortId, String name, int pageId, int pageNum, String seq, String desc);
 
 	// 根据推荐数获取图书的前3个
 	public List<T> getBookByRecom(int number);

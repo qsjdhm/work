@@ -40,6 +40,8 @@ import dataCommentDel from './modules/data/comment/comment-del';
 
 import dataBookAdd from './modules/data/book/book-add';
 import dataBookEdit from './modules/data/book/book-edit';
+import dataBookDetails from './modules/data/book/book-details';
+
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -79,7 +81,8 @@ export default new Vuex.Store({
 		dataCommentDel,
 
         dataBookAdd,
-		dataBookEdit
+		dataBookEdit,
+        dataBookDetails,
 	},
 	strict: debug,
 	middlewares: middlewares,

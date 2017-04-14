@@ -71,7 +71,7 @@ public class BookController {
 		List <TSort> sorts = sortService.getSort(3, 1, 10000);
 		String sortHtml = generateHtml.generateBookSortHtml(sorts);
 		// 2.根据子分类、页数、每页个数获取此分类下的图书列表
-		List <TBook> books = bookService.getBook(bookSort, 1, 10000, "", "");
+		List <TBook> books = bookService.getBook(bookSort,"", 1, 10000, "", "");
 		String bookHtml = generateHtml.generateBookHtml(books);
 		// 3.获取笔记下的第一个子分类
 		int noteFirstSortID = sortService.getFirstSortByFSort(8);

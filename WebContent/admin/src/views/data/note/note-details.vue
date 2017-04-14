@@ -200,8 +200,6 @@
 			});
 			this.editor.render("content");
 
-			console.info(this.$route.params.detailsId);
-
 			// 获取分类列表
 			let self = this;
 			self.$store.dispatch(GET_SORTLIST).then(function(response){

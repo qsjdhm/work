@@ -38,20 +38,19 @@ public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements 
 		return null;
 	}
 	
-	
 	/**
-	 *  根据分类获得此类型下的图书总个数
+	 *  根据总分类、名称获得此类型下的图书总个数
 	 *  @param sortId 图书类型id
+	 *  @param name   图书名称（用作模糊查询）
 	 *  @return 图书个数
 	 */
 	@Override
-	public int getBookLength(int sortId) {
-		
+	public int getBookLength(int sortId, String name) {
 		String sql = "";
 		if(sortId==0){
-			sql = "select COUNT(*) as count from book";
+			sql = "select COUNT(*) as count from book where Book_Name like '%"+name+"%'";
 		}else{
-			sql = "select COUNT(*) as count from book where Sort_ID="+sortId+"";
+			sql = "select COUNT(*) as count from book where Sort_ID="+sortId+" and Book_Name like '%"+name+"%'";
 		}
 		int count = this.getDao().getSqlQueryCount(sql);
 		return count;
@@ -82,8 +81,9 @@ public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements 
 	}
 	
 	/**
-	 *  根据分类、页数、每页个数获取此分类下的图书列表
+	 *  根据分类、名称、页数、每页个数获取此分类下的图书列表
 	 *  @param sortId 图书类型id
+	 *  @param name   图书名称（用作模糊查询）
 	 *  @param pageId 当前页
 	 *  @param pageNum 每页个数
 	 *  @param seq 排序字段
@@ -91,16 +91,16 @@ public class BookServiceImpl<T extends TBook> extends ServiceImpl<T> implements 
 	 *  @return 图书列表
 	 */
 	@Override
-	public List<T> getBook(int sortId, int pageId, int pageNum, String seq, String desc) {
+	public List<T> getBook(int sortId, String name, int pageId, int pageNum, String seq, String desc) {
 		
 		// 首先需要根据页数和每页个数计算出起始数和终止数
 		int start = pageNum*(pageId-1);
 		int end = pageNum;
 		String sql = "";
 		if(sortId==0){
-			sql = "select book from TBook book order by "+seq+" "+desc;
+			sql = "select book from TBook book where Book_Name like '%"+name+"%' order by "+seq+" "+desc;
 		}else{
-			sql = "select book from TBook book where Sort_ID="+sortId+" order by "+seq+" "+desc;
+			sql = "select book from TBook book where Book_Name like '%"+name+"%' and Sort_ID="+sortId+" order by "+seq+" "+desc;
 		}
 		List<T> books = this.getDao().pageQuery(sql, start, end);
 		if(books.size()>0){

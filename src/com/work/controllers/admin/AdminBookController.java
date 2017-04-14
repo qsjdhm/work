@@ -89,7 +89,12 @@ public class AdminBookController {
 	public void getBookCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		int count = bookService.getBookLength(sort);
+		String name = request.getParameter("name");
+		// 做一下新老接口数据参数兼容
+	    if (name == null || name == "") {
+	    	name = "";
+	    }
+		int count = bookService.getBookLength(sort, name);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
 		jsonObject.put("msg", "获取图书个数成功");
@@ -105,19 +110,24 @@ public class AdminBookController {
 	public void getBookList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
+		String name = request.getParameter("name");
+		// 做一下新老接口数据参数兼容
+	    if (name == null || name == "") {
+	    	name = "";
+	    }
 		int page = Integer.parseInt(request.getParameter("page"));
 		int size = Integer.parseInt(request.getParameter("size"));
 		String seq = request.getParameter("seq");
 		String desc = request.getParameter("desc");
 		// 做一下新老接口数据参数兼容
 	    if (seq == null || seq == "") {
-	    	seq = "Comment_Time";
+	    	seq = "Download_Num";
 	    }
 	    if (desc == null || desc == "") {
 	    	desc = "desc";
 	    }
 	    
-		List <TBook> books = bookService.getBook(sort, page, size, seq, desc);
+		List <TBook> books = bookService.getBook(sort, name, page, size, seq, desc);
 		
 		JSONArray bookJsonArray = new JSONArray();
 		for(int i=0; i<books.size(); i++){

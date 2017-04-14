@@ -78,7 +78,8 @@ const actions = {
         return new Promise((resolve, reject) => {
             console.info(context.state.classify);
             Vue.http.post(context.rootState.BASE_URL + '/bookAction/getBookCount', {
-                sort : context.state.classify
+                sort : context.state.classify,
+                name : context.state.name
             }, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
@@ -100,6 +101,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             Vue.http.post(context.rootState.BASE_URL + '/bookAction/getBookList', {
                 sort : context.state.classify,
+                name : context.state.name,
 				seq  : context.state.seq,
 				desc : context.state.desc,
                 page : context.state.tablePage,

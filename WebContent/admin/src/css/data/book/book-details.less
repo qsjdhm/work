@@ -1,0 +1,54 @@
+/**
+ *  数据 - 图书详情样式（包含兼容eleme框架样式处理）
+ */
+
+.data-book-details-page {
+    padding-top: 0px;
+
+    .header {
+        margin-bottom: 10px;
+        color: black;
+        background: #eef1f6;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .container {
+
+        .el-pagination--small .arrow.disabled, .el-table td.is-hidden>*, .el-table th.is-hidden>* {
+            visibility: inherit;
+        }
+
+        .el-form {
+            width: 600px;
+
+            .el-upload {
+                float: left;
+            }
+
+            .el-upload__tip {
+                width: 300px;
+                float: left;
+                margin-left: 20px;
+            }
+
+            .el-input {
+                width: 500px;
+            }
+
+            .el-textarea {
+                width: 500px;
+            }
+
+            .filter-sort {
+
+                .el-input {
+                    width: 300px;
+                }
+
+            }
+        }
+    }
+}
+
+

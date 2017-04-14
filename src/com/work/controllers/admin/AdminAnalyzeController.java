@@ -104,7 +104,7 @@ public class AdminAnalyzeController {
 		int articleCount = articleService.getArticleCount(0, "", "");
 		int noteCount    = articleService.getNoteCount(0, "", "");
 		int commentCount = commentService.getCommentLength("2", "", "");
-		int bookCount    = bookService.getBookLength(0);
+		int bookCount    = bookService.getBookLength(0, "");
 		
 		// 计算环比
 		String articleTendency = "";
