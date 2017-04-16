@@ -40,7 +40,7 @@
                             </el-table-column>
                             <el-table-column
                                 prop="Sort_Name"
-                                label="名称">
+                                label="所属名称">
 								<template scope="scope">
 									<a :href="'#/home/data-classify-edit/' + scope.row.Sort_ID" >{{scope.row.Sort_Name}}</a>
 								</template>

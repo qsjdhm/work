@@ -82,10 +82,13 @@
                                 sortable="custom"
                                 width="80">
                             </el-table-column>
-                            <el-table-column
-                                prop="Article_Title"
-                                label="名称">
-                            </el-table-column>
+							<el-table-column
+									prop="Article_Title"
+									label="名称">
+								<template scope="scope">
+									<a :href="'#/home/data-note-edit/' + scope.row.Article_ID" >{{scope.row.Article_Title}}</a>
+								</template>
+							</el-table-column>
                             <el-table-column
                                 prop="Sort_Name"
                                 label="分类"
@@ -176,7 +179,7 @@
                             <el-table-column
                                 fixed="right"
                                 label="操作"
-                                width="120">
+                                width="70">
                                 <template scope="scope">
                                     <el-button
                                         type="text"

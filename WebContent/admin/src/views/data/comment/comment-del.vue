@@ -82,10 +82,13 @@
                                 sortable="custom"
                                 width="80">
                             </el-table-column>
-                            <el-table-column
-                                prop="Comment_Content"
-                                label="评论内容">
-                            </el-table-column>
+							<el-table-column
+									prop="Comment_Content"
+									label="评论内容">
+								<template scope="scope">
+									<a :href="'#/home/data-comment-edit/details/' + scope.row.Comment_ID" >{{scope.row.Comment_Content}}</a>
+								</template>
+							</el-table-column>
                             <el-table-column
                                 prop="Comment_ArticleTitle"
                                 label="评论文章">
@@ -120,7 +123,7 @@
                             <el-table-column
                                 fixed="right"
                                 label="操作"
-                                width="120">
+                                width="70">
                                 <template scope="scope">
                                     <el-button
                                         type="text"

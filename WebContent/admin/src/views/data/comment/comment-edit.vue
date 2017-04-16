@@ -114,7 +114,7 @@
 							<el-table-column
                                 fixed="right"
                                 label="操作"
-                                width="120">
+                                width="70">
 								<template scope="scope">
 									<el-button
                                         type="text"

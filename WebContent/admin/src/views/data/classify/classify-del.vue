@@ -73,17 +73,20 @@
 							<el-table-column
 									prop="Sort_Name"
 									label="名称">
+								<template scope="scope">
+									<a :href="'#/home/data-classify-edit/' + scope.row.Sort_ID" >{{scope.row.Sort_Name}}</a>
+								</template>
 							</el-table-column>
 							<el-table-column
 									prop="F_Sort"
-									label="分类"
+									label="所属分类"
 									sortable="custom"
 									width="160">
 							</el-table-column>
                             <el-table-column
                                 fixed="right"
                                 label="操作"
-                                width="120">
+                                width="70">
                                 <template scope="scope">
                                     <el-button
                                         type="text"

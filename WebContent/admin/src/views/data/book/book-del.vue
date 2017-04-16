@@ -73,6 +73,9 @@
 							<el-table-column
 									prop="Book_Name"
 									label="名称">
+								<template scope="scope">
+									<a :href="'#/home/data-book-edit/' + scope.row.Book_ID" >{{scope.row.Book_Name}}</a>
+								</template>
 							</el-table-column>
 							<el-table-column
 									prop="Sort_Name"
@@ -103,7 +106,7 @@
                             <el-table-column
                                 fixed="right"
                                 label="操作"
-                                width="120">
+                                width="70">
                                 <template scope="scope">
                                     <el-button
                                         type="text"
