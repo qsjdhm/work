@@ -50,7 +50,7 @@ public class LoginController {
 		JSONObject jsonObject = new JSONObject();
 		
 		// 验证用户是否存在
-		List <TUser> users = userService.getUser(0, 10000);
+		List <TUser> users = userService.getUser(0, 10000, "", "", "");
 		
 		int aFlag = 0;
 		int pFlag = 0;

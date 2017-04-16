@@ -48,6 +48,16 @@ import dataClassifyEdit from './modules/data/classify/classify-edit';
 import dataClassifyDetails from './modules/data/classify/classify-details';
 import dataClassifyDel from './modules/data/classify/classify-del';
 
+import dataLinkAdd from './modules/data/link/link-add';
+import dataLinkEdit from './modules/data/link/link-edit';
+import dataLinkDetails from './modules/data/link/link-details';
+import dataLinkDel from './modules/data/link/link-del';
+
+import dataUserAdd from './modules/data/user/user-add';
+import dataUserEdit from './modules/data/user/user-edit';
+import dataUserDetails from './modules/data/user/user-details';
+import dataUserDel from './modules/data/user/user-del';
+
 
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -96,6 +106,16 @@ export default new Vuex.Store({
 		dataClassifyEdit,
 		dataClassifyDetails,
 		dataClassifyDel,
+
+		dataLinkAdd,
+		dataLinkEdit,
+		dataLinkDetails,
+		dataLinkDel,
+
+		dataUserAdd,
+		dataUserEdit,
+		dataUserDetails,
+		dataUserDel
 	},
 	strict: debug,
 	middlewares: middlewares,

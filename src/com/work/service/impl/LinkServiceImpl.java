@@ -17,9 +17,9 @@ public class LinkServiceImpl<T extends TLink> extends ServiceImpl<T> implements 
 	 *  @return 总个数
 	 */
 	@Override
-	public int getLinkLength() {
+	public int getLinkLength(String name) {
 		
-		String sql = "select COUNT(*) from TLink";
+		String sql = "select COUNT(*) from TLink where Link_Name like '%"+name+"%'";
 		List comment = this.getDao().list(sql);
 		Long count = (Long)comment.listIterator().next();
 		return count.intValue();
@@ -51,17 +51,20 @@ public class LinkServiceImpl<T extends TLink> extends ServiceImpl<T> implements 
 	 *  @return 外链接列表
 	 */
 	@Override
-	public List<T> getLink(int pageId, int pageNum) {
+	public List<T> getLink(int pageId, int pageNum, String name, String seq, String desc) {
 		
 		// 首先需要根据页数和每页个数计算出起始数和终止数
 		int start = pageNum*(pageId-1);
 		int end = pageNum;
-		String sql = "select link from TLink link order by Link_ID asc ";
-		List<T> links = this.getDao().pageQuery(sql, start, end);
-		if(links.size()>0){
-			return links;
+		if (seq.equals("")) {
+			seq = "Link_ID";
 		}
-		return null;
+		if (desc.equals("")) {
+			desc = "desc";
+		}
+		String sql = "select link from TLink link where Link_Name like '%"+name+"%' order by "+seq+" "+desc;
+		List<T> links = this.getDao().pageQuery(sql, start, end);
+		return links;
 	}
 	
 	/**

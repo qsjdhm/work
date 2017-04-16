@@ -93,99 +93,18 @@ public class AdminUserController {
 	}
 	
 	
-	/****************供页面加载转向的ACTION******************/
-	
-	
-	// 负责映射到新增用户页面
-	@RequestMapping(value = "/addPage")
-	public ModelAndView addPage() throws Exception{
-
-		// 1.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		// 2.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/user/add_user");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
-	// 负责映射到删除用户页面
-	@RequestMapping(value = "/delPage/{page}", method = {RequestMethod.GET})
-	public ModelAndView delPage(@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获得用户总个数
-		int count = userService.getUserLength();
-		// 2.根据分类、页数获取用户列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TUser> users = userService.getUser(page, 6);
-		String userHtml = generateHtml.generateAdminUserDelHtml(users);
-		// 3.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 4.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("userHtml", userHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/user/del_user");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	// 负责映射到修改链接页面
-	@RequestMapping(value = "/updatePage/{page}", method = {RequestMethod.GET})
-	public ModelAndView updatePage(@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获得用户总个数
-		int count = userService.getUserLength();
-		// 2.根据分类、页数获取用户列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		GenerateHtml generateHtml = new GenerateHtml();
-		List <TUser> users = userService.getUser(page, 6);
-		String userHtml = generateHtml.generateAdminUserUpdateHtml(users);
-		// 3.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 4.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("userHtml", userHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/user/update_user");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
 	
 	
 	/****************供AJAX请求的ACTION******************/
 	
 	@RequestMapping(value = "/getUserCount")
 	public void getUserCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
-		
-		int count = userService.getUserLength();
+		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
+		// 做一下新老接口数据参数兼容
+	    if (name == null || name == "") {
+	    	name = "";
+	    }
+		int count = userService.getUserLength(name);
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
@@ -201,8 +120,24 @@ public class AdminUserController {
 	@RequestMapping(value = "/getUserList")
 	public void getUserList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
+		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
+		// 做一下新老接口数据参数兼容
+	    if (name == null || name == "") {
+	    	name = "";
+	    }
 		int page = Integer.parseInt(request.getParameter("page"));
-		List <TUser> users = userService.getUser(page, 10);
+		int size = Integer.parseInt(request.getParameter("size"));
+		String seq = request.getParameter("seq");
+		String desc = request.getParameter("desc");
+		// 做一下新老接口数据参数兼容
+	    if (seq == null || seq == "") {
+	    	seq = "Link_ID";
+	    }
+	    if (desc == null || desc == "") {
+	    	desc = "desc";
+	    }
+		
+		List <TUser> users = userService.getUser(page, 20, name, seq, desc);
 		
 		JSONArray userJsonArray = new JSONArray();
 		for(int i=0; i<users.size(); i++){

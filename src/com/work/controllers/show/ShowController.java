@@ -156,7 +156,7 @@ public class ShowController {
 			List <TBook> topBooks = bookService.getBookByRecom(3);
 			String topBookHtml = generateHtml.generateTopBookHtml(topBooks);
 			// 7.获取所有的对外链接列表
-			List <TLink> links = linkService.getLink(1, 100);
+			List <TLink> links = linkService.getLink(1, 100, "", "", "");
 			String linkHtml = generateHtml.generateLinkHtml(links);
 			// 8.获取所有标签 
 			List <TSort> sorts = sortService.getSort(4, "", 1, 10000, "", "");

@@ -64,6 +64,16 @@ const dataClassifyEdit          = resolve => require(['../views/data/classify/cl
 const dataClassifyDetails       = resolve => require(['../views/data/classify/classify-details'], resolve);
 const dataClassifyDel           = resolve => require(['../views/data/classify/classify-del'], resolve);
 
+const dataLinkAdd               = resolve => require(['../views/data/link/link-add'], resolve);
+const dataLinkEdit              = resolve => require(['../views/data/link/link-edit'], resolve);
+const dataLinkDetails           = resolve => require(['../views/data/link/link-details'], resolve);
+const dataLinkDel               = resolve => require(['../views/data/link/link-del'], resolve);
+
+const dataUserAdd               = resolve => require(['../views/data/user/user-add'], resolve);
+const dataUserEdit              = resolve => require(['../views/data/user/user-edit'], resolve);
+const dataUserDetails           = resolve => require(['../views/data/user/user-details'], resolve);
+const dataUserDel               = resolve => require(['../views/data/user/user-del'], resolve);
+
 
 export default new Router({
     routes: [
@@ -248,7 +258,54 @@ export default new Router({
 					name: '删除分类',
 					component: dataClassifyDel
 				},
-
+				{
+					meta: { pId: '2' },
+					path: 'data-link-add',
+					name: '新增外链',
+					component: dataLinkAdd
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-link-edit',
+					name: '编辑外链',
+					component: dataLinkEdit
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-link-edit/:detailsId',
+					name: '外链详情',
+					component: dataLinkDetails
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-link-del',
+					name: '删除外链',
+					component: dataLinkDel
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-user-add',
+					name: '新增用户',
+					component: dataUserAdd
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-user-edit',
+					name: '编辑用户',
+					component: dataUserEdit
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-user-edit/:detailsId',
+					name: '外链用户',
+					component: dataUserDetails
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-user-del',
+					name: '删除用户',
+					component: dataUserDel
+				},
             ]
         },
         //{

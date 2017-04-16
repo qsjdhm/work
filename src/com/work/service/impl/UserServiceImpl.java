@@ -20,9 +20,9 @@ public class UserServiceImpl<T extends TUser> extends ServiceImpl<T> implements 
 	 *  @return 总个数
 	 */
 	@Override
-	public int getUserLength() {
+	public int getUserLength(String name) {
 		
-		String sql = "select COUNT(*) from TUser";
+		String sql = "select COUNT(*) from TUser where User_Account like '%"+name+"%'";
 		List comment = this.getDao().list(sql);
 		Long count = (Long)comment.listIterator().next();
 		return count.intValue();
@@ -54,12 +54,12 @@ public class UserServiceImpl<T extends TUser> extends ServiceImpl<T> implements 
 	 *  @return 用户列表
 	 */
 	@Override
-	public List<T> getUser(int pageId, int pageNum) {
+	public List<T> getUser(int pageId, int pageNum, String name, String seq, String desc) {
 		
 		// 首先需要根据页数和每页个数计算出起始数和终止数
 		int start = pageNum*(pageId-1);
 		int end = pageNum;
-		String sql = "select user from TUser user order by User_ID asc ";
+		String sql = "select user from TUser user where User_Account like '%"+name+"%' order by "+seq+" "+desc;
 		List<T> users = this.getDao().pageQuery(sql, start, end);
 		if(users.size()>0){
 			return users;
