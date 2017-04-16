@@ -74,7 +74,7 @@ public class NoteController {
 		int pageCount = articleService.getArticleSubSortPageCount(sort, 10);
 		// 3.获取所有笔记的子分类
 		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(8, 1, 10000);
+		List <TSort> sorts = sortService.getSort(8, "", 1, 10000, "", "");
 		List sortsNumber = new ArrayList();  // 保存
 		// 处理一下分类获取每个分类下的个数
 		int size = sorts.size();

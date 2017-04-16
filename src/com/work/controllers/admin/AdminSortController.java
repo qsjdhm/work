@@ -84,107 +84,6 @@ public class AdminSortController {
 	}
 	
 	
-	/****************供页面加载转向的ACTION******************/
-	
-	
-	// 负责映射到新增分类页面
-	@RequestMapping(value = "/addPage")
-	public ModelAndView addPage() throws Exception{
-
-		// 1.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		// 2.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 3.组织父分类html代码
-		GenerateHtml generateHtml = new GenerateHtml();
-		String fSortHtml = generateHtml.generateAdminFSortHtml(3);
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.addObject("fSortHtml", fSortHtml);
-		modelAndView.setViewName("/admin/column/sort/add_sort");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	
-	// 负责映射到删除分类页面
-	@RequestMapping(value = "/delPage/{fSort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView delPage(
-			@PathVariable(value="fSort") Integer fSort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取父分类列表，并且选中传递的子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		String fSortHtml = generateHtml.generateAdminFSortHtml(fSort);
-		// 2.根据父分类获得此分类下的总个数
-		int count = sortService.getSortLength(fSort);
-		// 3.根据父分类、页数、每页个数获取此分类下的分类列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TSort> sorts = sortService.getSort(fSort, page, 6);
-		String sortHtml = generateHtml.generateAdminSortDelHtml(sorts);
-		// 3.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 4.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("fSortId", fSort);
-		modelAndView.addObject("fSortHtml", fSortHtml);
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/sort/del_sort");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
-	// 负责映射到修改分类页面
-	@RequestMapping(value = "/updatePage/{fSort}/{page}", method = {RequestMethod.GET})
-	public ModelAndView updatePage(
-			@PathVariable(value="fSort") Integer fSort, 
-			@PathVariable(value="page") Integer page) throws Exception{
-
-		// 1.获取父分类列表，并且选中传递的子分类
-		GenerateHtml generateHtml = new GenerateHtml();
-		String fSortHtml = generateHtml.generateAdminFSortHtml(fSort);
-		// 2.根据父分类获得此分类下的总个数
-		int count = sortService.getSortLength(fSort);
-		// 3.根据父分类、页数、每页个数获取此分类下的分类列表
-		// 因为前台分页插件的索引是从0开始，所以加1
-		page = page +1;
-		List <TSort> sorts = sortService.getSort(fSort, page, 6);
-		String sortHtml = generateHtml.generateAdminSortUpdateHtml(sorts);
-		// 3.获取笔记下的第一个子分类
-		int noteFirstSortID = sortService.getFirstSortByFSort(8);
-		// 4.获取图书下的第一个子分类
-		int bookFirstSortID = sortService.getFirstSortByFSort(3);
-		
-		
-		// 1.把返回的数据放到相对应的key中
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("count", count);  // 总数
-		modelAndView.addObject("pageId", page-1);  // 当前页
-		modelAndView.addObject("fSortId", fSort);
-		modelAndView.addObject("fSortHtml", fSortHtml);
-		modelAndView.addObject("sortHtml", sortHtml);
-		modelAndView.addObject("noteFirstSortID", noteFirstSortID);
-		modelAndView.addObject("bookFirstSortID", bookFirstSortID);
-		modelAndView.setViewName("/admin/column/sort/update_sort");
-		
-		// 2.把modelAndView返回
-		return modelAndView;
-	}
-	
 	
 	/****************供AJAX请求的ACTION******************/
 	
@@ -192,7 +91,12 @@ public class AdminSortController {
 	public void getSortCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int fSort = Integer.parseInt(request.getParameter("fSort"));
-		int count = sortService.getSortLength(fSort);
+		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
+		// 做一下新老接口数据参数兼容
+	    if (name == null || name == "") {
+	    	name = "";
+	    }
+		int count = sortService.getSortLength(fSort, name);
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("success", "1");
@@ -209,8 +113,23 @@ public class AdminSortController {
 	public void getSortList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int fSort = Integer.parseInt(request.getParameter("fSort"));
+		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
+		// 做一下新老接口数据参数兼容
+	    if (name == null || name == "") {
+	    	name = "";
+	    }
 		int page = Integer.parseInt(request.getParameter("page"));
-		List <TSort> sorts = sortService.getSort(fSort, page, 10);
+		int size = Integer.parseInt(request.getParameter("size"));
+		String seq = request.getParameter("seq");
+		String desc = request.getParameter("desc");
+		// 做一下新老接口数据参数兼容
+	    if (seq == null || seq == "") {
+	    	seq = "Sort_ID";
+	    }
+	    if (desc == null || desc == "") {
+	    	desc = "desc";
+	    }
+		List <TSort> sorts = sortService.getSort(fSort, name, page, size, seq, desc);
 		
 		JSONArray sortJsonArray = new JSONArray();
 		for(int i=0; i<sorts.size(); i++){
@@ -342,11 +261,11 @@ public class AdminSortController {
 		if(type.equals("article")){
 			sorts = sortService.getSortByAriticleNotNote();
 		} else if(type.equals("note")){
-			sorts = sortService.getSort(8, 1, 10000);
+			sorts = sortService.getSort(8, "", 1, 10000, "", "");
 		} else if(type.equals("tag")){
-			sorts = sortService.getSort(4, 0, 1000);
+			sorts = sortService.getSort(4, "", 0, 10000, "", "");
 		} else if(type.equals("book")){
-			sorts = sortService.getSort(3, 1, 10000);
+			sorts = sortService.getSort(3, "", 1, 10000, "", "");
 		}
 		
 		JSONArray sortJsonArray = new JSONArray();

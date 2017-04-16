@@ -89,7 +89,7 @@ public class AdminBookController {
 	public void getBookCount(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		String name = request.getParameter("name");
+		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
 		// 做一下新老接口数据参数兼容
 	    if (name == null || name == "") {
 	    	name = "";
@@ -110,7 +110,7 @@ public class AdminBookController {
 	public void getBookList(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		int sort = Integer.parseInt(request.getParameter("sort"));
-		String name = request.getParameter("name");
+		String name = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
 		// 做一下新老接口数据参数兼容
 	    if (name == null || name == "") {
 	    	name = "";

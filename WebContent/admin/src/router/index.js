@@ -59,6 +59,10 @@ const dataBookEdit              = resolve => require(['../views/data/book/book-e
 const dataBookDetails           = resolve => require(['../views/data/book/book-details'], resolve);
 const dataBookDel               = resolve => require(['../views/data/book/book-del'], resolve);
 
+const dataClassifyAdd           = resolve => require(['../views/data/classify/classify-add'], resolve);
+const dataClassifyEdit          = resolve => require(['../views/data/classify/classify-edit'], resolve);
+const dataClassifyDetails       = resolve => require(['../views/data/classify/classify-details'], resolve);
+const dataClassifyDel           = resolve => require(['../views/data/classify/classify-del'], resolve);
 
 
 export default new Router({
@@ -220,6 +224,31 @@ export default new Router({
 					name: '删除图书',
 					component: dataBookDel
 				},
+				{
+					meta: { pId: '2' },
+					path: 'data-classify-add',
+					name: '新增分类',
+					component: dataClassifyAdd
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-classify-edit',
+					name: '编辑分类',
+					component: dataClassifyEdit
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-classify-edit/:detailsId',
+					name: '分类详情',
+					component: dataClassifyDetails
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-classify-del',
+					name: '删除分类',
+					component: dataClassifyDel
+				},
+
             ]
         },
         //{

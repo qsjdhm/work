@@ -68,7 +68,7 @@ public class BookController {
 		
 		// 1.获取所有笔记的子分类
 		GenerateHtml generateHtml = new GenerateHtml();
-		List <TSort> sorts = sortService.getSort(3, 1, 10000);
+		List <TSort> sorts = sortService.getSort(3, "", 1, 10000, "", "");
 		String sortHtml = generateHtml.generateBookSortHtml(sorts);
 		// 2.根据子分类、页数、每页个数获取此分类下的图书列表
 		List <TBook> books = bookService.getBook(bookSort,"", 1, 10000, "", "");

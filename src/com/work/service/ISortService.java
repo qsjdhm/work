@@ -8,13 +8,13 @@ import com.work.vo.TSort;
 public interface ISortService <T extends TSort> extends IService<T> {
 
 	// 根据总分类获得此类型下的文章总个数
-	public int getSortLength(int fSortId);
+	public int getSortLength(int fSortId, String name);
 	
 	// 根据总分类和每页个数获取此分类下文章的总页数
 	public int getSortPageCount(int fSortId, int pageNum);
 	
 	// 根据总分类、页数、每页个数获取此分类下的文章列表
-	public List<T> getSort(int fSortId, int pageId, int pageNum);
+	public List<T> getSort(int fSortId, String name, int pageId, int pageNum, String seq, String desc);
 	
 	// 根据总分类查询它下面的所有分类的第一个的分类ID
 	public int getFirstSortByFSort(int fSortId);

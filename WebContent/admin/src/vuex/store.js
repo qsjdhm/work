@@ -43,6 +43,12 @@ import dataBookEdit from './modules/data/book/book-edit';
 import dataBookDetails from './modules/data/book/book-details';
 import dataBookDel from './modules/data/book/book-del';
 
+import dataClassifyAdd from './modules/data/classify/classify-add';
+import dataClassifyEdit from './modules/data/classify/classify-edit';
+import dataClassifyDetails from './modules/data/classify/classify-details';
+import dataClassifyDel from './modules/data/classify/classify-del';
+
+
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -85,6 +91,11 @@ export default new Vuex.Store({
 		dataBookEdit,
         dataBookDetails,
 		dataBookDel,
+
+		dataClassifyAdd,
+		dataClassifyEdit,
+		dataClassifyDetails,
+		dataClassifyDel,
 	},
 	strict: debug,
 	middlewares: middlewares,

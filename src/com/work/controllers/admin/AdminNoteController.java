@@ -240,7 +240,7 @@ public class AdminNoteController {
 		// 2.处理不重复的标签并且将新标签添加到表中
 		// 处理已存在的分类
 		List tagList = new ArrayList();
-		List <TSort> sorts = sortService.getSort(4, 1, 10000);
+		List <TSort> sorts = sortService.getSort(4, "", 1, 10000, "", "");
 		int size = sorts.size();
 		for(int i=0; i<size; i++){
 			tagList.add(sorts.get(i).getSort_Name());

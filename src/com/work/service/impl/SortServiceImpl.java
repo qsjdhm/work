@@ -15,16 +15,17 @@ public class SortServiceImpl<T extends TSort> extends ServiceImpl<T> implements 
 	/**
 	 *  根据父分类获得此类型下的分类总个数
 	 *  @param fSortId 父分类id
+	 *  @param name   图书名称（用作模糊查询）
 	 *  @return 分类个数
 	 */
 	@Override
-	public int getSortLength(int fSortId) {
+	public int getSortLength(int fSortId, String name) {
 		
 		String sql = "";
 		if(fSortId==0){
-			sql = "select COUNT(*) from TSort";
+			sql = "select COUNT(*) from TSort where Sort_Name like '%"+name+"%'";
 		}else{
-			sql = "select COUNT(*) from TSort where F_Sort="+fSortId+"";
+			sql = "select COUNT(*) from TSort where F_Sort="+fSortId+" and Sort_Name like '%"+name+"%'";
 		}
 		List sort = this.getDao().list(sql);
 		Long count = (Long)sort.listIterator().next();
@@ -58,27 +59,34 @@ public class SortServiceImpl<T extends TSort> extends ServiceImpl<T> implements 
 	/**
 	 *  根据父分类、页数、每页个数获取此分类下的分类列表
 	 *  @param fSortId 父分类id
+	 *  @param name   分类名称（用作模糊查询）
 	 *  @param pageId 当前页
 	 *  @param pageNum 每页个数
+	 *  @param seq 排序字段
+	 *  @param desc 排序顺序
 	 *  @return 分类列表
 	 */
 	@Override
-	public List<T> getSort(int fSortId, int pageId, int pageNum) {
+	public List<T> getSort(int fSortId, String name, int pageId, int pageNum, String seq, String desc) {
 		
 		// 首先需要根据页数和每页个数计算出起始数和终止数
 		int start = pageNum*(pageId-1);
 		int end = pageNum;
+		if (seq.equals("")) {
+			seq = "Sort_ID";
+		}
+		if (desc.equals("")) {
+			desc = "desc";
+		}
+		
 		String sql = "";
 		if(fSortId==0){
-			sql = "select sort from TSort sort order by Sort_ID asc ";
+			sql = "select sort from TSort sort where Sort_Name like '%"+name+"%' order by "+seq+" "+desc;
 		}else{
-			sql = "select sort from TSort sort where F_Sort="+fSortId+" order by Sort_ID asc ";
+			sql = "select sort from TSort sort where F_Sort="+fSortId+" and Sort_Name like '%"+name+"%' order by "+seq+" "+desc;
 		}
 		List<T> sorts = this.getDao().pageQuery(sql, start, end);
-		if(sorts.size()>0){
-			return sorts;
-		}
-		return null;
+		return sorts;
 	}
 	
 	/**

@@ -108,7 +108,7 @@ public class FrontController {
 		GenerateHtml generateHtml = new GenerateHtml();
 		String frontArticleHtml = generateHtml.generateHomeMainHtml(frontArticles);
 		// 4.九宫格标签取标签按照id倒叙的前9个
-		List <TSort> sudokuSorts = sortService.getSort(4, 1, 9);
+		List <TSort> sudokuSorts = sortService.getSort(4, "", 1, 9, "", "");
 		String sudokuSortHtml = generateHtml.generateSudokuSortHtml(sudokuSorts);
 		// 5.根据推荐数获取除了笔记分类的热门文章的前5个文章
 		List <TArticle> topArticles = articleService.getArticleByRecomNotNote(5);
@@ -123,7 +123,7 @@ public class FrontController {
 		List <TLink> links = linkService.getLink(1, 100);
 		String linkHtml = generateHtml.generateLinkHtml(links);
 		// 9.获取所有标签 
-		List <TSort> sorts = sortService.getSort(4, 1, 10000);
+		List <TSort> sorts = sortService.getSort(4, "", 1, 10000, "", "");;
 		String sortHtml = generateHtml.generateSortHtml(sorts);
 		// 10.根据时间获取最新的前5条评论
 		List <TComment> newComments = commentService.getCommentByTime(5);
