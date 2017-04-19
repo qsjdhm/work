@@ -58,6 +58,10 @@ import dataUserEdit from './modules/data/user/user-edit';
 import dataUserDetails from './modules/data/user/user-details';
 import dataUserDel from './modules/data/user/user-del';
 
+import dataArticleRecom from './modules/data/recom/article-recom';
+import dataNoteRecom from './modules/data/recom/note-recom';
+import dataBookRecom from './modules/data/recom/book-recom';
+
 
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -115,7 +119,11 @@ export default new Vuex.Store({
 		dataUserAdd,
 		dataUserEdit,
 		dataUserDetails,
-		dataUserDel
+		dataUserDel,
+
+		dataArticleRecom,
+		dataNoteRecom,
+		dataBookRecom
 	},
 	strict: debug,
 	middlewares: middlewares,

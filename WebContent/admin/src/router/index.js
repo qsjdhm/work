@@ -74,6 +74,11 @@ const dataUserEdit              = resolve => require(['../views/data/user/user-e
 const dataUserDetails           = resolve => require(['../views/data/user/user-details'], resolve);
 const dataUserDel               = resolve => require(['../views/data/user/user-del'], resolve);
 
+const dataArticleRecom          = resolve => require(['../views/data/recom/article-recom'], resolve);
+const dataNoteRecom             = resolve => require(['../views/data/recom/note-recom'], resolve);
+const dataBookRecom             = resolve => require(['../views/data/recom/book-recom'], resolve);
+
+
 
 export default new Router({
     routes: [
@@ -306,6 +311,25 @@ export default new Router({
 					name: '删除用户',
 					component: dataUserDel
 				},
+				{
+					meta: { pId: '2' },
+					path: 'data-article-recom',
+					name: '文章推荐量',
+					component: dataArticleRecom,
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-note-recom',
+					name: '笔记推荐量',
+					component: dataNoteRecom,
+				},
+				{
+					meta: { pId: '2' },
+					path: 'data-book-recom',
+					name: '图书推荐量',
+					component: dataBookRecom,
+				}
+
             ]
         },
         //{
