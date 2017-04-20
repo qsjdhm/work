@@ -77,7 +77,8 @@ const dataUserDel               = resolve => require(['../views/data/user/user-d
 const dataArticleRecom          = resolve => require(['../views/data/recom/article-recom'], resolve);
 const dataNoteRecom             = resolve => require(['../views/data/recom/note-recom'], resolve);
 const dataBookRecom             = resolve => require(['../views/data/recom/book-recom'], resolve);
-
+// 设置菜单
+const cogAdmin                  = resolve => require(['../views/cog/cog-admin'], resolve);
 
 
 export default new Router({
@@ -328,7 +329,15 @@ export default new Router({
 					path: 'data-book-recom',
 					name: '图书推荐量',
 					component: dataBookRecom,
-				}
+				},
+
+                {
+                    meta: { pId: '3' },
+                    path: 'cog-admin',
+                    name: '管理员设置',
+                    component: cogAdmin,
+                }
+
 
             ]
         },

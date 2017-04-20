@@ -62,6 +62,7 @@ import dataArticleRecom from './modules/data/recom/article-recom';
 import dataNoteRecom from './modules/data/recom/note-recom';
 import dataBookRecom from './modules/data/recom/book-recom';
 
+import cogAdmin from './modules/cog/cog-admin';
 
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -123,7 +124,9 @@ export default new Vuex.Store({
 
 		dataArticleRecom,
 		dataNoteRecom,
-		dataBookRecom
+		dataBookRecom,
+
+        cogAdmin
 	},
 	strict: debug,
 	middlewares: middlewares,
