@@ -111,7 +111,10 @@ const state  = {
 		{
 			'id' : '3', 'icon' : 'fa-cogs', 'name' : '系统设置', 'level' : 1, 'childMenu' : [
 				{
-					'id' : '3-1', 'pId': '3', 'icon' : 'fa-user-o', 'name' : '管理员设置', 'level' : 2, 'path' : '/home/cog-admin'
+					'id' : '3-1', 'pId': '3', 'icon' : 'fa-database', 'name' : '数据备份', 'level' : 2, 'path' : '/home/cog-backup'
+				},
+				{
+					'id' : '3-2', 'pId': '3', 'icon' : 'fa-user-o', 'name' : '管理员设置', 'level' : 2, 'path' : '/home/cog-admin'
 				},
 			],
 		},

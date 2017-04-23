@@ -37,7 +37,7 @@
                                 class="item unread-message">
                                 <i @click="skipUnreadComment" class="fa fa-bell-o"></i>
                             </el-badge>
-                            <i class="setting fa fa-cog"></i>
+                            <i @click="signBackup"class="setting fa fa-cog"></i>
                             <i class="user fa fa-user-circle-o"><span>张三</span></i>
                             <i @click="signOut" class="logout fa fa-sign-out"></i>
                         </div>
@@ -180,6 +180,9 @@
 			signOut: function () {
 				delete localStorage.workUser;
 				window.location.href = this.$store.state.BASE_URL + '/admin';
+			},
+			signBackup: function () {
+				window.location.href = this.$store.state.BASE_URL + '/admin/#/home/cog-backup';
 			},
             // 跳转到未读评论列表
             skipUnreadComment: function() {

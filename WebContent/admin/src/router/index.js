@@ -79,6 +79,7 @@ const dataNoteRecom             = resolve => require(['../views/data/recom/note-
 const dataBookRecom             = resolve => require(['../views/data/recom/book-recom'], resolve);
 // 设置菜单
 const cogAdmin                  = resolve => require(['../views/cog/cog-admin'], resolve);
+const cogBackup                 = resolve => require(['../views/cog/cog-backup'], resolve);
 
 
 export default new Router({
@@ -336,7 +337,13 @@ export default new Router({
                     path: 'cog-admin',
                     name: '管理员设置',
                     component: cogAdmin,
-                }
+                },
+				{
+					meta: { pId: '3' },
+					path: 'cog-backup',
+					name: '数据备份',
+					component: cogBackup,
+				}
 
 
             ]
