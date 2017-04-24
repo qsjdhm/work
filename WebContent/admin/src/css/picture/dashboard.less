@@ -1,0 +1,121 @@
+/**
+ *  数据 - 图库管理样式（包含兼容eleme框架样式处理）
+ */
+.picture-dashboard-page {
+    padding-top: 0px;
+
+    .header {
+        margin-bottom: 5px;
+
+        .filter-package {
+            color: black;
+            background: #eef1f6;
+            padding: 10px;
+            border-radius: 5px;
+
+            .el-input__inner {
+                height: 30px;
+            }
+
+            .el-select {
+                margin-right: 10px;
+            }
+
+            .el-input {
+                width: 190px;
+            }
+
+            .el-button {
+                margin-left: 10px;
+                padding: 7px 15px;
+            }
+        }
+    }
+
+    .container {
+
+        .list-data {
+            padding-top: 10px;
+            overflow: hidden;
+
+            .el-card {
+                width: 200px!important;
+                float: left;
+                margin-right: 20px;
+                margin-bottom: 20px;
+
+                .el-card__body {
+
+                    img {
+                        width: 200px!important;
+                        height: 150px;
+                    }
+
+                    span {
+                        width: 165px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        -o-text-overflow: ellipsis;
+                        text-overflow:    ellipsis;
+                        display: inline-block;
+                    }
+
+                    .time {
+                        font-size: 13px;
+                        color: #999;
+                    }
+
+                    .bottom {
+                        margin-top: 13px;
+                        line-height: 12px;
+                    }
+
+                    .button {
+                        padding: 0;
+                        float: right;
+                    }
+
+                    .image {
+                        width: 100%;
+                        display: block;
+                    }
+
+                    .clearfix:before,
+                    .clearfix:after {
+                        display: table;
+                        content: "";
+                    }
+
+                    .clearfix:after {
+                        clear: both
+                    }
+                }
+            }
+
+
+            .el-upload--picture-card {
+                float: left;
+                margin-right: 20px;
+                width: 200px;
+                height: 225px;
+                line-height: 225px;
+            }
+        }
+
+        .list-page {
+            margin-top: 5px;
+            text-align: right;
+
+            .el-pagination {
+                padding: 2px 0;
+            }
+        }
+    }
+
+    .el-dialog__body {
+        text-align: center;
+    }
+
+}
+
+

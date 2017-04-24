@@ -66,7 +66,8 @@ public class Uploader {
 			return;
 		}
 		DiskFileItemFactory dff = new DiskFileItemFactory();
-		String savePath = this.getFolder(this.savePath);
+		//String savePath = this.getFolder(this.savePath);
+		String savePath = this.savePath;
 		dff.setRepository(new File(savePath));
 		try {
 			ServletFileUpload sfu = new ServletFileUpload(dff);

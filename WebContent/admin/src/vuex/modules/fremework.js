@@ -121,7 +121,7 @@ const state  = {
 		{
 			'id' : '4', 'icon' : 'fa-picture-o', 'name' : '图库', 'level' : 1, 'childMenu' : [
 				{
-					'id' : '4-1', 'pId': '4', 'icon' : 'fa-line-chart', 'name' : '图库管理', 'level' : 2, 'path' : '/home/picture-dashboard'
+					'id' : '4-1', 'pId': '4', 'icon' : 'fa-picture-o', 'name' : '图库管理', 'level' : 2, 'path' : '/home/picture-dashboard'
 				},
 			]
 		}

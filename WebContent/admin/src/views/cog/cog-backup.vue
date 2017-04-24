@@ -1,5 +1,5 @@
 <template>
-    <div class="data-backup-del-page">
+    <div class="backup-del-page">
         <div class="header">
             <el-row :gutter="20">
                 <el-col class="header-title" :span="24">

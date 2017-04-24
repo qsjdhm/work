@@ -20,7 +20,7 @@
      * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
     // 写一下editor在work项目的绝对路径
-    window.UEDITOR_HOME_URL = "src/assets/ueditor1.6.1/";
+    window.UEDITOR_HOME_URL = "/work/admin/src/assets/ueditor1.6.1/";
     var URL = window.UEDITOR_HOME_URL || (function(){
 
         function PathStack() {

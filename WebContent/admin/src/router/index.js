@@ -80,7 +80,8 @@ const dataBookRecom             = resolve => require(['../views/data/recom/book-
 // 设置菜单
 const cogAdmin                  = resolve => require(['../views/cog/cog-admin'], resolve);
 const cogBackup                 = resolve => require(['../views/cog/cog-backup'], resolve);
-
+// 图库
+const pictureDashboard          = resolve => require(['../views/picture/dashboard'], resolve);
 
 export default new Router({
     routes: [
@@ -343,9 +344,14 @@ export default new Router({
 					path: 'cog-backup',
 					name: '数据备份',
 					component: cogBackup,
-				}
+				},
 
-
+                {
+                    meta: { pId: '4' },
+                    path: 'picture-dashboard',
+                    name: '图库管理',
+                    component: pictureDashboard,
+                }
             ]
         },
         //{

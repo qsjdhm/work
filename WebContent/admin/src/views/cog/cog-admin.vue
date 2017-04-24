@@ -1,5 +1,5 @@
 <template>
-	<div class="data-cog-admin-page">
+	<div class="cog-admin-page">
 		<div class="header">
 			当您填写管理员信息的时候请尽量填写完整, 以保证管理员的正常使用.
 		</div>
