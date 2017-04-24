@@ -50,7 +50,7 @@ public class LoginController {
 		JSONObject jsonObject = new JSONObject();
 		
 		// 验证用户是否存在
-		List <TUser> users = userService.getUser(0, 10000, "", "", "");
+		List <TUser> users = userService.getUser(0, 10000, name, "User_ID", "desc");
 		
 		int aFlag = 0;
 		int pFlag = 0;
@@ -85,8 +85,10 @@ public class LoginController {
 			TUser user = userService.getUserByID(id);
 			
 			JSONObject userObject = new JSONObject();
+			userObject.put("id", user.getUser_ID());
 			userObject.put("name", user.getUser_Account());
 			userObject.put("email", user.getUser_Email());
+			userObject.put("avatar", user.getUser_Avatar());
 			userObject.put("token", user.getUser_Token());
 			
 			jsonObject.put("success", "1");

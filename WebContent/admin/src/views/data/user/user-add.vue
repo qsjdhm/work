@@ -8,7 +8,7 @@
                 <el-input :disabled="isSubmit" v-model="ruleForm.name"></el-input>
             </el-form-item>
 			<el-form-item label="登录密码" prop="password">
-				<el-input :disabled="isSubmit" v-model="ruleForm.password"></el-input>
+				<el-input :disabled="isSubmit" type="password" v-model="ruleForm.password"></el-input>
 			</el-form-item>
 			<el-form-item label="用户邮箱" prop="email">
 				<el-input :disabled="isSubmit" v-model="ruleForm.email"></el-input>

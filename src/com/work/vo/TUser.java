@@ -22,6 +22,7 @@ public class TUser {
 	private String User_Email = "";
 	private String SessionId = "";
 	private String User_Token = "";
+	private String User_Avatar = "";
 	
 	public int getUser_ID() {
 		return User_ID;
@@ -58,5 +59,11 @@ public class TUser {
 	}
 	public void setUser_Token(String user_Token) {
 		User_Token = user_Token;
+	}
+	public String getUser_Avatar() {
+		return User_Avatar;
+	}
+	public void setUser_Avatar(String user_Avatar) {
+		User_Avatar = user_Avatar;
 	}
 }

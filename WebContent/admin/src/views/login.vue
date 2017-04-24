@@ -63,7 +63,7 @@
                             message: result.msg,
                             type: 'success'
                         });
-                        localStorage["workUser"] = result.user;
+                        localStorage["workUser"] = JSON.stringify(result.user);
                         window.location.href = self.$store.state.BASE_URL + "/admin/#/home/analyze-dashboard";
                     } else {
                         self.$message.error(result.msg);

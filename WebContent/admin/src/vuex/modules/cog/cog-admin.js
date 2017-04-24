@@ -4,24 +4,23 @@
 
 import Vue from 'vue';
 
-export const SET_SORTLIST = 'data-book-add/SET_SORTLIST';
-export const SET_CLASSIFY = 'data-book-add/SET_CLASSIFY';
-export const SET_NAME = 'data-book-add/SET_NAME';
-export const SET_HEIGHT = 'data-book-add/SET_HEIGHT';
-export const SET_COVER = 'data-book-add/SET_COVER';
-export const SET_LINK = 'data-book-add/SET_LINK';
-export const SET_ISSUBMIT = 'data-book-add/SET_ISSUBMIT';
+export const SET_ID = 'cog-admin/SET_ID';
+export const SET_AVATAR = 'cog-admin/SET_AVATAR';
+export const SET_NAME = 'cog-admin/SET_NAME';
+export const SET_PASSWORD = 'cog-admin/SET_PASSWORD';
+export const SET_EMAIL = 'cog-admin/SET_EMAIL';
+export const SET_ISSUBMIT = 'cog-admin/SET_ISSUBMIT';
 
-export const GET_SORTLIST = 'data-book-add/GET_SORTLIST';
-export const SUBMIT_DATA = 'data-book-add/SUBMIT_DATA';
+export const GET_USER = 'cog-admin/GET_USER';
+export const SUBMIT_DATA = 'cog-admin/SUBMIT_DATA';
 
 const state  = {
-    sortList : [],  // 分类数据列表
-    classify : '',  // 选中的分类
+    id : '',  // id
+    avatar : '',  // 头像
+    password : '',  // 密码
     name : '',  // 名称
-    height : '',  // 高度
-    cover : '',  // 封面
-    link: '',  // 链接
+    email : '',  // 邮箱
+
     isSubmit: false  // 当前是否是提交数据状态
 };
 
@@ -32,62 +31,43 @@ const getters = {
 
 // actions
 const actions = {
-    // 获取每个大分类下的小分类列表（例如：文章下的小分类）
-    [GET_SORTLIST] (context, payload) {
+    // 根据id获取用户
+    [GET_USER] (context, payload) {
         return new Promise((resolve, reject) => {
-            Vue.http.post(context.rootState.BASE_URL + '/sortAction/byTypeGetSort', {
+            Vue.http.post(context.rootState.BASE_URL + '/userAction/getUser', {
                 // 参数部分
-                'type' : 'book'
+                "selectId"   : context.state.id,
             }, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
                 },
                 emulateJSON: true
             }).then(function(response) {
-                // 处理下子分类数据
-                var data = response.data.data;
-                var tempSortList = [];
-                for (var i = 0; i < data.length; i++) {
-                    if (i === 0) {
-                        // 赋值默认分类选中项
-                        context.commit(SET_CLASSIFY, data[i].Sort_ID);
-                    }
-                    tempSortList.push({value: data[i].Sort_ID, label: data[i].Sort_Name});
-                }
-                context.commit(SET_SORTLIST, tempSortList);
-                resolve();
+                // 设置页面元素内容
+                context.commit(SET_NAME, response.data.name);
+                context.commit(SET_EMAIL, response.data.email);
+                context.commit(SET_AVATAR, response.data.avatar);
+                resolve(response);
             }, function(response) {
                 resolve(response.json());
             });
         })
     },
-    // 添加图书
+    // 修改信息
     [SUBMIT_DATA] (context, payload) {
-        let self = this;
         return new Promise((resolve, reject) => {
-            // 处理下分类名称
-            let classifyName = '';
-            for (let i = 0, len = context.state.sortList.length; i < len; i++) {
-                if (context.state.sortList[i].value === context.state.classify) {
-                    classifyName = context.state.sortList[i].label;
-                    break;
-                }
-            }
-            Vue.http.post(context.rootState.BASE_URL + '/bookAction/addBook', {
-                // 参数部分
+            Vue.http.post(context.rootState.BASE_URL + '/userAction/updateUser', {
+                "id"       : context.state.id,
+                "avatar"   : context.state.avatar,
                 "name"     : encodeURI(encodeURI(context.state.name)),
-                "sortId"   : context.state.classify,
-                "sortName" : encodeURI(encodeURI(classifyName)),
-                "height"   : context.state.height,
-                "cover"    : context.state.cover,
-                "link"     : context.state.link.replace(/&/g, "*")
+                "password" : encodeURI(encodeURI(context.state.password)),
+                "email"    : encodeURI(encodeURI(context.state.email))
             }, {
                 headers: {
                     "X-Requested-With": "XMLHttpRequest"
                 },
                 emulateJSON: true
             }).then(function(response) {
-                //context.commit(SET_TAGLIST, tempTagList);
                 resolve(response);
             }, function(response) {
                 resolve(response.json());
@@ -99,23 +79,20 @@ const actions = {
 // mutations
 // action会发送请求到此，在此对state的值做设置处理
 const mutations = {
-    [SET_SORTLIST](state , sortList){
-        state.sortList = sortList;
+    [SET_ID](state , id){
+        state.id = id;
     },
-    [SET_CLASSIFY](state , classify){
-        state.classify = classify;
+    [SET_AVATAR](state , avatar){
+        state.avatar = avatar;
     },
     [SET_NAME](state , name){
         state.name = name;
     },
-    [SET_HEIGHT](state , height){
-        state.height = height;
+    [SET_PASSWORD](state , password){
+        state.password = password;
     },
-    [SET_COVER](state , cover){
-        state.cover = cover;
-    },
-    [SET_LINK](state , link){
-        state.link = link;
+    [SET_EMAIL](state , email){
+        state.email = email;
     },
     [SET_ISSUBMIT](state , isSubmit){
         state.isSubmit = isSubmit;

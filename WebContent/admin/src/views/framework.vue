@@ -38,7 +38,7 @@
                                 <i @click="skipUnreadComment" class="fa fa-bell-o"></i>
                             </el-badge>
                             <i @click="signBackup"class="setting fa fa-cog"></i>
-                            <i class="user fa fa-user-circle-o"><span>张三</span></i>
+                            <i @click="skipAdmin" class="user fa fa-user-circle-o"><span>{{name}}</span></i>
                             <i @click="signOut" class="logout fa fa-sign-out"></i>
                         </div>
 					</div>
@@ -112,6 +112,7 @@
 	export default {
         data: function () {
             return {
+                name: '',  // 管理员昵称
                 nowDate: this.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss')
             }
         },
@@ -188,6 +189,10 @@
             skipUnreadComment: function() {
                 window.location.href = this.$store.state.BASE_URL + '/admin/#/home/data-comment-edit/0';
             },
+            // 跳转到管理员设置
+            skipAdmin: function() {
+                window.location.href = this.$store.state.BASE_URL + '/admin/#/home/cog-admin';
+            },
 
 
             // 功能性方法
@@ -240,6 +245,7 @@
             setInterval(function(){
                 self.nowDate = self.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
             },1000);
+            self.name = JSON.parse(localStorage["workUser"]).name;
 
             // 获取未读评论
 			self.getUnreadComment();

@@ -146,6 +146,7 @@ public class AdminUserController {
 			userJson.put("User_ID", user.getUser_ID());
 			userJson.put("User_Account", user.getUser_Account());
 			userJson.put("User_Email", user.getUser_Email());
+			userJson.put("User_Avatar", user.getUser_Avatar());
 			
 			userJsonArray.add(userJson);
 		}
@@ -223,6 +224,7 @@ public class AdminUserController {
 		TUser user = userService.getUserByID(selectId);
 		String account = user.getUser_Account();
 		String email = user.getUser_Email();
+		String avatar = user.getUser_Avatar();
 		
 		// 3.返回添加状态信息
 		JSONObject jsonObject = new JSONObject();
@@ -231,6 +233,7 @@ public class AdminUserController {
 		jsonObject.put("id", selectId);
 		jsonObject.put("name", account);
 		jsonObject.put("email", email);
+		jsonObject.put("avatar", avatar);
 		
 		response.setContentType("text/html;charset=utf-8");
         response.setHeader("Cache-Control", "no-cache"); 
@@ -245,6 +248,7 @@ public class AdminUserController {
 		String account = URLDecoder.decode(URLDecoder.decode(request.getParameter("name"), "utf-8"), "utf-8");
 		String password = URLDecoder.decode(URLDecoder.decode(request.getParameter("password"), "utf-8"), "utf-8");
 		String email = URLDecoder.decode(URLDecoder.decode(request.getParameter("email"), "utf-8"), "utf-8");
+		String avatar = request.getParameter("avatar");
 		
 		if(password.equals("")){
 			// 首先取回需要修改的分类的数据
@@ -256,12 +260,19 @@ public class AdminUserController {
 			password = enc.encryption(password);
 		}
 		
+		if(avatar == null || avatar.equals("")){
+			// 首先取回需要修改的分类的数据
+			TUser priUser = userService.getUserByID(id);
+			avatar = priUser.getUser_Avatar();
+		}
+		
 		// 2.修改用户数据
 		TUser user = new TUser();
 		user.setUser_ID(id);
 		user.setUser_Account(account);
 		user.setUser_Password(password);
 		user.setUser_Email(email);
+		user.setUser_Avatar(avatar);
 		userService.update(user);
 		
 		// 2.返回添加状态信息
