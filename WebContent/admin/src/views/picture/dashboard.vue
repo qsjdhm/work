@@ -47,10 +47,25 @@
                         </el-upload>
 
                         <el-card
+                            v-if="classify==1"
                             v-for="(item, key) in listData"
                             :key="key"
                             :body-style="{ padding: '0px' }">
                             <img :src="'http://localhost:8080/work/admin/src/assets/ueditor1.6.1/jsp/upload/'+item.Picture_Name" class="image">
+                            <div style="padding: 14px;">
+                                <span>{{item.Picture_Name}}</span>
+                                <div class="bottom clearfix">
+                                    <time class="time">{{ item.Picture_Time }}</time>
+                                </div>
+                            </div>
+                        </el-card>
+
+                        <el-card
+                            v-if="classify==2"
+                            v-for="(item, key) in listData"
+                            :key="key"
+                            :body-style="{ padding: '0px' }">
+                            <img :src="'http://localhost:8080/work/admin/uploads/'+item.Picture_Name" class="image">
                             <div style="padding: 14px;">
                                 <span>{{item.Picture_Name}}</span>
                                 <div class="bottom clearfix">
@@ -123,6 +138,7 @@
                 get: function () { return this.classify; },
                 set: function (newClassify) {
                     this.$store.commit(SET_CLASSIFY, newClassify);
+                    this.$store.dispatch(GET_LISTDATA);
                 }
             },
             // 时间区间切换事件
@@ -169,30 +185,20 @@
             ]),
             // 图片上传切换
             uploadHandle(response, file, fileList) {
-                console.info(1111111111111111);
                 console.info(response);
                 console.info(file);
-                console.info(file);
-//                this.ruleForm.coverList = [];
-//                this.ruleForm.coverList.push(file);
-//                this.$store.commit(SET_COVER, file.response);
+                console.info(fileList);
             },
             // 根据条件查询数据
             searchData(event) {
-                let self = this;
-                self.$store.dispatch(GET_LISTDATACOUNT).then(function (response) {
-                    self.$store.dispatch(GET_LISTDATA);
-                });
+                this.$store.dispatch(GET_LISTDATA);
             },
             // 重置条件
             resetFilter(event) {
                 this.$store.commit(SET_CLASSIFY, '1');
                 this.$store.commit(SET_STARTTIME, '');
                 this.$store.commit(SET_ENDTIME, '');
-                let self = this;
-                self.$store.dispatch(GET_LISTDATACOUNT).then(function (response) {
-                    self.$store.dispatch(GET_LISTDATA);
-                });
+                this.$store.dispatch(GET_LISTDATA);
             },
             // 翻页事件
             listPageChange(val) {
@@ -203,6 +209,13 @@
             // 格式化处理表格的时间数据格式
             formatterListTime(row, column) {
                 return row.Article_Date.split(' ')[0];
+            },
+
+
+            // 外部调用VUE外放接口
+            _outgoingInterface(){
+                console.info('外部调用VUE外放接口-------------------');
+                this.$store.dispatch(GET_LISTDATA);
             }
         },
         created: function () {
@@ -227,6 +240,9 @@
             // 设置list高度
             this.listHeight = document.getElementById("frameworkContainer").offsetHeight - 260;
             this.$store.dispatch(GET_LISTDATA);
+
+            // 把这个组件定义的一个方法赋给window对象，方便客户端或者直接在控制台（window.outgoingInterface()）直接调用
+            window.outgoingInterface = this._outgoingInterface;
         }
     }
 </script>
