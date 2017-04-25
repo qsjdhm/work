@@ -188,6 +188,7 @@
                 console.info(response);
                 console.info(file);
                 console.info(fileList);
+                this.$store.dispatch(GET_LISTDATA);
             },
             // 根据条件查询数据
             searchData(event) {
