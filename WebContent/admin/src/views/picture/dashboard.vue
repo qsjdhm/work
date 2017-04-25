@@ -48,6 +48,7 @@
 
                         <el-card
                             v-for="(item, key) in listData"
+                            :key="key"
                             :body-style="{ padding: '0px' }">
                             <img :src="'http://localhost:8080/work/admin/src/assets/ueditor1.6.1/jsp/upload/'+item.Picture_Name" class="image">
                             <div style="padding: 14px;">

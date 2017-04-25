@@ -191,7 +191,8 @@ const actions = {
                 url = context.rootState.BASE_URL + '/commentAction/getCommentCount';
             } else if (context.state.selectedFSortType === 'book') {
                 postData = {
-                    sort : context.state.selectedSubSort
+                    sort : context.state.selectedSubSort,
+                    name : ''
                 };
                 url = context.rootState.BASE_URL + '/bookAction/getBookCount';
             }
@@ -248,6 +249,7 @@ const actions = {
                 postData = {
                     sort : context.state.selectedSubSort,
                     page : context.state.tablePage,
+                    name : '',
                     size : 20
                 };
                 url = context.rootState.BASE_URL + '/bookAction/getBookList';
