@@ -2,7 +2,7 @@
 
 # work -- vue版后台管理系统
 各种gif截图
-<img src="http://tva3.sinaimg.cn/crop.0.1.750.750.50/69be932ajw8ex43th636ij20ku0kwjsw.jpg" />
+<img src="图库.gif" />
 
 
 * 开发此项目重点学习 :
