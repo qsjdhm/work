@@ -17,11 +17,11 @@
 * src文件夹下面是java代码、WebContent/WEB-INF下是后台配置文件
 * WebContent文件夹下面是前端代码
 * - admin      后台管理系统代码
-* --   build    webpack配置文件
-* --   config   后台管理系统配置文件
-* --   dist     npm run pro编译后的文件（用于系统发布）
-* --   src      功能源码
-* --   uploads  上传的图片
+* - admin/build    webpack配置文件
+* - admin/config   后台管理系统配置文件
+* - admin/dist     npm run pro编译后的文件（用于系统发布）
+* - admin/src      功能源码
+* - admin/uploads  上传的图片
 * - backupFile 数据库备份文件
 * - column     前台页面频道代码
 * - common     项目前端一些通用文件
