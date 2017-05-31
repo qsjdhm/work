@@ -1,23 +1,29 @@
 
 
-# work -- vue版后台管理系统
-各种gif截图
+# work -- vue+vuex版后台管理系统（分析、数据管理、系统设置、图库）
+各种gif截图（gif截图内容很多，请耐心等待）
+<img src="分析.gif" />
+<img src="新增文章.gif" />
+<img src="编辑文章.gif" />
+<img src="评论.gif" />
+<img src="推荐.gif" />
+<img src="系统设置.gif" />
 <img src="图库.gif" />
 
 
-* 开发此项目重点学习 :
-* - react的重载、更新等生命周期的那些方法意义和作用
-* - 理解在redux的架子下组件如何父子、同级组件的数据传输、方法调用
-* - 理解redux中的reducers，stores中的概念，还有dispatch，redux-thunk，总结redux的整个流程
-* - 分析项目适合hashHistory还是browserHistory路由，实现子路由、路由处理权限等功能
-* - 争取把此项目提炼为通用的数据平台管理系统
 
-* by zhangyan 2016-11-01            email : qsjdhm@163.com
+* by zhangyan 2017-04-22            email : qsjdhm@163.com
 
 # 目录介绍
 * src文件夹下面是java代码、WebContent/WEB-INF下是后台配置文件
 * WebContent文件夹下面是前端代码
 * - admin      后台管理系统代码
+* -   build    webpack配置文件
+* -   config   后台管理系统配置文件
+* -   dist     npm run pro编译后的文件（用于系统发布）
+* -   src      功能源码
+* -   uploads  上传的图片
+* - backupFile 数据库备份文件
 * - column     前台页面频道代码
 * - common     项目前端一些通用文件
 * - staticFile 静态化生成的前台页面
@@ -29,8 +35,12 @@
 * 后台服务采用spring + hibernate来实现快速的搭建整个MVC中的M模块
 
 #后台管理系统页面使用技术
-* react + react-redux + antd
-* react-router路由按需加载
+* vue基础框架
+* vuex数据状态树管理
+* vue-resource请求后台数据
+* vue-router路由按需加载
+* element-ui作为ui框架
+* echarts负责图表分析展示
 * webpack-dev-server
 
 #前台页面使用技术
