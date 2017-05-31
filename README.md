@@ -2,13 +2,12 @@
 
 # work -- vue+vuex版后台管理系统（分析、数据管理、系统设置、图库）
 各种gif截图（gif截图内容很多，请耐心等待）
-<img src="分析.gif" />
-<img src="新增文章.gif" />
-<img src="编辑文章.gif" />
-<img src="评论.gif" />
-<img src="推荐.gif" />
-<img src="系统设置.gif" />
-<img src="图库.gif" />
+<img src="markdown-jpg/分析.jpg" />
+<img src="markdown-jpg/编辑文章.jpg" />
+<img src="markdown-jpg/详情.jpg" />
+<img src="markdown-jpg/图书.jpg" />
+<img src="markdown-jpg/系统设置.jpg" />
+<img src="markdown-jpg/图库.jpg" />
 
 
 
